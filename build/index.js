@@ -113,6 +113,69 @@ btnPedidosPend.addEventListener('click',()=>{
     dbCargarPedidosPendientes();
 });
 
+
+let btnUpdate = document.getElementById('btnUpdate');
+btnUpdate.addEventListener('click',()=>{
+    
+    btnUpdate.innerHTML = '<i class="fal fa-sync fa-spin"></i>';
+    btnUpdate.disabled = true;
+
+    downloadProductos()
+    .then((data)=>{
+        deleteProductos()
+        .then(()=>{
+            let contador = 1;
+            let totalrows = Number(data.rowsAffected[0]);
+              
+            data.recordset.map(async(rows)=>{
+                var datosdb = {
+                    CODSUCURSAL:rows.CODSUCURSAL,
+                    CODPROD:rows.CODPROD,
+                    DESPROD:rows.DESPROD,
+                    CODMEDIDA:rows.CODMEDIDA,
+                    EQUIVALE:rows.EQUIVALE,
+                    COSTO:rows.COSTO,
+                    PRECIO:rows.PRECIO,
+                    PRECIOA:rows.PRECIOA,
+                    PRECIOB:rows.PRECIOB,
+                    PRECIOC:rows.PRECIOC,
+                    DESMARCA:rows.DESMARCA,
+                    EXENTO:rows.EXENTO,
+                    EXISTENCIA:rows.EXISTENCIA,
+                    DESPROD3:rows.DESPROD3
+                }                
+                var noOfRowsInserted = await connection.insert({
+                    into: "productos",
+                    values: [datosdb], //you can insert multiple values at a time
+                });
+                if (noOfRowsInserted > 0) {
+                    let porc = (Number(contador) / Number(totalrows)) * 100;
+                    contador += 1;
+                    if(totalrows==contador){
+                        funciones.Aviso('Productos descargados exitosamente!!')
+                    }
+                }
+                btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
+                btnUpdate.disabled = false;
+            });
+           
+        })
+        .catch(()=>{
+          btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
+          btnUpdate.disabled = false;
+           funciones.AvisoError('No se pudieron eliminar los productos previos');       
+        })
+    })
+    .catch(()=>{
+            btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
+            btnUpdate.disabled = false;
+        funciones.AvisoError('No se pudieron descargar los productos');
+    })
+
+
+
+});
+
 //deshabilita los mensajes de consola
 //logger.disableLogger();
 

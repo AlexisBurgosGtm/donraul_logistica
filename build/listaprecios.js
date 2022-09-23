@@ -1,7 +1,7 @@
-let btnListaP = document.getElementById('btnListaP');
-btnListaP.addEventListener('click',()=>{
-    $('#modalListaPrecios').modal('show');
-})
+//let btnListaP = document.getElementById('btnListaP');
+//btnListaP.addEventListener('click',()=>{
+    //$('#modalListaPrecios').modal('show');
+//})
 
 let txtBProducto = document.getElementById('txtBProducto');
 txtBProducto.addEventListener('keydown',(e)=>{

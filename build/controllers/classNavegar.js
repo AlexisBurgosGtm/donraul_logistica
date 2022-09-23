@@ -44,16 +44,16 @@ let classNavegar = {
         })
     },
     inicioVendedor : async ()=>{
-        let strFooter =    `<button class="btn btn-sm "  id="btnMenu2VendedorClientesMapa">
+        let strFooter =    `<button class="btn btn-sm hidden"  id="btnMenu2VendedorClientesMapa">
                                 <i class="fal fa-map"></i>
                                 Mapa
                             </button> 
-                            <button class="btn btn-sm "  id="btnMenu2VendedorClientes">
+                            <button class="btn btn-sm  hidden"  id="btnMenu2VendedorClientes">
                                 <i class="fal fa-shopping-cart"></i>
                                 Clientes
                             </button>
                           
-                            <button class="btn btn-sm " id="btnMenu2VendedorLogro">
+                            <button class="btn btn-sm hidden" id="btnMenu2VendedorLogro">
                                 <i class="fal fa-chart-pie"></i>
                                 Logro
                             </button>
@@ -62,7 +62,7 @@ let classNavegar = {
                                 <i class="fal fa-edit"></i>
                                 .
                             </button>
-                            <button class="btn btn-sm "  id="btnMenu2VendedorSync">
+                            <button class="btn btn-sm hidden"  id="btnMenu2VendedorSync">
                                 <i class="fal fa-sync"></i>
                                 Desc
                             </button>
@@ -106,8 +106,9 @@ let classNavegar = {
                     //actualiza la ubicación del empleado
                     await classEmpleados.updateMyLocation();
 
-                    //classNavegar.ventasMapaClientes();
-                    classNavegar.inicioVendedorListado();
+                  
+                    //classNavegar.inicioVendedorListado();
+                    classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
 
 
                     let btnMConfig = document.getElementById('btnMConfig');

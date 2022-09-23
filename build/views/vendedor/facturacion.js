@@ -1,5 +1,59 @@
 function getView(){
     let view = {
+        body:()=>{
+            return `
+                <div class="col-12 p-0 bg-white">
+                    <div class="tab-content" id="myTabHomeContent">
+                        <div class="tab-pane fade show active" id="pedido" role="tabpanel" aria-labelledby="receta-tab">
+
+                           ${view.encabezadoClienteDocumento() 
+                            + view.gridTempVenta() 
+                            + view.modalBusquedaCliente() 
+                            + view.modalNuevoCliente() 
+                            }
+
+                        </div>
+                        <div class="tab-pane fade" id="cliente" role="tabpanel" aria-labelledby="home-tab">
+                           ${view.vista_cliente()}
+                        </div>
+
+                        <div class="tab-pane fade" id="entrega" role="tabpanel" aria-labelledby="home-tab">
+                            ${view.vista_entrega()}
+                           
+                                   
+                        </div>
+                        <div class="tab-pane fade" id="ubicacion" role="tabpanel" aria-labelledby="tab-ubicacion">
+
+                           
+
+                        </div>
+                    
+                    </div>
+
+                    <ul class="nav nav-tabs hidden" id="myTabHome" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active negrita text-success" id="tab-pedido" data-toggle="tab" href="#pedido" role="tab" aria-controls="profile" aria-selected="false">
+                                <i class="fal fa-list"></i>pedido</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link negrita text-danger" id="tab-cliente" data-toggle="tab" href="#cliente" role="tab" aria-controls="home" aria-selected="true">
+                                <i class="fal fa-comments"></i>cliente</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link negrita text-info" id="tab-entrega" data-toggle="tab" href="#entrega" role="tab" aria-controls="home" aria-selected="true">
+                                <i class="fal fa-edit"></i>entrega</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link negrita text-warning" id="tab-ubicacion" data-toggle="tab" href="#ubicacion" role="tab" aria-controls="profile" aria-selected="false">
+                                <i class="fal fa-chart-pie"></i>ubicacion</a>
+                        </li> 
+                                
+                    </ul>
+
+                </div>
+               
+            `
+        },
         encabezadoClienteDocumento :()=>{
             return `
         <div class="row">
@@ -117,17 +171,17 @@ function getView(){
                     </div>
                     <div>
 
-                        <button class="btn btn-xl btn-secondary btn-bottom-ml btn-circle hand shadow" id="btnCambiarCliente">
-                            <i class="fal fa-user"></i>
-                        </button>
+                      
                     
                         <button class="btn btn-circle btn-xl btn-success shadow btn-bottom-mr hand" id="btnAgregarProd">
                             <i class="fal fa-search"></i>
                         </button>
 
-                        <button class="btn btn-danger btn-xl btn-circle btn-bottom-r shadow hand" id="btnCobrar">
-                            <i class="fal fa-save"></i>
+                        <button class="btn btn-xl btn-secondary btn-bottom-r btn-circle hand shadow" id="btnCambiarCliente">
+                            <i class="fal fa-user"></i>
                         </button>
+
+                      
 
                     </div>
                 </div>
@@ -656,20 +710,126 @@ function getView(){
                         </div>
                     </div>
                 </div>`
+        },
+        vista_entrega :()=>{
+            return `
+              
+                    <div class="card card-rounded shadow">
+                            <div class="card-body">
+                                    <div class="">            
+                                        
+                                        <div class="form-group">
+                                            <label>Forma de Pago:</label>
+                                            <select id="cmbEntregaConcre" class="form-control">
+                                                <option value="CONTADO">CONTADO</option>
+                                                <option value="CREDITO">CREDITO</option>
+                                                <option value="VALE">VALE AL VENDEDOR</option>
+                                                <option value="FACTURA">FACTURA CONTABLE</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Observaciones</label>
+                                            <textarea rows="4" cols="80" class="form-control" id="txtEntregaObs" placeholder="Escriba aqui sus observaciones..."></textarea>
+                                        </div>                                                              
+                                            
+                                    </div>
+
+                                    <div class="row">
+                                        <label class="text-white" id="lbDocLat">0</label>
+                                        <label class="text-white" id="lbDocLong">0</label class="text-white">
+                                    </div>
+                                    
+                                    <br>
+            
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <button class="btn btn-outline-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="btnEntregaCancelar">
+                                                <i class="fal fa-ban mr-1"></i>
+                                                Cancelar
+                                            </button>                                
+                                        </div>
+            
+                                        <div class="col-1"></div>
+            
+                                        <div class="col-5">
+                                            <button class="btn btn-outline-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnFinalizarPedido">
+                                                <i class="fal fa-paper-plane mr-1"></i>Enviar
+                                            </button>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                            
+                            </div>
+                        
+                        
+                    </div>
+                `
+        },
+        vista_cliente:()=>{
+            return `
+            <div class="card card-rounded shadow col-12 p-4">
+                <div class="card-body">
+
+                    <h5 class="text-danger negrita">Datos del Cliente</h5>
+                
+                    <div class="form-group">
+                        <label>NIT</label>
+                        <input type="text" class="form-control bg-amarillo border-info" id="txtCliNit" value="CF">
+                    </div>
+
+                    <div class="form-group">
+                        <label>NOMBRE</label>
+                        <input type="text" class="form-control" id="txtCliNombre" value="CONSUMIDOR FINAL">
+                    </div>
+
+                    <div class="form-group">
+                        <label>DIRECCIÓN</label>
+                        <input type="text" class="form-control" id="txtCliDireccion" value="CIUDAD">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4">
+                        
+                        </div>
+                        <div class="col-4">
+                                <button class="btn btn-info btn-md shadow hand" id="btnCobrarDomicilio">
+                                    <i class="fal fa-truck"></i> Entregar en Domicilio
+                                </button>
+                        </div>
+                        <div class="col-4">
+                                <button class="btn btn-danger btn-md shadow hand" id="btnCobrar">
+                                    <i class="fal fa-warehouse"></i> Recoge en Tienda
+                                </button>
+                        </div>
+                    
+
+               
+
+                    </div>
+
+                </div>
+            </div>
+                              
+                <br>
+
+                    <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnPedido">
+                        <i class="fal fa-arrow-left"></i>
+                    </button>
+
+
+
+                  
+
+
+            `
         }
     }
 
-    //+ view.cajabusquedaproducto()  antes de gridtempventas
-    root.innerHTML = view.encabezadoClienteDocumento() 
-                + view.gridTempVenta() 
-                //+ view.btnCobrar() 
-                //+ view.modalBusquedaProductos() 
-                //+ view.modalCantidadProducto()
-                + view.modalBusquedaCliente() 
-                //+ view.modalCobro() 
-                + view.modalNuevoCliente() 
-                + view.modalTerminar(); 
-                //+ view.modalCantidadCalculadora();
+   
+    root.innerHTML = view.body(); 
+               
 
     let containerModalesVentas = document.getElementById('containerModalesVentas');
     containerModalesVentas.innerHTML = view.modalBusquedaProductos() 
@@ -688,8 +848,14 @@ async function iniciarVistaVentas(nit,nombre,direccion){
     let lbNomClien = document.getElementById('lbNomClien');
     lbNomClien.innerText = `${nombre} // ${direccion}`;
     
+
+    document.getElementById('btnPedido').addEventListener('click',()=>{
+        document.getElementById('tab-pedido').click();
+    })
+
     document.getElementById('btnCambiarCliente').addEventListener('click',()=>{
-        classNavegar.inicioVendedor();
+        //classNavegar.inicioVendedor();
+        document.getElementById('tab-cliente').click();
     })
 
 
@@ -742,7 +908,8 @@ async function iniciarVistaVentas(nit,nombre,direccion){
                     
                         break;
                     case 'TERMINAR':
-                        $('#ModalFinalizarPedido').modal('show');   
+                        //$('#ModalFinalizarPedido').modal('show');
+                        document.getElementById('tab-entrega').click();   
                         break;
             
                     default:
@@ -852,6 +1019,38 @@ async function iniciarVistaVentas(nit,nombre,direccion){
     document.getElementById('btnAgregarProd').addEventListener('click',()=>{
         $('#ModalBusqueda').modal('show');
     });
+
+
+
+    let txtCliNit = document.getElementById('txtCliNit');
+    txtCliNit.addEventListener('focusout', ()=>{
+
+        let nit = txtCliNit.value || 'CF';
+        if(nit=='CF'){
+            document.getElementById('txtCliNombre').value = 'CONSUMIDOR FINAL';
+            document.getElementById('txtCliDireccion').value = 'CIUDAD';   
+        }else{
+            document.getElementById('txtCliNombre').value = 'VERIFICANDO, ESPERE POR FAVOR.....';
+            document.getElementById('txtCliDireccion').value = 'VERIFICANDO......';  
+
+            funciones.GetDataNit(txtCliNit.value)
+            .then((json)=>{
+                
+                document.getElementById('txtCliNombre').value = json.descripcion;
+                document.getElementById('txtCliDireccion').value = json.direcciones.direccion;    
+            })
+            .catch(()=>{
+                funciones.showToast('Nit no existe o no se pudo verificar');
+                
+            })
+        }
+       
+
+    })
+
+
+    funciones.slideAnimationTabs();
+    
 };
 
 function addEventsModalCambioCantidad(){

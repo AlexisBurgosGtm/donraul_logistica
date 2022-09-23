@@ -1,17 +1,13 @@
 {
-  "name": "mercadosefectivosventas",
+  "name": "donraul_logistica",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "dependencies": {
-    "axios": "^0.19.2",
-    "cheerio": "^1.0.0-rc.3",
     "express": "^4.17.1",
     "mssql": "^4.3.7",
     "mysql": "^2.17.1",
-    "quickdb": "^1.0.5",
-    "socket.io": "^2.3.0",
-    "sweetalert": "^2.1.2"
+    "socket.io": "^2.3.0"
   },
   "scripts": {
     "test": "nodemon server.js",
@@ -19,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AlexisBurgosGtm/me-vendedor.git"
+    "url": ""
   },
   "author": "Alexis Burgos",
   "license": "ISC",

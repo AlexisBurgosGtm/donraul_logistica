@@ -19,6 +19,7 @@ let apigen = {
                             GlobalSelectedDiaUpdated = Number(f.getDate());
                             if(GlobalTipoUsuario=='VENDEDOR'){
                                 classNavegar.inicioVendedor();
+                                
                             }else{
                                 classNavegar.inicio_supervisor();
                             }
