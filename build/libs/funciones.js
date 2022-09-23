@@ -5,8 +5,8 @@ let funciones = {
     },
     shareApp:async()=>{
         const shareData = {
-          title: 'MERCADOS EFECTIVOS',
-          text: `App para Vendedor (${versionapp})`,
+          title: 'DON RAUL LOGISTICA',
+          text: `App para logistica (${versionapp})`,
           url: window.location.origin
         }
 
@@ -31,7 +31,7 @@ let funciones = {
     .then(numero => {
       if (!numero) throw null;
         let stn = '502' + numero.toString();
-        let msg = encodeURIComponent(`Aplicación Ventas Mercados Efectivos ${versionapp} `);
+        let msg = encodeURIComponent(`Aplicación logística Don Raul ${versionapp} `);
             window.open('https://api.whatsapp.com/send?phone='+stn+'&text='+msg+url)
     })   
 

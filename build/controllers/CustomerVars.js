@@ -1,16 +1,12 @@
-let GlobalToken = 'MERCADOSEFECTIVOS';
+let GlobalToken = 'DONRAUL';
 let GlobalCodSucursal = '';
 
-let GlobalEmpnit = '1034261-3';
-let GlobalEmpNombre = 'MERCADOS EFECTIVOS';
+let GlobalEmpnit = 'DONRAUL001';
+let GlobalEmpNombre = 'DON RAUL';
 
 
-let GlobalVentaMinima = 79.99;
+let GlobalVentaMinima = 10;
 
 let dataEmpresas = [
-    {codsucursal:"ME-ZACAPA",nomsucursal:"SUCURSAL ZACAPA",color:"success"},
-    {codsucursal:"ME-IZABAL",nomsucursal:"SUCURSAL IZABAL",color:"primary"},
-    {codsucursal:"ME-JUTIAPA",nomsucursal:"SUCURSAL JUTIAPA",color:"info"},
-    {codsucursal:"ME-COBAN",nomsucursal:"SUCURSAL COBAN",color:"warning"},
-    {codsucursal:"ME-PETEN",nomsucursal:"SUCURSAL PETEN",color:"danger"},
+    {codsucursal:"DONRAUL001",nomsucursal:"CONSTRUMATERIALES EL CAMPESINO",color:"success"}
   ];

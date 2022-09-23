@@ -98,7 +98,6 @@ function getView(){
                         <div class="panel-toolbar">
                             <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
                             <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
-                            
                         </div>
                     </div>
                     <div class="panel-container collapse"> <!--show-->
@@ -718,21 +717,25 @@ function getView(){
                             <div class="card-body">
                                     <div class="">            
                                         
+                                        <h5 class="text-danger negrita">Recoge en Tienda</h5>
+
                                         <div class="form-group">
                                             <label>Forma de Pago:</label>
                                             <select id="cmbEntregaConcre" class="form-control">
                                                 <option value="CONTADO">CONTADO</option>
                                                 <option value="CREDITO">CREDITO</option>
-                                                <option value="VALE">VALE AL VENDEDOR</option>
-                                                <option value="FACTURA">FACTURA CONTABLE</option>
                                             </select>
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Observaciones</label>
-                                            <textarea rows="4" cols="80" class="form-control" id="txtEntregaObs" placeholder="Escriba aqui sus observaciones..."></textarea>
-                                        </div>                                                              
-                                            
+                                            <label>Tipo de Documento:</label>
+                                            <select id="cmbEntregaTipoDoc" class="form-control">
+                                                <option value="FACTURA">FACTURA CONTABLE</option>
+                                                <option value="ENVIO">ENVIO (COMPROBANTE)</option>
+                                            </select>
+                                        </div>
+
+                                       
                                     </div>
 
                                     <div class="row">
@@ -743,20 +746,14 @@ function getView(){
                                     <br>
             
                                     <div class="row">
-                                        <div class="col-5">
-                                            <button class="btn btn-outline-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="btnEntregaCancelar">
-                                                <i class="fal fa-ban mr-1"></i>
-                                                Cancelar
+                                       
+                                            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="btnEntregaCancelar">
+                                                <i class="fal fa-arrow-left"></i>
                                             </button>                                
-                                        </div>
-            
-                                        <div class="col-1"></div>
-            
-                                        <div class="col-5">
-                                            <button class="btn btn-outline-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnFinalizarPedido">
-                                                <i class="fal fa-paper-plane mr-1"></i>Enviar
+                                       
+                                            <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="btnFinalizarPedido">
+                                                <i class="fal fa-paper-plane mr-1"></i>
                                             </button>
-                                        </div>
                                         
                                         
                                     </div>
@@ -790,6 +787,7 @@ function getView(){
                     </div>
 
                     <div class="row">
+                        
                         <div class="col-4">
                         
                         </div>
@@ -803,26 +801,17 @@ function getView(){
                                     <i class="fal fa-warehouse"></i> Recoge en Tienda
                                 </button>
                         </div>
-                    
-
-               
 
                     </div>
 
                 </div>
             </div>
                               
-                <br>
+            <br>
 
-                    <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnPedido">
-                        <i class="fal fa-arrow-left"></i>
-                    </button>
-
-
-
-                  
-
-
+            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnPedido">
+                    <i class="fal fa-arrow-left"></i>
+            </button>
             `
         }
     }
@@ -1588,14 +1577,16 @@ async function fcnFinalizarPedido(){
         //socket.emit('avisos','venta menor al minimo', `El vendedor ${GlobalUsuario} ha intentado ingresar un pedido de ${funciones.setMoneda(GlobalTotalDocumento,'Q')}`);
     };
 
+    GlobalSelectedCodCliente = 0;
+    
     if(GlobalSelectedCodCliente.toString()=='SI'){funciones.AvisoError('Datos del cliente incorrectos, por favor, seleccione cliente nuevamente');return;}
 
     //funciones.Aviso('cliente: ' + GlobalSelectedCodCliente.toString());
-
+    
     let codcliente = GlobalSelectedCodCliente;
     let ClienteNombre = document.getElementById('txtNombre').value;
     let dirclie = document.getElementById('txtDireccion').value; // CAMPO DIR_ENTREGA
-    let obs = document.getElementById('txtEntregaObs').value; 
+    let obs = document.getElementById('cmbEntregaTipoDoc').value; //document.getElementById('txtEntregaObs').value; 
     let direntrega = "SN"; //document.getElementById('txtEntregaDireccion').value; //CAMPO MATSOLI
     let codbodega = GlobalCodBodega;
     let cmbTipoEntrega = document.getElementById('cmbEntregaConcre').value; //campo TRANSPORTE
@@ -1633,7 +1624,7 @@ async function fcnFinalizarPedido(){
                 .then((correlativo)=>{
                     correlativoDoc = correlativo;
                     
-                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>Enviar';
+                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                     document.getElementById('btnFinalizarPedido').disabled = false;
 
                     funciones.Confirmacion('¿Está seguro que desea Finalizar este Pedido')
@@ -1855,7 +1846,7 @@ async function fcnFinalizarPedido(){
                 .catch(()=>{
                     console.log('pasa por aqui...');
                     
-                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>Enviar';
+                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                     document.getElementById('btnFinalizarPedido').disabled = false;
 
                     gettempDocproductos(GlobalUsuario)
