@@ -25,6 +25,7 @@ let GlobalNivelUser = 0;
 let GlobalTipoUsuario ='';
 let GlobalSelectedDia ='';
 let GlobalBool = false;
+let GlobalSelectedDomicilio = 'NO';
 
 let GlobalSelectedForm = '';
 

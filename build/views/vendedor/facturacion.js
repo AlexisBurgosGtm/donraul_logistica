@@ -743,16 +743,48 @@ function getView(){
                                         <label class="text-white" id="lbDocLong">0</label class="text-white">
                                     </div>
                                     
-                                    <br>
+                                     
+                            </div>
+                    </div>
+                    <br>
+                    <div class="card card-rounded shadow p-2" id="divDatosEntrega">
+                        <div class="card-body">
+                            CONTACTO PARA LA ENTREGA
+
+                    
+                        </div>
+                    </div>
+
+                    <br> 
+            
+                    <div class="row">
+                        <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="btnEntregaCancelar">
+                            <i class="fal fa-arrow-left"></i>
+                        </button>                                                                       
+                        <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="btnFinalizarPedido">
+                            <i class="fal fa-paper-plane mr-1"></i>
+                        </button>                
+                    </div>
+                           
+                `
+        },
+        vista_ubicacion :()=>{
+            return `
+              
+                    <div class="card card-rounded shadow">
+                            <div class="card-body">
+                                   
+
+
             
                                     <div class="row">
                                        
-                                            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="btnEntregaCancelar">
+                                            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="">
                                                 <i class="fal fa-arrow-left"></i>
                                             </button>                                
                                        
-                                            <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="btnFinalizarPedido">
-                                                <i class="fal fa-paper-plane mr-1"></i>
+                                            <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="">
+                                                <i class="fal fa-check"></i>
                                             </button>
                                         
                                         
@@ -792,7 +824,7 @@ function getView(){
                         
                         </div>
                         <div class="col-4">
-                                <button class="btn btn-info btn-md shadow hand" id="btnCobrarDomicilio">
+                                <button class="btn btn-info btn-md shadow hand" id="btnCobrar2">
                                     <i class="fal fa-truck"></i> Entregar en Domicilio
                                 </button>
                         </div>
@@ -881,33 +913,7 @@ async function iniciarVistaVentas(nit,nombre,direccion){
         //$('#ModalBusqueda').modal('show');
     });
 
-    let btnCobrar = document.getElementById('btnCobrar');
-    btnCobrar.addEventListener('click',()=>{
-       
-        //ALEXIS REVISAR LOGICA
-        if(btnCobrar.innerText=='Terminar'){
-            funciones.AvisoError('No puede finalizar un pedido sin productos')
-        }else{
-           if(txtNit.value==''){
-               funciones.AvisoError('Especifique el cliente a quien se carga la venta');
-           }else{
-               funciones.ObtenerUbicacion('lbDocLat','lbDocLong')
-                switch (GlobalTipoCobro) {
-                    case 'COBRO':
-                    
-                        break;
-                    case 'TERMINAR':
-                        //$('#ModalFinalizarPedido').modal('show');
-                        document.getElementById('tab-entrega').click();   
-                        break;
-            
-                    default:
-                        break;
-                }                 
-           }
-       }
-       
-    });
+   
 
     let cmbCoddoc = document.getElementById('cmbCoddoc');
     //classTipoDocumentos.comboboxTipodoc('PED','cmbCoddoc');
@@ -919,10 +925,21 @@ async function iniciarVistaVentas(nit,nombre,direccion){
 
     let cmbVendedor = document.getElementById('cmbVendedor');
 
+    
+    
+
+    //PEDIDO EN TIENDA
     let btnFinalizarPedido = document.getElementById('btnFinalizarPedido');
     btnFinalizarPedido.addEventListener('click',async ()=>{
+       
         fcnFinalizarPedido();
     });
+
+  
+
+
+
+
 
     //BUSQUEDA CLIENTES
     let frmNuevoCliente = document.getElementById('formNuevoCliente');
@@ -966,21 +983,7 @@ async function iniciarVistaVentas(nit,nombre,direccion){
     })
 
      
-    // EVENTOS DE LOS BOTONES
-    document.body.addEventListener('keyup',(e)=>{
-        if(GlobalSelectedForm=='VENTAS'){
-            switch (e.keyCode) {
-                case 118: //f7
-                    btnCobrar.click();
-                    break;
-                case 113: //f2
-                    btnBusquedaClientes.click();
-                    //createNotification('hola mundo');
-                default:
-                    break;
-            }    
-        }
-    });
+   
 
     // carga el grid
    
@@ -1009,6 +1012,9 @@ async function iniciarVistaVentas(nit,nombre,direccion){
         $('#ModalBusqueda').modal('show');
     });
 
+    document.getElementById('btnEntregaCancelar').addEventListener('click',()=>{
+        document.getElementById('tab-cliente').click();
+    });
 
 
     let txtCliNit = document.getElementById('txtCliNit');
@@ -1036,6 +1042,50 @@ async function iniciarVistaVentas(nit,nombre,direccion){
        
 
     })
+
+
+     //RECOGER EN TIENDA
+     let btnCobrar = document.getElementById('btnCobrar');
+     btnCobrar.addEventListener('click',()=>{
+
+         if(btnCobrar.innerText=='Terminar'){
+             funciones.AvisoError('No puede finalizar un pedido sin productos')
+         }else{
+            if(txtNit.value==''){
+                funciones.AvisoError('Especifique el cliente a quien se carga la venta');
+            }else{
+                funciones.ObtenerUbicacion('lbDocLat','lbDocLong')
+                
+                GlobalSelectedDomicilio ='NO';
+ 
+                document.getElementById('tab-entrega').click();   
+                document.getElementById('divDatosEntrega').style = 'visibility:hidden';
+                                  
+            }
+        }
+        
+     });
+
+     let btnCobrar2 = document.getElementById('btnCobrar2');
+     btnCobrar2.addEventListener('click',()=>{
+
+         if(btnCobrar.innerText=='Terminar'){
+             funciones.AvisoError('No puede finalizar un pedido sin productos')
+         }else{
+            if(txtNit.value==''){
+                funciones.AvisoError('Especifique el cliente a quien se carga la venta');
+            }else{
+                funciones.ObtenerUbicacion('lbDocLat','lbDocLong')
+                
+                GlobalSelectedDomicilio ='SI';
+ 
+                document.getElementById('tab-entrega').click();   
+                document.getElementById('divDatosEntrega').style = 'visibility:visible';
+                                  
+            }
+        }
+        
+     });
 
 
     funciones.slideAnimationTabs();
@@ -1321,6 +1371,8 @@ async function fcnCargarGridTempVentas(idContenedor){
 
     let btnCobrarTotal = document.getElementById('btnCobrar')
     btnCobrarTotal.disabled = true; //.innerText =  'Terminar';
+    let btnCobrar2 = document.getElementById('btnCobrar2');
+    btnCobrar2.disabled = true;
    
     let coddoc = document.getElementById('cmbCoddoc').value;
     
@@ -1374,8 +1426,10 @@ async function fcnCargarGridTempVentas(idContenedor){
            containerTotalVenta.innerHTML = `${funciones.setMoneda(GlobalTotalDocumento,'Q ')}`;
            if(GlobalTotalDocumento==0){
                 btnCobrarTotal.disabled = true;
+                btnCobrar2.disabled = true;
            }else{
                 btnCobrarTotal.disabled = false;
+                btnCobrar2.disabled = false;
            }
              //innerHTML = '<h1>Terminar : ' + funciones.setMoneda(GlobalTotalDocumento,'Q ') + '</h1>';
            containerTotalItems.innerHTML = `${varTotalItems} items`;
@@ -1385,6 +1439,7 @@ async function fcnCargarGridTempVentas(idContenedor){
         tabla.innerHTML = 'No se logró cargar la lista...';
         containerTotalVenta.innerHTML = '0';
         btnCobrarTotal.disabled = true; //innerText =  'Terminar';
+        btnCobrar2.disabled = true;
         containerTotalItems.innerHTML = `0 items`;
     }
 };
@@ -1566,23 +1621,12 @@ async function fcnGuardarNuevoCliente(form){
 //FINALIZAR PEDIDO
 async function fcnFinalizarPedido(){
     
-    if(Number(GlobalTotalDocumento)<Number(GlobalVentaMinima)){
-        funciones.AvisoError('Pedido menor al mínimo de venta');
-        try {
-            funciones.hablar('Advertencia. Este pedido es menor al mínimo de venta permitido');    
-        } catch (error) {
-            
-        }
-        
-        //socket.emit('avisos','venta menor al minimo', `El vendedor ${GlobalUsuario} ha intentado ingresar un pedido de ${funciones.setMoneda(GlobalTotalDocumento,'Q')}`);
-    };
-
+  
     GlobalSelectedCodCliente = 0;
     
     if(GlobalSelectedCodCliente.toString()=='SI'){funciones.AvisoError('Datos del cliente incorrectos, por favor, seleccione cliente nuevamente');return;}
 
-    //funciones.Aviso('cliente: ' + GlobalSelectedCodCliente.toString());
-    
+      
     let codcliente = GlobalSelectedCodCliente;
     let ClienteNombre = document.getElementById('txtNombre').value;
     let dirclie = document.getElementById('txtDireccion').value; // CAMPO DIR_ENTREGA
