@@ -1172,6 +1172,16 @@ function addEventsModalCambioCantidad(){
             document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
     });
 
+    document.getElementById('txtCantNuevoPrecio').addEventListener('change',()=>{
+      
+        let nuevacantidad = Number(document.getElementById('txtCantNuevaCant').value);
+        let nuevoprecio = Number(document.getElementById('txtCantNuevoPrecio').value);
+
+            let subtotal = nuevacantidad * nuevoprecio;
+
+            document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
+    });
+
 };
 
 function fcnIniciarModalCantidadProductos(){
@@ -1468,7 +1478,7 @@ async function fcnCargarGridTempVentas(idContenedor){
                                 <div class="row">
                                     <div class="col-4"></div>
                                     <div class="col-4 " align="right">
-                                        <button class="btn btn-secondary btn-sm btn-circle" onClick="fcnCambiarCantidad(${rows.ID},${rows.CANTIDAD},'${rows.CODPROD}',${rows.EXISTENCIA});">
+                                        <button class="btn btn-secondary btn-sm btn-circle" onClick="fcnCambiarCantidad(${rows.ID},${rows.CANTIDAD},'${rows.CODPROD}',${rows.EXISTENCIA},${rows.PRECIO},${rows.COSTO});">
                                             <i class="fal fa-edit"></i>
                                         </button>    
                                     </div>
@@ -1515,6 +1525,10 @@ async function fcnUpdateTempRow(id,cantidad,precio){
         //funciones.AvisoError('No pude agregar una cantidad mayor a la existencia');
         //return;
     };
+    if(Number(GlobalSelectedCosto)<Number(precio)){
+            funciones.AvisoError('Precio menor al costo, por favor rectifique');
+            return;
+    };
     //--------------------------
 
     return new Promise((resolve, reject) => {
@@ -1532,12 +1546,16 @@ async function fcnUpdateTempRow(id,cantidad,precio){
         });
 };
 
-async function fcnCambiarCantidad(id,cantidad,codprod, existencia){
+async function fcnCambiarCantidad(id,cantidad,codprod, existencia,precio,costo){
     
     GlobalSelectedId = id;
     GlobalSelectedExistencia = Number(existencia);
+    GlobalSelectedCosto = Number(costo);
+
     //$('#ModalCantidad').modal('show');
     document.getElementById('txtCantNuevaCant').value = cantidad;
+    document.getElementsByName('txtCantNuevoPrecio').value = precio;
+
     $('#modalCambiarCantidadProducto').modal('show');
     
 };

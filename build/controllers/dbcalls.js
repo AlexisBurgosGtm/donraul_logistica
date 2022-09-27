@@ -382,6 +382,7 @@ function selectDataRowVenta(id,nuevacantidad,precio)
             in: "tempventa",
             set: {
                 CANTIDAD:Number(nuevacantidad),
+                PRECIO:Number(precio),
                 TOTALUNIDADES:totalunidades,
                 TOTALCOSTO:totalcosto,
                 TOTALPRECIO:totalprecio,
