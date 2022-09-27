@@ -1548,21 +1548,19 @@ async function fcnUpdateTempRow(id,cantidad,precio){
 
 async function fcnCambiarCantidad(id,cantidad,codprod, existencia,precio,costo){
     
-    GlobalSelectedId = id;
-    GlobalSelectedExistencia = Number(existencia);
-    GlobalSelectedCosto = Number(costo);
+        GlobalSelectedId = id;
+        GlobalSelectedExistencia = Number(existencia);
+        GlobalSelectedCosto = Number(costo);
 
-    //$('#ModalCantidad').modal('show');
-    document.getElementById('txtCantNuevaCant').value = cantidad;
-    document.getElementById('txtCantNuevoPrecio').value = precio;
-
+        //$('#ModalCantidad').modal('show');
+        document.getElementById('txtCantNuevaCant').value = cantidad;
+        document.getElementById('txtCantNuevoPrecio').value = precio;
 
         let subtotal = cantidad * precio;
-
         document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
-   
-    $('#modalCambiarCantidadProducto').modal('show');
     
+        $('#modalCambiarCantidadProducto').modal('show');
+        
 };
 
 
