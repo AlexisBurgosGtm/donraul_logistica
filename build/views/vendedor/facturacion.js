@@ -100,7 +100,8 @@ function getView(){
                             <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
                         </div>
                     </div>
-                    <div class="panel-container collapse"> <!--show-->
+                    <div class="panel-container collapse"> 
+                    <!--show-->
                         <div class="panel-content">
                             <div class="row">
                                 <div class="col-6">
@@ -739,14 +740,18 @@ function getView(){
                                     </div>
 
                                     <div class="row">
+
                                         <label class="text-white" id="lbDocLat">0</label>
-                                        <label class="text-white" id="lbDocLong">0</label class="text-white">
+                                        <label class="text-white" id="lbDocLong">0</label>
+
+                                                                            
                                     </div>
                                     
-                                     
                             </div>
                     </div>
+
                     <br>
+
                     <div class="card card-rounded shadow p-2" id="divDatosEntrega">
                         <div class="card-body">
                             <div class="form-group">
@@ -762,9 +767,17 @@ function getView(){
                                 <input type="text" class="form-control" id="txtEntregaDireccion>
                             </div>
 
+
                             <div class="row">
-                                <span id="lbEntregaLat">0</span>
-                                <span id="lbEntregaLong">0</span>
+                                <div class="col-6">
+                                    <span id="lbEntregaLat">0</span>
+                                    <span id="lbEntregaLong">0</span>
+                                </div>
+                                <div class="col-6">
+                                    <button class="btn btn-info btn-circle btn-md hand shadow" id="btnObtenerUbicacion">
+                                        <i class="fal fa-map"></i>
+                                    </button>
+                                </div>
                             </div>
 
                                                 
@@ -1067,11 +1080,15 @@ async function iniciarVistaVentas(nit,nombre,direccion){
          if(btnCobrar.innerText=='Terminar'){
              funciones.AvisoError('No puede finalizar un pedido sin productos')
          }else{
+
             if(txtNit.value==''){
                 funciones.AvisoError('Especifique el cliente a quien se carga la venta');
             }else{
                 funciones.ObtenerUbicacion('lbDocLat','lbDocLong')
                 
+                funciones.ObtenerUbicacion('txtEntregaLat','txtEntregaLong')
+             
+
                 GlobalSelectedDomicilio ='NO';
  
                 document.getElementById('tab-entrega').click();   
