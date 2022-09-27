@@ -749,9 +749,25 @@ function getView(){
                     <br>
                     <div class="card card-rounded shadow p-2" id="divDatosEntrega">
                         <div class="card-body">
-                            CONTACTO PARA LA ENTREGA
+                            <div class="form-group">
+                                <label>Contacto</label>
+                                <input type="text" class="form-control" id="txtEntregaContacto">
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfonos</label>
+                                <input type="text" class="form-control" id="txtEntregaTelefono">
+                            </div>
+                            <div class="form-group">
+                                <label>Dirección entrega</label>
+                                <input type="text" class="form-control" id="txtEntregaDireccion>
+                            </div>
 
-                    
+                            <div class="row">
+                                <span id="lbEntregaLat">0</span>
+                                <span id="lbEntregaLong">0</span>
+                            </div>
+
+                                                
                         </div>
                     </div>
 
