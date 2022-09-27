@@ -134,58 +134,58 @@ function getView(){
         },
         gridTempVenta :()=>{
             return `
-        <div class="row">
-            <label class="text-info" id="lbNomClien">Consumidor Final</label>
-            <div id="panel-2" class="panel col-12">
+                <div class="row">
+                        <label class="text-info" id="lbNomClien">Consumidor Final</label>
+                        <div id="panel-2" class="panel col-12">
 
-                <div class="panel-hdr">
-                   
-                    <h2 id="txtTotalItems" class="negrita">0 items</h2>
-                    <div class="panel-toolbar">
+                            <div class="panel-hdr">
+                            
+                                <h2 id="txtTotalItems" class="negrita">0 items</h2>
+                                <div class="panel-toolbar">
 
-                                                                   
-                        <button class="btn btn-sm btn-outline-secondary hand hidden">
-                        </button>
+                                                                            
+                                    <button class="btn btn-sm btn-outline-secondary hand hidden">
+                                    </button>
 
-                        <h1 id="txtTotalVenta" class="text-danger negrita"></h1>
-                        
-                        <button class="btn btn-outline-warning btn-md shadow hidden" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen" id="btnMaxVenta">
-                            <i class="fal fa-angle-double-up"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="panel-container show">
-                    <div class="panel-content">
-                        
-                        <div class="table-responsive border-top-rounded border-bottom-rounded shadow">
-                            <table class="table table-hover table-striped"><!--mt-5-->
-                                <thead class="bg-secondary text-white">
-                                    <tr>
-                                        <th class="">Producto</th>
-                                        <th class="">Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblGridTempVentas"></tbody>
-                            </table>
+                                    <h1 id="txtTotalVenta" class="text-danger negrita"></h1>
+                                    
+                                    <button class="btn btn-outline-warning btn-md shadow hidden" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen" id="btnMaxVenta">
+                                        <i class="fal fa-angle-double-up"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="panel-container show">
+                                <div class="panel-content">
+                                    
+                                    <div class="table-responsive border-top-rounded border-bottom-rounded shadow">
+                                        <table class="table table-hover table-striped"><!--mt-5-->
+                                            <thead class="bg-secondary text-white">
+                                                <tr>
+                                                    <th class="">Producto</th>
+                                                    <th class="">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tblGridTempVentas"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            <div>
+
+                            <button class="btn btn-circle btn-xl btn-warning shadow btn-bottom-ml hand" id="btnLogro">
+                                <i class="fal fa-chart-pie"></i>
+                            </button>
+
+                            <button class="btn btn-circle btn-xl btn-success shadow btn-bottom-mr hand" id="btnAgregarProd">
+                                <i class="fal fa-search"></i>
+                            </button>
+
+                            <button class="btn btn-xl btn-secondary btn-bottom-r btn-circle hand shadow" id="btnCambiarCliente">
+                                <i class="fal fa-user"></i>
+                            </button>
+
                         </div>
                     </div>
-                    <div>
-
-                      
                     
-                        <button class="btn btn-circle btn-xl btn-success shadow btn-bottom-mr hand" id="btnAgregarProd">
-                            <i class="fal fa-search"></i>
-                        </button>
-
-                        <button class="btn btn-xl btn-secondary btn-bottom-r btn-circle hand shadow" id="btnCambiarCliente">
-                            <i class="fal fa-user"></i>
-                        </button>
-
-                      
-
-                    </div>
-                </div>
-                
                 <div id="containerModalesVentas"></div>
 
             </div>
@@ -814,34 +814,6 @@ function getView(){
                            
                 `
         },
-        vista_ubicacion :()=>{
-            return `
-              
-                    <div class="card card-rounded shadow">
-                            <div class="card-body">
-                                   
-
-
-            
-                                    <div class="row">
-                                       
-                                            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="">
-                                                <i class="fal fa-arrow-left"></i>
-                                            </button>                                
-                                       
-                                            <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="">
-                                                <i class="fal fa-check"></i>
-                                            </button>
-                                        
-                                        
-                                    </div>
-                            
-                            </div>
-                        
-                        
-                    </div>
-                `
-        },
         vista_cliente:()=>{
             return `
             <div class="card card-rounded shadow col-12 p-4">
@@ -915,6 +887,10 @@ async function iniciarVistaVentas(nit,nombre,direccion){
     let lbNomClien = document.getElementById('lbNomClien');
     lbNomClien.innerText = `${nombre} // ${direccion}`;
     
+
+    document.getElementById('btnLogro').addEventListener('click',()=>{
+        classNavegar.logrovendedor();
+    });
 
     document.getElementById('btnPedido').addEventListener('click',()=>{
         document.getElementById('tab-pedido').click();
@@ -1525,7 +1501,7 @@ async function fcnUpdateTempRow(id,cantidad,precio){
         //funciones.AvisoError('No pude agregar una cantidad mayor a la existencia');
         //return;
     };
-    if(Number(GlobalSelectedCosto)<Number(precio)){
+    if(Number(GlobalSelectedCosto)>Number(precio)){
             funciones.AvisoError('Precio menor al costo, por favor rectifique');
             return;
     };

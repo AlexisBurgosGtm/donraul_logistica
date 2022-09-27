@@ -61,6 +61,11 @@ function getView(){
                   
                 </div>
             </div>
+
+            <button class="btn btn-circle btn-xl btn-secondary shadow btn-bottom-ml hand" id="btnVenta">
+                <i class="fal fa-edit"></i>
+            </button>
+
             `
         },
         modalDetallePedido:()=>{
@@ -204,6 +209,10 @@ function getView(){
 };
 
 function addListeners(){
+
+    document.getElementById('btnVenta').addEventListener('click',()=>{
+            classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
+    });
 
     document.getElementById('txtFecha').value = funciones.getFecha();
 
