@@ -1554,8 +1554,13 @@ async function fcnCambiarCantidad(id,cantidad,codprod, existencia,precio,costo){
 
     //$('#ModalCantidad').modal('show');
     document.getElementById('txtCantNuevaCant').value = cantidad;
-    document.getElementsByName('txtCantNuevoPrecio').value = precio;
+    document.getElementById('txtCantNuevoPrecio').value = precio;
 
+
+        let subtotal = cantidad * precio;
+
+        document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
+   
     $('#modalCambiarCantidadProducto').modal('show');
     
 };
