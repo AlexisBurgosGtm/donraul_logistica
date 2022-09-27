@@ -682,6 +682,17 @@ function getView(){
                                             <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevaCant">
                                         </div>                                                             
                                             
+                                        <div class="form-group">
+                                            <label>Nuevo Precio:</label>
+                                            <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevoPrecio">
+                                        </div> 
+
+                                        <div class="form-group">
+                                            <label>Subtotal</label>
+                                            <br>
+                                            <h3 id="lbCantNuevoSubtotal">0</h3>
+                                        </div> 
+
                                     </div>
                                     
                                     <br>
@@ -762,9 +773,15 @@ function getView(){
                                 <label>Teléfonos</label>
                                 <input type="text" class="form-control" id="txtEntregaTelefono">
                             </div>
+
                             <div class="form-group">
                                 <label>Dirección entrega</label>
                                 <input type="text" class="form-control" id="txtEntregaDireccion>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Referencia entrega</label>
+                                <input type="text" class="form-control" id="txtEntregaReferencia>
                             </div>
 
 
@@ -830,7 +847,7 @@ function getView(){
             <div class="card card-rounded shadow col-12 p-4">
                 <div class="card-body">
 
-                    <h5 class="text-danger negrita">Datos del Cliente</h5>
+                    <h5 class="text-danger negrita">Datos de Facturación</h5>
                 
                     <div class="form-group">
                         <label>NIT</label>
@@ -1130,16 +1147,30 @@ function addEventsModalCambioCantidad(){
 
 
     document.getElementById('btnCantGuardar').addEventListener('click',()=>{
+
         let nuevacantidad = Number(document.getElementById('txtCantNuevaCant').value);
+        let nuevoprecio = Number(document.getElementById('txtCantNuevoPrecio').value);
+
+
         if(nuevacantidad>0){
-            fcnUpdateTempRow(GlobalSelectedId,nuevacantidad)
+            fcnUpdateTempRow(GlobalSelectedId,nuevacantidad,nuevoprecio)
             .then(()=>{
                 $('#modalCambiarCantidadProducto').modal('hide');
             })
         }else{
             funciones.AvisoError('Escriba una cantidad válida')
         }  
-    }) 
+    });
+    
+    document.getElementById('txtCantNuevaCant').addEventListener('change',()=>{
+      
+        let nuevacantidad = Number(document.getElementById('txtCantNuevaCant').value);
+        let nuevoprecio = Number(document.getElementById('txtCantNuevoPrecio').value);
+
+            let subtotal = nuevacantidad * nuevoprecio;
+
+            document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
+    });
 
 };
 
@@ -1310,8 +1341,8 @@ function getDataMedidaProducto(codprod,desprod,codmedida,cantidad,equivale,total
 async function fcnAgregarProductoVenta(codprod,desprod,codmedida,cantidad,equivale,totalunidades,costo,precio,exento){
    
     if(Number(GlobalSelectedExistencia)<Number(totalunidades)){
-        funciones.AvisoError('No pude agregar una cantidad mayor a la existencia');
-        return;
+        //funciones.AvisoError('No pude agregar una cantidad mayor a la existencia');
+        //return;
     };
 
     document.getElementById('btnAgregarProducto').innerHTML = GlobalLoader;
@@ -1477,18 +1508,18 @@ async function fcnCargarGridTempVentas(idContenedor){
     }
 };
 
-async function fcnUpdateTempRow(id,cantidad){
+async function fcnUpdateTempRow(id,cantidad,precio){
 
     //--------------------------
     if(Number(GlobalSelectedExistencia)<Number(cantidad)){
-        funciones.AvisoError('No pude agregar una cantidad mayor a la existencia');
-        return;
+        //funciones.AvisoError('No pude agregar una cantidad mayor a la existencia');
+        //return;
     };
     //--------------------------
 
     return new Promise((resolve, reject) => {
             //OBTIENE LOS DATOS DE LA ROW    
-            selectDataRowVenta(id,cantidad)
+            selectDataRowVenta(id,cantidad,precio)
             .then(()=>{
                 fcnCargarGridTempVentas('tblGridTempVentas');
                 resolve();
