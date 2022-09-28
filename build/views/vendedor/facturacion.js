@@ -22,9 +22,9 @@ function getView(){
                            
                                    
                         </div>
-                        <div class="tab-pane fade" id="ubicacion" role="tabpanel" aria-labelledby="tab-ubicacion">
+                        <div class="tab-pane fade" id="mapa" role="tabpanel" aria-labelledby="tab-mapa">
 
-                           
+                           ${view.vista_mapa()}
 
                         </div>
                     
@@ -44,8 +44,8 @@ function getView(){
                                 <i class="fal fa-edit"></i>entrega</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link negrita text-warning" id="tab-ubicacion" data-toggle="tab" href="#ubicacion" role="tab" aria-controls="profile" aria-selected="false">
-                                <i class="fal fa-chart-pie"></i>ubicacion</a>
+                            <a class="nav-link negrita text-warning" id="tab-mapa" data-toggle="tab" href="#mapa" role="tab" aria-controls="profile" aria-selected="false">
+                                <i class="fal fa-chart-pie"></i>mapa</a>
                         </li> 
                                 
                     </ul>
@@ -776,23 +776,28 @@ function getView(){
 
                             <div class="form-group">
                                 <label>Dirección entrega</label>
-                                <input type="text" class="form-control" id="txtEntregaDireccion>
+                                <input type="text" class="form-control" id="txtEntregaDireccion">
                             </div>
 
                             <div class="form-group">
                                 <label>Referencia entrega</label>
-                                <input type="text" class="form-control" id="txtEntregaReferencia>
+                                <input type="text" class="form-control" id="txtEntregaReferencia" value="SN">
                             </div>
 
 
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <span id="lbEntregaLat">0</span>
                                     <span id="lbEntregaLong">0</span>
                                 </div>
-                                <div class="col-6">
-                                    <button class="btn btn-info btn-circle btn-md hand shadow" id="btnObtenerUbicacion">
+                                <div class="col-4">
+                                    <button class="btn btn-danger btn-circle btn-lg hand shadow" id="btnObtenerUbicacion">
                                         <i class="fal fa-map"></i>
+                                    </button>
+                                </div>
+                                <div class="col-4">
+                                    <button class="btn btn-warning btn-circle btn-lg hand shadow" id="btnLimpiarUbicacion">
+                                        <i class="fal fa-sync"></i>
                                     </button>
                                 </div>
                             </div>
@@ -862,6 +867,17 @@ function getView(){
             <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnPedido">
                     <i class="fal fa-arrow-left"></i>
             </button>
+            `
+        },
+        vista_mapa :()=>{
+            return `
+            <div id="mapcontainer" class="mapcontainer4">
+            
+            </div>
+            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnMapaAtras">
+                    <i class="fal fa-arrow-left"></i>
+            </button>
+           
             `
         }
     }
@@ -1079,9 +1095,6 @@ async function iniciarVistaVentas(nit,nombre,direccion){
             }else{
                 funciones.ObtenerUbicacion('lbDocLat','lbDocLong')
                 
-                funciones.ObtenerUbicacion('txtEntregaLat','txtEntregaLong')
-             
-
                 GlobalSelectedDomicilio ='NO';
  
                 document.getElementById('tab-entrega').click();   
@@ -1101,10 +1114,20 @@ async function iniciarVistaVentas(nit,nombre,direccion){
             if(txtNit.value==''){
                 funciones.AvisoError('Especifique el cliente a quien se carga la venta');
             }else{
-                funciones.ObtenerUbicacion('lbDocLat','lbDocLong')
+
+                funciones.ObtenerUbicacion('lbDocLat','lbDocLong');
+               
                 
                 GlobalSelectedDomicilio ='SI';
  
+                
+                
+                //valores default en entrega a domicilio
+                document.getElementById('txtEntregaContacto').value = document.getElementById('txtCliNombre').value;
+                document.getElementById('txtEntregaDireccion').value = document.getElementById('txtCliDireccion').value;
+
+
+
                 document.getElementById('tab-entrega').click();   
                 document.getElementById('divDatosEntrega').style = 'visibility:visible';
                                   
@@ -1113,6 +1136,38 @@ async function iniciarVistaVentas(nit,nombre,direccion){
         
      });
 
+
+
+     let btnObtenerUbicacion = document.getElementById('btnObtenerUbicacion');
+     btnObtenerUbicacion.addEventListener('click',()=>{
+
+        showUbicacion()
+        .then(async(location)=>{
+                let lat = location.coords.latitude.toString();
+                let longg = location.coords.longitude.toString();
+                Lmap(lat, longg);
+                   //RE-AJUSTA EL MAPA A LA PANTALLA
+                setTimeout(function () {
+                    try {
+                        map.invalidateSize();    
+                    } catch (error) {
+                        
+                    }
+                }, 500);
+        });
+        document.getElementById('tab-mapa').click();
+
+     });
+
+
+    document.getElementById('btnMapaAtras').addEventListener('click',()=>{
+        document.getElementById('tab-entrega').click();
+    });
+    
+    document.getElementById('btnLimpiarUbicacion').addEventListener('click',()=>{
+        document.getElementById('lbEntregaLat').innerText = '0';
+        document.getElementById('lbEntregaLong').innerText = '0';
+    });
 
     funciones.slideAnimationTabs();
     
@@ -2108,3 +2163,60 @@ async function fcnCargarComboTipoPrecio(){
 };
 
 
+function showUbicacion(){
+    return new Promise((resolve,reject)=>{
+        try {
+            navigator.geolocation.getCurrentPosition(function (location) {
+                console.log(location);
+                resolve(location);
+            })
+        } catch (error) {
+            reject();
+        }
+    })
+};
+
+function Lmap(lat,long){
+
+    try {
+        map.off();
+        map.remove();    
+    } catch (error) {
+        
+    }
+    
+
+    document.getElementById('mapcontainer').innerHTML = '';
+
+
+    //INICIALIZACION DEL MAPA            
+      var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      osmAttrib = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      osm = L.tileLayer(osmUrl, {center: [lat, long],maxZoom: 20, attribution: osmAttrib});    
+      map = L.map('mapcontainer').setView([lat, long], 11).addLayer(osm);
+
+      var userIcon = L.icon({
+        iconUrl: '../img/userIcon.png',
+        shadowUrl: '../img/marker-shadow.png',
+    
+        iconSize:     [30, 45], // size of the icon
+        shadowSize:   [50, 64], // size of the shadow
+        iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+        shadowAnchor: [4, 62],  // the same for the shadow
+        popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+    });
+
+      L.marker([lat, long],{icon:userIcon,draggable:'true'})
+        .addTo(map)
+        .bindPopup('Mi Ubicación', {closeOnClick: false, autoClose: false})   
+        .openPopup()
+        .on('dragend', function(event){
+            var marker = event.target;
+            var position = marker.getLatLng();
+            marker.setLatLng(new L.LatLng(position.lat, position.lng),{draggable:'true'});
+            map.panTo(new L.LatLng(position.lat, position.lng));
+            document.getElementById('lbEntregaLat').innerText = position.lat.toString();
+            document.getElementById('lbEntregaLong').innerText = position.lng.toString();
+          });        
+      return map;
+};
