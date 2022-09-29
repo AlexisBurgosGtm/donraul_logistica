@@ -337,7 +337,9 @@ router.get("/buscarcliente", async(req,res)=>{
 // INSERTA UN PEDIDO EN LAS TABLAS DE DOCUMENTOS Y DOCPRODUCTOS
 router.post("/documentos", async (req,res)=>{
     
-    const {app,empnit,anio,mes,dia,coddoc,fecha,fechaentrega,formaentrega,codcliente,nomclie,codbodega,totalcosto,totalprecio,nitclie,dirclie,obs,direntrega,usuario,codven,lat,long} = req.body;
+    const {app,empnit,anio,mes,dia,coddoc,fecha,fechaentrega,formaentrega,codcliente,nomclie,codbodega,totalcosto,totalprecio,nitclie,
+        dirclie,obs,direntrega,usuario,codven,lat,long,
+        tipo_pago,tipo_doc,entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long} = req.body;
     
 
     let correlativo = req.body.correlativo;
@@ -422,7 +424,8 @@ router.post("/documentos", async (req,res)=>{
                 DOC_PORINGUAT, DOC_INGUATEXENTO, DOC_TIPOTRANIVA, DOC_PORTIMBREPRE, DOC_TIMBREPRENSA,
                 ABONOSANTICIPO, SALDOANTICIPO, DOC_PRODEXENTO, PUNTOSGANADOS, PUNTOSUSADOS,
                 APL_ANTICIPO, COD_DEPARTA, FIRMAELECTRONICA, DOC_CODDOCRETENCION, DOC_SERIERETENCION,
-                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL
+                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL,
+                TIPO_PAGO,TIPO_DOC,ENTREGA_CONTACTO,ENTREGA_TELEFONO,ENTREGA_DIRECCION,ENTREGA_REFERENCIA,ENTREGA_LAT,ENTREGA_LONG
                 ) 
                 VALUES (
                 '${empnit}', ${anio}, ${mes}, '${coddoc}', '${correlativo}',
@@ -452,7 +455,8 @@ router.post("/documentos", async (req,res)=>{
                 0, 'N', 'C', 0, 0,
                 0, 0, 0, 0, 0,
                 '', '', '', '', '',
-                '', '', 0, ${lat},${long},'${app}'
+                '', '', 0, ${lat},${long},'${app}',
+                '${tipo_pago}','${tipo_doc}','${entrega_contacto}','${entrega_telefono}','${entrega_direccion}','${entrega_referencia}',${entrega_lat},${entrega_long}
                 );`
                   //GETANSINULL()
             qrydoc = `INSERT INTO ME_DOCPRODUCTOS 
@@ -866,7 +870,9 @@ router.post('/reportemarcasmes',async(req,res)=>{
 // INSERTA UN PEDIDO EN LAS TABLAS DE DOCUMENTOS Y DOCPRODUCTOS
 router.post("/insertventa", async (req,res)=>{
     
-    const {jsondocproductos,codsucursal,empnit,anio,mes,dia,coddoc,correl,fecha,fechaentrega,formaentrega,codcliente,nomclie,codbodega,totalcosto,totalprecio,nitclie,dirclie,obs,direntrega,usuario,codven,lat,long,hora} = req.body;
+    const {jsondocproductos,codsucursal,empnit,anio,mes,dia,coddoc,correl,fecha,fechaentrega,formaentrega,codcliente,nomclie,codbodega,totalcosto,
+        totalprecio,nitclie,dirclie,obs,direntrega,usuario,codven,lat,long,hora,
+        tipo_pago,tipo_doc,entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long} = req.body;
   
     let app = codsucursal;
   
@@ -950,7 +956,8 @@ router.post("/insertventa", async (req,res)=>{
                 DOC_PORINGUAT, DOC_INGUATEXENTO, DOC_TIPOTRANIVA, DOC_PORTIMBREPRE, DOC_TIMBREPRENSA,
                 ABONOSANTICIPO, SALDOANTICIPO, DOC_PRODEXENTO, PUNTOSGANADOS, PUNTOSUSADOS,
                 APL_ANTICIPO, COD_DEPARTA, FIRMAELECTRONICA, DOC_CODDOCRETENCION, DOC_SERIERETENCION,
-                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL
+                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL,
+                TIPO_PAGO,TIPO_DOC,ENTREGA_CONTACTO,ENTREGA_TELEFONO,ENTREGA_DIRECCION,ENTREGA_REFERENCIA,ENTREGA_LAT,ENTREGA_LONG
                 ) 
                 VALUES (
                 '${empnit}', ${anio}, ${mes}, '${coddoc}', '${correlativo}',
@@ -980,7 +987,8 @@ router.post("/insertventa", async (req,res)=>{
                 0, 'N', 'C', 0, 0,
                 0, 0, 0, 0, 0,
                 '', '', '', '', '',
-                '', '', 0, ${lat},${long},'${app}'
+                '', '', 0, ${lat},${long},'${app}',
+                '${tipo_pago}','${tipo_doc}','${entrega_contacto}','${entrega_telefono}','${entrega_direccion}','${entrega_referencia}',${entrega_lat},${entrega_long}
                 );`
                    
                 qrycorrelativo =`   UPDATE ME_TIPODOCUMENTOS 

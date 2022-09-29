@@ -1,4 +1,4 @@
-const DbName = "donraul_offline";
+const DbName = "donraul_offline2";
 
 var tblDocumentos = {
     name: 'documentos',
@@ -25,7 +25,15 @@ var tblDocumentos = {
         CODVEN:{dataType: "number"},
         LAT:{dataType: "string"},
         LONG:{dataType: "string"},
-        JSONPRODUCTOS:{dataType: "string"}
+        JSONPRODUCTOS:{dataType: "string"},
+        tipo_pago:{dataType: "string"},
+        tipo_doc:{dataType: "string"},
+        entrega_contacto:{dataType: "string"},
+        entrega_telefono:{dataType: "string"},
+        entrega_direccion:{dataType: "string"},
+        entrega_referencia:{dataType: "string"},
+        entrega_lat:{dataType: "string"},
+        entrega_long:{dataType: "string"}
     }
 };
 

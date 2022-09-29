@@ -729,7 +729,7 @@ function getView(){
                             <div class="card-body">
                                     <div class="">            
                                         
-                                        <h5 class="text-danger negrita">Recoge en Tienda</h5>
+                                        <h5 class="text-danger negrita">Detalle de la Entrega</h5>
 
                                         <div class="form-group">
                                             <label>Forma de Pago:</label>
@@ -1777,6 +1777,16 @@ async function fcnFinalizarPedido(){
     let latdoc = document.getElementById('lbDocLat').innerText;
     let longdoc = document.getElementById('lbDocLong').innerText;
 
+            let tipo_pago = document.getElementById('cmbEntregaConcre').value;
+            let tipo_doc = document.getElementById('cmbEntregaTipoDoc').value;
+            let entrega_contacto = document.getElementById('txtEntregaContacto').value || document.getElementById('txtNit').value;
+            let entrega_telefono = document.getElementById('txtEntregaTelefono').value || '0';
+            let entrega_direccion = document.getElementById('txtEntregaDireccion').value || 'SN';
+            let entrega_referencia = document.getElementById('txtEntregaReferencia').value || 'SN';
+            let entrega_lat = document.getElementById('lbEntregaLat').innerText;
+            let entrega_long = document.getElementById('lbEntregaLong').innerText;
+            
+
         document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1 fa-spin"></i>';
         document.getElementById('btnFinalizarPedido').disabled = true;
 
@@ -1826,7 +1836,15 @@ async function fcnFinalizarPedido(){
                                     codven:cmbVendedor.value,
                                     lat:latdoc,
                                     long:longdoc,
-                                    hora:hora
+                                    hora:hora,
+                                    tipo_pago:tipo_pago,
+                                    tipo_doc:tipo_doc,
+                                    entrega_contacto:entrega_contacto,
+                                    entrega_telefono:entrega_telefono,
+                                    entrega_direccion:entrega_direccion,
+                                    entrega_referencia:entrega_referencia,
+                                    entrega_lat:entrega_lat,
+                                    entrega_long:entrega_long
                                 })
                                 .then(async(response) => {
                                     const data = response.data;
@@ -1860,7 +1878,15 @@ async function fcnFinalizarPedido(){
                                             CODVEN:Number(cmbVendedor.value),
                                             LAT:latdoc,
                                             LONG:longdoc,
-                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped)
+                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped),
+                                            tipo_pago:tipo_pago,
+                                            tipo_doc:tipo_doc,
+                                            entrega_contacto:entrega_contacto,
+                                            entrega_telefono:entrega_telefono,
+                                            entrega_direccion:entrega_direccion,
+                                            entrega_referencia:entrega_referencia,
+                                            entrega_lat:entrega_lat,
+                                            entrega_long:entrega_long
                                         };
                         
                                         insertVenta(datospedido)
@@ -1949,7 +1975,15 @@ async function fcnFinalizarPedido(){
                                                             CODVEN:Number(cmbVendedor.value),
                                                             LAT:latdoc,
                                                             LONG:longdoc,
-                                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped)
+                                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped),
+                                                            tipo_pago:tipo_pago,
+                                                            tipo_doc:tipo_doc,
+                                                            entrega_contacto:entrega_contacto,
+                                                            entrega_telefono:entrega_telefono,
+                                                            entrega_direccion:entrega_direccion,
+                                                            entrega_referencia:entrega_referencia,
+                                                            entrega_lat:entrega_lat,
+                                                            entrega_long:entrega_long
                                                         };
                                         
                                                         insertVenta(datospedido)
@@ -2104,6 +2138,9 @@ async function fcnEliminarTempVentas(usuario){
 
 async function fcnNuevoPedido(){
     
+    document.getElementById('lbEntregaLat').innerText ='0';
+    document.getElementById('lbEntregaLong').innerText ='0';
+
     classNavegar.inicio(GlobalTipoUsuario);
     
 };

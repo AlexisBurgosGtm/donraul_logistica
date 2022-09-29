@@ -450,22 +450,6 @@ function insertVenta(datos){
 
 };
 
-function BACKUP_insertVenta(datos){
-    console.log('intentando ingresar en tabla documentos')
-    return new Promise((resolve,reject)=>{
-        connection.insert({
-            into: "documentos",
-            values: [datos], //you can insert multiple values at a time
-        })
-        .then(()=>{
-            resolve();
-        })
-        .catch(()=>{
-            reject();
-        })
-    }) 
-
-};
 
 //carga el json con la lista de pedidos pendientes
 function selectVentasPendientes(usuario) {
@@ -570,60 +554,6 @@ function dbCargarPedidosPendientes(){
 };
 
 
-function BACKUP_dbCargarPedidosPendientes(){
-    
-    selectVentasPendientes(GlobalUsuario)
-    .then((response)=>{
-        let container = document.getElementById('tblPedidosPendientes');
-        container.innerHTML = GlobalLoader;
-
-        let containerTotal = document.getElementById('lbTotalVentaPendiente');
-        containerTotal.innerHTML = '--.--';
-        
-        let str = '';
-        let contador = 0;
-        let totalventa = 0;
-
-        response.map((rs)=>{
-            contador = contador + 1;
-            totalventa += Number(rs.TOTALPRECIO);
-            str = str + `<tr class="border-bottom">
-                            <td>${rs.FECHA}
-                                <br>
-                                <small class="negrita">${rs.CODDOC}-${rs.ID}</small>
-                            </td>
-                            <td>${rs.NOMCLIE}
-                                <br>
-                                <small>${rs.DIRCLIE}</small>
-                            </td>
-                            <td>${funciones.setMoneda(rs.TOTALPRECIO,'Q')}
-                            </td>
-                            <td>
-                                <button class="btn btn-info btn-circle" onclick="getDbDetallePedido(${rs.ID},'${rs.NOMCLIE}');">
-                                    <i class="fal fa-search"></i>
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-success btn-circle" onclick="dbSendPedido(${rs.ID});">
-                                    <i class="fal fa-paper-plane"></i>
-                                </button>
-                            </td>
-                        </tr>`    
-        })
-        container.innerHTML = str;
-        containerTotal.innerText = funciones.setMoneda(totalventa,'');
-        
-        if(Number(contador)>0){
-            btnPedidosPend.className = 'btn btn-danger btn-lg btn-icon rounded-circle shadow';
-        }else{
-            btnPedidosPend.className = 'btn btn-outline-secondary btn-lg btn-icon rounded-circle shadow';
-        }
-        
-        btnPedidosPend.innerHTML = `<i class="fal fa-bell"></i>${contador}`;
-        
-
-    });
-};
 
 function getDbDetallePedido(id, cliente){
  
@@ -772,7 +702,15 @@ function dbSendPedido(id){
                                 usuario:rs.USUARIO,
                                 codven:rs.CODVEN,
                                 lat:rs.LAT,
-                                long:rs.LONG
+                                long:rs.LONG, 
+                                tipo_pago: rs.tipo_pago,
+                                tipo_doc: rs.tipo_doc,
+                                entrega_contacto: rs.entrega_contacto,
+                                entrega_telefono: rs.entrega_telefono,
+                                entrega_direccion: rs.entrega_direccion,
+                                entrega_referencia: rs.entrega_referencia,
+                                entrega_lat: rs.entrega_lat,
+                                entrega_long: rs.entrega_long
                             }
                         })
                         
