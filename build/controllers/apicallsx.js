@@ -17,13 +17,18 @@ let apigen = {
                             GlobalSistema = sucursal;
                             GlobalObjetivoVenta = Number(rows.OBJETIVO);
                             GlobalSelectedDiaUpdated = Number(f.getDate());
-                            if(GlobalTipoUsuario=='VENDEDOR'){
-                                classNavegar.inicioVendedor();
-                                
-                            }else{
-                                classNavegar.inicio_supervisor();
-                            }
-                               
+                            switch (GlobalTipoUsuario) {
+                                case 'VENDEDOR':
+                                    classNavegar.inicioVendedor();    
+                                    break;
+                                case 'SUPERVISOR':
+                                    classNavegar.inicio_supervisor();    
+                                    break;
+                                case 'DIGITADOR':
+                                    classNavegar.inicio_digitador();
+                                    break;
+                           
+                            }                               
                         }        
                     })
                     resolve();

@@ -274,5 +274,12 @@ let classNavegar = {
             initView();
             //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
         })
+    },
+    inicio_digitador:()=>{
+        funciones.loadScript('./views/digitador/inicio.js','root')
+        .then(()=>{
+            GlobalSelectedForm ='DIGITADOR';
+            iniciarVistaDigitador();
+        })
     }
 }
