@@ -2507,7 +2507,7 @@ let apigen = {
         })
         
     },
-    digitadorPedidosVendedor: async(sucursal,codven,idContenedor,idLbTotal,st)=>{
+    digitadorPedidosVendedor: async(sucursal,idContenedor,idLbTotal,st)=>{
 
         let container = document.getElementById(idContenedor);
         container.innerHTML = GlobalLoader;
@@ -2532,8 +2532,7 @@ let apigen = {
         }
         axios.post(strApicall, {
             app:GlobalSistema,
-            sucursal: sucursal,
-            codven:codven
+            sucursal: sucursal
         })
         .then((response) => {
             const data = response.data.recordset;

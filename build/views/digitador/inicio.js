@@ -5,35 +5,20 @@ function getView(){
             <div class="row">
 
                 <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
-                    <div class="form-group">               
-                        <label>Seleccione un vendedor</label>
-                        <select id="cmbVendedor" class="form-control"></select>
-                    </div>
+                        <select class="form-control" id="cmbStatus">
+                            <option value="O">Pendientes</option>
+                            <option value="A">Bloqueados</option>
+                        </select>
                 </div>
+
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                     <div class="form-group">
                         <label>Total : </label>
                         <h3 id='lbTotal' class="text-danger"></h3>
                     </div>
                 </div>
+
             </div> 
-
-            <div class="row">
-                
-                <div class="col-4">
-                    <button class="btn btn-lg btn-info" id="btnCargarTipoPrecio">
-                        <i class="fal fa-tag"></i>
-                        Tipo Precio
-                    </button>
-                </div>
-                <div class="col-4">
-                    <select class="form-control" id="cmbStatus">
-                        <option value="O">Pendientes</option>
-                        <option value="A">Bloqueados</option>
-                    </select>
-                </div>
-
-            </div>
             `
         },
         listado : ()=>{
@@ -261,39 +246,28 @@ async function addListeners(){
     //tipo de lista
     let cmbStatus = document.getElementById('cmbStatus');
     cmbStatus.addEventListener('change',()=>{
-        api.digitadorPedidosVendedor(GlobalCodSucursal,cmbVendedor.value,'tblPedidos','lbTotal',cmbStatus.value)
+        apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
     });
 
-    //agrega el listener del combo de vendedores
-    let cmbVendedor = document.getElementById('cmbVendedor');
-    cmbVendedor.addEventListener('change',()=>{
-        api.digitadorPedidosVendedor(GlobalCodSucursal,cmbVendedor.value,'tblPedidos','lbTotal',cmbStatus.value)
-    });
+   
 
-    //carga la lista
-    api.comboVendedores(GlobalCodSucursal,'cmbVendedor')
-    .then(()=>{
+   
 
-        api.digitadorPedidosVendedor(GlobalCodSucursal,cmbVendedor.value,'tblPedidos','lbTotal',cmbStatus.value)
-    });
-
-    let btnCargarTipoPrecio = document.getElementById('btnCargarTipoPrecio');
-    btnCargarTipoPrecio.addEventListener('click',()=>{
+        
+    apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+    
        
-       api.digitadorPedidosTipoprecio(GlobalCodSucursal,cmbVendedor.value,'tblTipoPrecio')
-  
-        $("#modalTipoPrecio").modal('show');
-    });
+
 
     let btnPedidoBloquear = document.getElementById('btnPedidoBloquear');
     btnPedidoBloquear.addEventListener('click',()=>{
         funciones.Confirmacion('¿Está seguro que desea Bloquear/Anular este Pedido?')
         .then((value)=>{
             if(value==true){
-                api.digitadorBloquearPedido(GlobalCodSucursal,cmbVendedor.value,GlobalSelectedCoddoc,GlobalSelectedCorrelativo)
+                apigen.digitadorBloquearPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo)
                 .then(()=>{
                     funciones.Aviso('Pedido BLOQUEADO exitosamente!!')
-                    api.digitadorPedidosVendedor(GlobalCodSucursal,cmbVendedor.value,'tblPedidos','lbTotal',cmbStatus.value)
+                    apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                     $("#modalMenu").modal('hide');
                 })
                 .catch(()=>{
@@ -312,10 +286,10 @@ async function addListeners(){
         funciones.Confirmacion('¿Está seguro que desea CONFIRMAR este Pedido?')
         .then((value)=>{
             if(value==true){
-                api.digitadorConfirmarPedido(GlobalCodSucursal,cmbVendedor.value,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,cmbEmbarques.value)
+                apigen.digitadorConfirmarPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,cmbEmbarques.value)
                 .then(()=>{
                     funciones.Aviso('Pedido CONFIRMADO exitosamente!!')
-                    api.digitadorPedidosVendedor(GlobalCodSucursal,cmbVendedor.value,'tblPedidos','lbTotal',cmbStatus.value)
+                    apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                     $("#modalMenu").modal('hide');
                 })
                 .catch(()=>{
@@ -326,7 +300,7 @@ async function addListeners(){
 
     });
 
-    await api.digitadorComboEmbarques('cmbEmbarques');
+    await apigen.digitadorComboEmbarques('cmbEmbarques');
     
 };
 
@@ -339,7 +313,7 @@ function iniciarVistaDigitador(){
 function getDetallePedido(fecha,coddoc,correlativo){
     GlobalSelectedFecha = fecha;
     lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
-    api.digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+    apigen.digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
     $("#modalMenu").modal('show');
 };
 
@@ -357,13 +331,13 @@ function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
     .then((value)=>{
         if(value==true){
 
-            api.digitadorQuitarRowPedido(idRow,coddoc,correlativo,totalprecio,totalcosto)
+            apigen.digitadorQuitarRowPedido(idRow,coddoc,correlativo,totalprecio,totalcosto)
             .then(async()=>{
                 
-                await api.digitadorPedidosVendedor(GlobalCodSucursal,cmbVendedor.value,'tblPedidos','lbTotal',cmbStatus.value)
+                await apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                 document.getElementById(idRow).remove();
                 
-                api.digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+                apigen.digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
 
                 funciones.Aviso('Item removido exitosamente !!')
             })

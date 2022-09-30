@@ -48,14 +48,14 @@ router.post("/pedidostipoprecio", async(req,res)=>{
 
 // LISTA DE PEDIDOS PENDIENTES DEL VENDEDOR
 router.post("/pedidospendientes", async(req,res)=>{
-    const {sucursal,codven}  = req.body;
+    const {sucursal}  = req.body;
     
     let qry = '';
     qry = `SELECT DOC_FECHA AS FECHA, CODDOC, DOC_NUMERO AS CORRELATIVO, DOC_NOMREF AS NOMCLIE, 
             DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, 
             isnull(DOC_TOTALVENTA,0) AS IMPORTE, LAT, LONG, DOC_NUMORDEN AS EMBARQUE, DOC_ESTATUS AS ST, DOC_OBS AS OBS
             FROM ME_Documentos
-            WHERE (CODSUCURSAL = '${sucursal}') AND (CODVEN = ${codven}) AND (DOC_ESTATUS='O') AND (ISCENVIADO=0)
+            WHERE (CODSUCURSAL = '${sucursal}') AND  (DOC_ESTATUS='O') AND (ISCENVIADO=0)
             ORDER BY DOC_FECHA,DOC_NUMERO`
 
     
@@ -64,12 +64,12 @@ router.post("/pedidospendientes", async(req,res)=>{
 
 // LISTA DE PEDIDOS BLOQUEADOS DEL VENDEDOR
 router.post("/pedidosbloqueados", async(req,res)=>{
-    const {sucursal,codven}  = req.body;
+    const {sucursal}  = req.body;
     
     let qry = '';
     qry = `SELECT DOC_FECHA AS FECHA, CODDOC, DOC_NUMERO AS CORRELATIVO, DOC_NOMREF AS NOMCLIE, DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, isnull(DOC_TOTALVENTA,0) AS IMPORTE, LAT, LONG, DOC_NUMORDEN AS EMBARQUE, DOC_ESTATUS AS ST, DOC_OBS AS OBS
             FROM ME_Documentos
-            WHERE (CODSUCURSAL = '${sucursal}') AND (CODVEN = ${codven}) AND (DOC_ESTATUS='A') AND (ISCENVIADO=0)
+            WHERE (CODSUCURSAL = '${sucursal}') AND (DOC_ESTATUS='A') AND (ISCENVIADO=0)
             ORDER BY DOC_FECHA,DOC_NUMERO`
 
     
