@@ -51,12 +51,14 @@ router.post("/pedidospendientes", async(req,res)=>{
     const {sucursal}  = req.body;
     
     let qry = '';
-    qry = `SELECT DOC_FECHA AS FECHA, CODDOC, DOC_NUMERO AS CORRELATIVO, DOC_NOMREF AS NOMCLIE, 
-            DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, 
-            isnull(DOC_TOTALVENTA,0) AS IMPORTE, LAT, LONG, DOC_NUMORDEN AS EMBARQUE, DOC_ESTATUS AS ST, DOC_OBS AS OBS
-            FROM ME_Documentos
-            WHERE (CODSUCURSAL = '${sucursal}') AND  (DOC_ESTATUS='O') AND (ISCENVIADO=0)
-            ORDER BY DOC_FECHA,DOC_NUMERO`
+    qry = `SELECT        ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.DOC_NOMREF AS NOMCLIE, ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, 
+    '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, ME_Documentos.LAT, ME_Documentos.LONG, ME_Documentos.DOC_NUMORDEN AS EMBARQUE, ME_Documentos.DOC_ESTATUS AS ST, 
+    ME_Documentos.DOC_OBS AS OBS, ME_Vendedores.NOMVEN, ME_Documentos.TIPO_PAGO, ME_Documentos.TIPO_DOC, ME_Documentos.ENTREGA_CONTACTO, ME_Documentos.ENTREGA_TELEFONO, 
+    ME_Documentos.ENTREGA_DIRECCION, ME_Documentos.ENTREGA_REFERENCIA, ME_Documentos.ENTREGA_LAT, ME_Documentos.ENTREGA_LONG
+FROM            ME_Documentos LEFT OUTER JOIN
+    ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
+WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ESTATUS = 'O') AND (ME_Documentos.ISCENVIADO = 0)
+ORDER BY FECHA, CORRELATIVO`
 
     
     execute.Query(res,qry);
@@ -64,19 +66,26 @@ router.post("/pedidospendientes", async(req,res)=>{
 
 // LISTA DE PEDIDOS BLOQUEADOS DEL VENDEDOR
 router.post("/pedidosbloqueados", async(req,res)=>{
+    
     const {sucursal}  = req.body;
     
     let qry = '';
-    qry = `SELECT DOC_FECHA AS FECHA, CODDOC, DOC_NUMERO AS CORRELATIVO, DOC_NOMREF AS NOMCLIE, DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, isnull(DOC_TOTALVENTA,0) AS IMPORTE, LAT, LONG, DOC_NUMORDEN AS EMBARQUE, DOC_ESTATUS AS ST, DOC_OBS AS OBS
-            FROM ME_Documentos
-            WHERE (CODSUCURSAL = '${sucursal}') AND (DOC_ESTATUS='A') AND (ISCENVIADO=0)
-            ORDER BY DOC_FECHA,DOC_NUMERO`
+    qry = `
+    SELECT        ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.DOC_NOMREF AS NOMCLIE, ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, 
+                         '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, ME_Documentos.LAT, ME_Documentos.LONG, ME_Documentos.DOC_NUMORDEN AS EMBARQUE, ME_Documentos.DOC_ESTATUS AS ST, 
+                         ME_Documentos.DOC_OBS AS OBS, ME_Vendedores.NOMVEN, ME_Documentos.TIPO_PAGO, ME_Documentos.TIPO_DOC, ME_Documentos.ENTREGA_CONTACTO, ME_Documentos.ENTREGA_TELEFONO, 
+                         ME_Documentos.ENTREGA_DIRECCION, ME_Documentos.ENTREGA_REFERENCIA, ME_Documentos.ENTREGA_LAT, ME_Documentos.ENTREGA_LONG
+FROM            ME_Documentos LEFT OUTER JOIN
+                         ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
+WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ESTATUS = 'A') AND (ME_Documentos.ISCENVIADO = 0)
+ORDER BY FECHA, CORRELATIVO`
 
     
     execute.Query(res,qry);
 });
 
 router.post("/pedidosgenerados", async(req,res)=>{
+   
     const {sucursal,codven}  = req.body;
     
     let qry = '';

@@ -1347,7 +1347,7 @@ function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
 
 //gestiona la apertura de la cantidad
 function getDataMedidaProducto(codprod,desprod,codmedida,cantidad,equivale,totalunidades,costo,precio,exento,existencia){
-    console.log('existencia: ' + existencia);
+   
 
     //if(parseInt(existencia)>0){
         GlobalSelectedCodprod = codprod;
