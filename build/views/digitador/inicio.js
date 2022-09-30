@@ -52,16 +52,16 @@ function getView(){
                     <div class="col-1"></div>
                     <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
                         
-                        <select class="form-control" id="cmbEmbarques">
+                        <select class="form-control hidden" id="cmbEmbarques">
                         </select>
                     </div>
 
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                         <button class="btn btn-md btn-danger" id="btnPedidoBloquear">
                             <i class="fal fa-globe"></i>
-                            Bloquear_
+                            Finalizar
                         </button>
-                        <button class="btn btn-md btn-success" id="btnPedidoConfirmar">
+                        <button class="btn btn-md btn-success hidden" id="btnPedidoConfirmar">
                             <i class="fal fa-bell"></i>
                             Confirmar
                         </button>
@@ -261,12 +261,12 @@ async function addListeners(){
 
     let btnPedidoBloquear = document.getElementById('btnPedidoBloquear');
     btnPedidoBloquear.addEventListener('click',()=>{
-        funciones.Confirmacion('¿Está seguro que desea Bloquear/Anular este Pedido?')
+        funciones.Confirmacion('¿Está seguro que desea FINALIZAR este Pedido?')
         .then((value)=>{
             if(value==true){
                 apigen.digitadorBloquearPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo)
                 .then(()=>{
-                    funciones.Aviso('Pedido BLOQUEADO exitosamente!!')
+                    funciones.Aviso('Pedido FINALIZADO exitosamente!!')
                     apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                     $("#modalMenu").modal('hide');
                 })
