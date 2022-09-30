@@ -152,11 +152,15 @@ btnUpdate.addEventListener('click',()=>{
                     let porc = (Number(contador) / Number(totalrows)) * 100;
                     contador += 1;
                     if(totalrows==contador){
-                        funciones.Aviso('Productos descargados exitosamente!!')
+                        funciones.Aviso('Productos descargados exitosamente!!');
+                        btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
+                        btnUpdate.disabled = false;
+                    }else{
+                      btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
+                      btnUpdate.disabled = false;
                     }
                 }
-                btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
-                btnUpdate.disabled = false;
+                
             });
            
         })

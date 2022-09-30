@@ -39,6 +39,10 @@ function getView(){
 
                     </div>
                 </div>
+
+                <button class="btn btn-circle btn-xl btn-secondary shadow btn-bottom-ml hand" id="btnVenta">
+                    <i class="fal fa-edit"></i>
+                </button>
                
             `
         },
@@ -114,6 +118,12 @@ function addListeners(){
     });
 
     //--------------------------------
+
+    let btnVenta = document.getElementById('btnVenta');
+    btnVenta.addEventListener('click',()=>{
+            classNavegar.inicioVendedor();
+    });
+
 };
 
 
