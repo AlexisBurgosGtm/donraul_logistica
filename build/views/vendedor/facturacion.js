@@ -209,14 +209,15 @@ function getView(){
                 </div>
                 <div class="panel-container show">
                     <div class="panel-content">
-                        <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
+                        
+                       <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
                             <div class="input-group">
-                                <select class="form-control col-3 shadow border-info" id="cmbTipoPrecio">
-                                    <option value="P">DET</option>
-                                    <option value="C">PreB</option>
-                                    <option value="B">PreC</option>
-                                    <option value="A">MAY</option>
-                                    <option value="K">CAMBIO</option>
+                                <select class="form-control col-3 shadow border-info hidden" id="cmbTipoPrecio">
+                                    <option value="P">P</option>
+                                    <option value="C">C</option>
+                                    <option value="B">B</option>
+                                    <option value="A">A</option>
+                                    <option value="K">K</option>
                                 </select>
                                 <input id="txtBusqueda" type="text" ref="txtBusqueda" class="form-control col-7  shadow border-info" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
                                 <div class="input-group-prepend">
@@ -226,6 +227,9 @@ function getView(){
                                 </div>
                             </div>
                         </div>
+                   
+                     
+
                         <div class="table-responsive">
                             <table class="table table-hover table-striped"><!--mt-5-->
                                 <thead>
@@ -359,12 +363,12 @@ function getView(){
                         <div class="modal-body">
                             <div class="row">
                                 <div class="input-group">
-                                    <select class="form-control col-3 shadow border-secondary negrita border-left-0 border-right-0 border-top-0" id="cmbTipoPrecio">
-                                        <option value="P">DET</option>
-                                        <option value="C">PreB</option>
-                                        <option value="B">PreA</option>
-                                        <option value="A">MAY</option>
-                                        <option value="K">CAMBIO</option>
+                                    <select class="form-control col-3 shadow border-secondary negrita border-left-0 border-right-0 border-top-0 hidden" id="cmbTipoPrecio">
+                                        <option value="P">P</option>
+                                        <option value="C">C</option>
+                                        <option value="B">B</option>
+                                        <option value="A">A</option>
+                                        <option value="K">K</option>
                                     </select>
                                     <input id="txtBusqueda" type="text" ref="txtBusqueda" class="bg-amarillo form-control col-7 shadow" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
                                     <div class="input-group-prepend">
@@ -1738,7 +1742,7 @@ async function fcnGuardarNuevoCliente(form){
 async function fcnFinalizarPedido(){
     
   
-    GlobalSelectedCodCliente = 0;
+    GlobalSelectedCodCliente = '0';
     
     if(GlobalSelectedCodCliente.toString()=='SI'){funciones.AvisoError('Datos del cliente incorrectos, por favor, seleccione cliente nuevamente');return;}
 
@@ -1888,7 +1892,7 @@ async function fcnFinalizarPedido(){
                                             entrega_lat:entrega_lat,
                                             entrega_long:entrega_long
                                         };
-                        
+                                        console.log(datospedido);
                                         insertVenta(datospedido)
                                         .then(async()=>{
                                             
@@ -1985,7 +1989,7 @@ async function fcnFinalizarPedido(){
                                                             entrega_lat:entrega_lat,
                                                             entrega_long:entrega_long
                                                         };
-                                        
+                                                        console.log(datospedido);
                                                         insertVenta(datospedido)
                                                         .then(async()=>{
                                                             //funciones.Aviso('El pedido será guardado localmente, recuerde enviarlo');
