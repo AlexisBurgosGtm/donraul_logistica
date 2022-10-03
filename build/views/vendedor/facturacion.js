@@ -2253,7 +2253,7 @@ function Lmap(lat,long){
         popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
     });
 
-      L.marker([lat, long],{icon:userIcon,draggable:'true'})
+      L.marker([lat, long],{draggable:'true'})
         .addTo(map)
         .bindPopup('Mi Ubicación', {closeOnClick: false, autoClose: false})   
         .openPopup()

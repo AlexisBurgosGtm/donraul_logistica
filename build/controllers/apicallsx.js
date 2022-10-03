@@ -3259,6 +3259,7 @@ let apigen = {
                         <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
                         <td>${rows.PEDIDOS}</td>
                         <td>${funciones.setMoneda(promedio,'Q')}</td>
+                        <td>${ funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
                     </tr>
                     `
             })
@@ -3370,6 +3371,7 @@ let apigen = {
                         <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
                         <td>${rows.PEDIDOS}</td>
                         <td>${funciones.setMoneda(promedio,'Q')}</td>
+                        <td>${ funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
                     </tr>
                     `
             })

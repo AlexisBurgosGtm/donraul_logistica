@@ -790,7 +790,9 @@ router.post('/rptrankingvendedoressucursal', async(req,res)=>{
 // ranking de vendedores por sucursal y fecha
 router.post('/rptrankingvendedoressucursal2', async(req,res)=>{
     const {fecha,sucursal} = req.body;
-    let qry = `SELECT       ME_Vendedores.NOMVEN, COUNT(ME_Documentos.CODDOC) AS PEDIDOS, SUM(ME_Documentos.DOC_TOTALVENTA) AS TOTALPRECIO
+    let qry = `SELECT       ME_Vendedores.NOMVEN, COUNT(ME_Documentos.CODDOC) AS PEDIDOS, 
+                SUM(ME_Documentos.DOC_TOTALVENTA) AS TOTALPRECIO,
+                SUM(ME_Documentos.DOC_TOTALCOSTO) AS TOTALCOSTO
     FROM            ME_Documentos LEFT OUTER JOIN
                              ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
                 WHERE (ME_Documentos.DOC_ESTATUS <> 'A') AND (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_FECHA = '${fecha}')
@@ -804,7 +806,8 @@ router.post('/rptrankingvendedoressucursal2', async(req,res)=>{
 router.post('/rptrankingvendedoressucursalmes', async(req,res)=>{
     const {anio,mes,sucursal} = req.body;
 
-    let qry = `SELECT  ME_Vendedores.NOMVEN, COUNT(ME_Documentos.CODDOC) AS PEDIDOS, SUM(ME_Documentos.DOC_TOTALVENTA) AS TOTALPRECIO
+    let qry = `SELECT  ME_Vendedores.NOMVEN, COUNT(ME_Documentos.CODDOC) AS PEDIDOS, SUM(ME_Documentos.DOC_TOTALVENTA) AS TOTALPRECIO,
+    SUM(ME_Documentos.DOC_TOTALCOSTO) AS TOTALCOSTO
     FROM            ME_Documentos LEFT OUTER JOIN
                              ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
                 WHERE (ME_Documentos.DOC_ESTATUS <> 'A') AND (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ANO = ${anio}) AND (ME_Documentos.DOC_MES = ${mes})

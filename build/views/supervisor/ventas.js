@@ -114,6 +114,7 @@ function getView(){
                             <td>Venta</td>
                             <td>Pedidos</td>
                             <td>Promedio</td>
+                            <td>Margen</td>
                         </tr>
                     </thead>
                     <tbody id="tblVtaDia"></tbody>
@@ -170,6 +171,7 @@ function getView(){
                         <td>Venta</td>
                         <td>Pedidos</td>
                         <td>Promedio</td>
+                        <td>Margen</td>
                     </tr>
                 </thead>
                 <tbody id="tblVentasVendedoresMes"></tbody>

@@ -5,10 +5,19 @@ function getView(){
             <div class="row">
 
                 <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
-                        <select class="form-control" id="cmbStatus">
-                            <option value="O">Pendientes</option>
-                            <option value="A">Bloqueados</option>
-                        </select>
+                      
+                        
+                        <div class="input-group">
+                            <select class="form-control" id="cmbStatus">
+                                <option value="O">Pendientes</option>
+                                <option value="A">Finalizado</option>
+                            </select>
+                            <div class="input-group-prepend">
+                                <button class="btn btn-info waves-effect waves-themed shadow" type="button" id="btnRecargar">
+                                    <i class="fal fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
                 </div>
 
                 <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
@@ -240,10 +249,12 @@ async function addListeners(){
 
    
    
-
+    document.getElementById('btnRecargar').addEventListener('click',()=>{
+        digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+    });
         
+   
     digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
-    
        
 
 
@@ -435,7 +446,18 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                     strClassStatus='bg-danger text-white';
                     domicilio='ENTREGA DOMICILIO';
                     tblentrega = `<table class="table">
+                                   
                                     <tbody>
+                                        <tr>
+                                            <td>
+                                                <small class="${strClassStatus}">${domicilio}</small>
+                                            </td>
+                                            <td> 
+                                                <button class="btn btn-md btn-warning shadow hand" onclick="funciones.gotoGoogleMaps('${rows.ENTREGA_LAT}','${rows.ENTREGA_LONG}')">
+                                                    <i class="fal fa-map"></i> Ver en el mapa
+                                                </button>
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <td>Contacto:</td>
                                             <td>${rows.ENTREGA_CONTACTO}</td>
@@ -472,41 +494,52 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                         <b>Fecha: ${f}</b>
                                         <br>
                                         Pedido:<b>${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
+                                        <br>
+                                        <small class="negrita">${rows.NOMVEN}</small>
                                     </div>
-                                    <div class="col-6">
-                                        <h5 class="negrita">${rows.NOMVEN}</h5>
+                                    <div class="col-6" onclick="getDetallePedido('${f}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}')">
+                                        <h2 class="negrita text-danger text-right">${funciones.setMoneda(rows.IMPORTE,'Q')}</h2>
                                     </div>
                                 </div>   
                                 
                                 <hr class="solid">
 
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                                             <small class="negrita text-danger">Datos de Facturación:</small>
-                                            <br><br>
-                                            <h5>NIT/NOMBRE: ${rows.NIT} - ${rows.NOMCLIE}</h5>
-                                            
-                                            <small>DIRECCION: ${rows.DIRCLIE}</small>
                                             <br>
-                                            <small class="negrita ${strClassRowSt}">Tipo Documento: ${rows.OBS}</small>
-                                    </div>
-                                </div>
-
-                                <hr class="solid">
-
-                                <div class="row">
-                                    <div class="col-6">
-                                        <small class="${strClassStatus}">${domicilio}</small>
-                                        <br>
-                                        <div class="table-responsive">
-                                            ${tblentrega}                                            
-                                        </div>
-                                    </div>
-                                    <div class="col-6"  onclick="getDetallePedido('${f}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}')">
-                                        <h3 class="negrita text-danger text-right">${funciones.setMoneda(rows.IMPORTE,'Q')}</h3>
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Nit:</td>
+                                                        <td>${rows.NIT}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Nombre:</td>
+                                                        <td>${rows.NOMCLIE}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Dirección:</td>
+                                                        <td>${rows.DIRCLIE}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Tipo Documento</td>
+                                                        <td class="negrita ${strClassRowSt}">${rows.OBS}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                        
                                     </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                            
+                                            <div class="table-responsive">
+                                                ${tblentrega}                                            
+                                            </div>
+                                    </div>
+
                                 </div>
+
+                              
 
                             </div>    
                         </div>
