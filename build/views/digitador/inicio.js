@@ -25,20 +25,9 @@ function getView(){
             return `
             <br>
             <div class="row">
-                <div class="card col-12">                    
-                    <div class="table-responsive">
-                        <table class="table table-responsive table-striped table-hover table-bordered">
-                            <thead class="bg-trans-gradient text-white">
-                                <tr>
-                                    <td>Fecha</td>
-                                    <td>Pedido</td>
-                                    <td>Cliente</td>
-                                    <td>Importe</td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblPedidos"></tbody>
-                        </table>
+                <div class="col-12">                    
+                    <div class="table-responsive" id="tblPedidos">
+                       
                     </div>
                 </div>
             </div>
@@ -111,7 +100,7 @@ function getView(){
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="table-responsive">
+                            <div class="table-responsive" id="">
                                 <table class="table table-responsive table-hover table-striped table-bordered">
                                     <thead class="bg-trans-gradient text-white">
                                         <tr>
@@ -246,15 +235,14 @@ async function addListeners(){
     //tipo de lista
     let cmbStatus = document.getElementById('cmbStatus');
     cmbStatus.addEventListener('change',()=>{
-        apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+        digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
     });
 
    
-
    
 
         
-    apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+    digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
     
        
 
@@ -267,7 +255,7 @@ async function addListeners(){
                 apigen.digitadorBloquearPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo)
                 .then(()=>{
                     funciones.Aviso('Pedido FINALIZADO exitosamente!!')
-                    apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+                    digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                     $("#modalMenu").modal('hide');
                 })
                 .catch(()=>{
@@ -289,7 +277,7 @@ async function addListeners(){
                 apigen.digitadorConfirmarPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,cmbEmbarques.value)
                 .then(()=>{
                     funciones.Aviso('Pedido CONFIRMADO exitosamente!!')
-                    apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+                    digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                     $("#modalMenu").modal('hide');
                 })
                 .catch(()=>{
@@ -313,7 +301,7 @@ function iniciarVistaDigitador(){
 function getDetallePedido(fecha,coddoc,correlativo){
     GlobalSelectedFecha = fecha;
     lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
-    apigen.digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+    digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
     $("#modalMenu").modal('show');
 };
 
@@ -334,10 +322,10 @@ function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
             apigen.digitadorQuitarRowPedido(idRow,coddoc,correlativo,totalprecio,totalcosto)
             .then(async()=>{
                 
-                await apigen.digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+                await digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                 document.getElementById(idRow).remove();
                 
-                apigen.digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+                digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
 
                 funciones.Aviso('Item removido exitosamente !!')
             })
@@ -407,3 +395,192 @@ function fcnUpdateRowPedido(idRow,cant){
     funciones.Aviso('En esta función se cambiará el total');
 
 };
+
+
+function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
+
+    let container = document.getElementById(idContenedor);
+    container.innerHTML = GlobalLoader;
+    
+    let lbTotal = document.getElementById(idLbTotal);
+    lbTotal.innerText = '---';
+    
+    let strdata = '';
+    let totalpedidos = 0;
+    let strApicall= '';
+
+    switch (st) {
+        case "O":
+            strApicall = '/digitacion/pedidospendientes';
+            break;
+        case "A":
+            strApicall = '/digitacion/pedidosbloqueados';
+            break;
+    
+        default:
+            break;
+    }
+    axios.post(strApicall, {
+        app:GlobalSistema,
+        sucursal: sucursal
+    })
+    .then((response) => {
+        const data = response.data.recordset;
+        let total =0;
+        let strClassStatus = '';
+        let strClassRowSt = '';
+        data.map((rows)=>{
+                let domicilio = ''; let tblentrega = '';
+                if(rows.DOMICILIO=='SI'){
+                    strClassStatus='bg-danger text-white';
+                    domicilio='ENTREGA DOMICILIO';
+                    tblentrega = `<table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>Contacto:</td>
+                                            <td>${rows.ENTREGA_CONTACTO}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Teléfono:</td>
+                                            <td>${rows.ENTREGA_TELEFONO}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Dirección:</td>
+                                            <td>${rows.ENTREGA_DIRECCION}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Referencia:</td>
+                                            <td>${rows.ENTREGA_REFERENCIA}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>`;
+                }else{
+                    strClassStatus='bg-info text-white';
+                    domicilio='TIENDA';
+                    tblentrega = '';
+                }
+                if(rows.ST=='A'){strClassRowSt='bg-danger text-white'}else{strClassRowSt=''}
+                total = total + Number(rows.IMPORTE);
+                totalpedidos = totalpedidos + 1;
+                let f = funciones.convertDateNormal(rows.FECHA);
+
+                strdata = strdata + `
+                        <div class="card shadow col-12 p-2 card-rounded">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <b>Fecha: ${f}</b>
+                                        <br>
+                                        Pedido:<b>${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
+                                    </div>
+                                    <div class="col-6">
+                                        <h5 class="negrita">${rows.NOMVEN}</h5>
+                                    </div>
+                                </div>   
+                                
+                                <hr class="solid">
+
+                                <div class="row">
+                                    <div class="col-12">
+                                            <small class="negrita text-danger">Datos de Facturación:</small>
+                                            <br><br>
+                                            <h5>NIT/NOMBRE: ${rows.NIT} - ${rows.NOMCLIE}</h5>
+                                            
+                                            <small>DIRECCION: ${rows.DIRCLIE}</small>
+                                            <br>
+                                            <small class="negrita ${strClassRowSt}">Tipo Documento: ${rows.OBS}</small>
+                                    </div>
+                                </div>
+
+                                <hr class="solid">
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small class="${strClassStatus}">${domicilio}</small>
+                                        <br>
+                                        <div class="table-responsive">
+                                            ${tblentrega}                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-6"  onclick="getDetallePedido('${f}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}')">
+                                        <h3 class="negrita text-danger text-right">${funciones.setMoneda(rows.IMPORTE,'Q')}</h3>
+                                       
+                                    </div>
+                                </div>
+
+                            </div>    
+                        </div>
+                        <br>
+                           
+                           
+                              
+                           `
+        })
+        container.innerHTML = strdata;
+        lbTotal.innerText = `${funciones.setMoneda(total,'Q ')} - Peds:${totalpedidos} - Prom:${funciones.setMoneda((Number(total)/Number(totalpedidos)),'Q')}`;
+    }, (error) => {
+        funciones.AvisoError('Error en la solicitud');
+        strdata = '';
+        container.innerHTML = '';
+        lbTotal.innerText = 'Q 0.00';
+    });
+       
+};
+
+
+
+function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal){
+
+    let container = document.getElementById(idContenedor);
+    container.innerHTML = GlobalLoader;
+    
+    let lbTotal = document.getElementById(idLbTotal);
+    lbTotal.innerText = '---';
+    
+    let strdata = '';
+
+    GlobalSelectedCoddoc = coddoc;
+    GlobalSelectedCorrelativo = correlativo;
+
+    axios.post('/digitacion/detallepedido', {
+        sucursal: GlobalCodSucursal,
+        coddoc:coddoc,
+        correlativo:correlativo
+    })
+    .then((response) => {
+        const data = response.data.recordset;
+        let total =0;
+        data.map((rows)=>{
+                total = total + Number(rows.IMPORTE);
+                strdata = strdata + `
+                        <tr id='${rows.DOC_ITEM}'>
+                            <td colspan="3">${rows.DESPROD}
+                                <br>
+                                <small class="text-danger">${rows.CODPROD}</small>
+                                <br>
+                                <b class="text-info">${rows.CODMEDIDA}</b>-<b>Cant: ${rows.CANTIDAD}</b>
+                            </td>
+                            <td>${funciones.setMoneda(rows.PRECIO,"")}</td>
+                            <td>${funciones.setMoneda(rows.IMPORTE,"")}
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-danger btn-md btn-circle"
+                                            onclick="deleteProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO})">
+                                            <i class="fal fa-trash"></i>
+                                        </button>              
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        `
+        })
+        container.innerHTML = strdata;
+        lbTotal.innerText = `${funciones.setMoneda(total,'Q')}`;
+    }, (error) => {
+        funciones.AvisoError('Error en la solicitud');
+        strdata = '';
+        container.innerHTML = '';
+        lbTotal.innerText = 'Q0.00';
+    });
+       
+}

@@ -51,10 +51,27 @@ router.post("/pedidospendientes", async(req,res)=>{
     const {sucursal}  = req.body;
     
     let qry = '';
-    qry = `SELECT        ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.DOC_NOMREF AS NOMCLIE, ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, 
-    '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, ME_Documentos.LAT, ME_Documentos.LONG, ME_Documentos.DOC_NUMORDEN AS EMBARQUE, ME_Documentos.DOC_ESTATUS AS ST, 
-    ME_Documentos.DOC_OBS AS OBS, ME_Vendedores.NOMVEN, ME_Documentos.TIPO_PAGO, ME_Documentos.TIPO_DOC, ME_Documentos.ENTREGA_CONTACTO, ME_Documentos.ENTREGA_TELEFONO, 
-    ME_Documentos.ENTREGA_DIRECCION, ME_Documentos.ENTREGA_REFERENCIA, ME_Documentos.ENTREGA_LAT, ME_Documentos.ENTREGA_LONG
+    qry = `SELECT  ME_Documentos.DOC_FECHA AS FECHA, 
+    ME_Documentos.CODDOC, 
+    ME_Documentos.DOC_NUMERO AS CORRELATIVO,
+    ME_Documentos.NITCLIE AS NIT, 
+    ME_Documentos.DOC_NOMREF AS NOMCLIE, 
+    ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, 
+    '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, 
+    ME_Documentos.LAT, 
+    ME_Documentos.LONG, 
+    ME_Documentos.DOC_NUMORDEN AS EMBARQUE, ME_Documentos.DOC_ESTATUS AS ST, 
+    ME_Documentos.DOC_OBS AS OBS, 
+    ME_Vendedores.NOMVEN, 
+    ME_Documentos.TIPO_PAGO, 
+    ME_Documentos.TIPO_DOC, 
+    ME_Documentos.ENTREGA_CONTACTO, 
+    ME_Documentos.ENTREGA_TELEFONO, 
+    ME_Documentos.ENTREGA_DIRECCION, 
+    ME_Documentos.ENTREGA_REFERENCIA, 
+    ME_Documentos.ENTREGA_LAT, 
+    ME_Documentos.ENTREGA_LONG,
+    ME_Documentos.DOMICILIO
 FROM            ME_Documentos LEFT OUTER JOIN
     ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
 WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ESTATUS = 'O') AND (ME_Documentos.ISCENVIADO = 0)
@@ -71,10 +88,23 @@ router.post("/pedidosbloqueados", async(req,res)=>{
     
     let qry = '';
     qry = `
-    SELECT        ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.DOC_NOMREF AS NOMCLIE, ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, 
+    SELECT        ME_Documentos.DOC_FECHA AS FECHA, 
+    ME_Documentos.CODDOC, 
+    ME_Documentos.DOC_NUMERO AS CORRELATIVO, 
+    ME_Documentos.NITCLIE AS NIT,
+    ME_Documentos.DOC_NOMREF AS NOMCLIE, ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, 
                          '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, ME_Documentos.LAT, ME_Documentos.LONG, ME_Documentos.DOC_NUMORDEN AS EMBARQUE, ME_Documentos.DOC_ESTATUS AS ST, 
-                         ME_Documentos.DOC_OBS AS OBS, ME_Vendedores.NOMVEN, ME_Documentos.TIPO_PAGO, ME_Documentos.TIPO_DOC, ME_Documentos.ENTREGA_CONTACTO, ME_Documentos.ENTREGA_TELEFONO, 
-                         ME_Documentos.ENTREGA_DIRECCION, ME_Documentos.ENTREGA_REFERENCIA, ME_Documentos.ENTREGA_LAT, ME_Documentos.ENTREGA_LONG
+                         ME_Documentos.DOC_OBS AS OBS, 
+                         ME_Vendedores.NOMVEN, 
+                         ME_Documentos.TIPO_PAGO, 
+                         ME_Documentos.TIPO_DOC, 
+                         ME_Documentos.ENTREGA_CONTACTO, 
+                         ME_Documentos.ENTREGA_TELEFONO, 
+                         ME_Documentos.ENTREGA_DIRECCION, 
+                         ME_Documentos.ENTREGA_REFERENCIA, 
+                         ME_Documentos.ENTREGA_LAT, 
+                         ME_Documentos.ENTREGA_LONG, 
+                         ME_Documentos.DOMICILIO
 FROM            ME_Documentos LEFT OUTER JOIN
                          ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
 WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ESTATUS = 'A') AND (ME_Documentos.ISCENVIADO = 0)
@@ -99,7 +129,7 @@ router.post("/pedidosgenerados", async(req,res)=>{
 });
 
 router.post("/detallepedido", async(req,res)=>{
-    const {sucursal,fecha,coddoc,correlativo}  = req.body;
+    const {sucursal,coddoc,correlativo}  = req.body;
 
     let ncorrelativo = correlativo;
     
@@ -110,7 +140,6 @@ router.post("/detallepedido", async(req,res)=>{
             ME_Docproductos ON ME_Documentos.CODSUCURSAL = ME_Docproductos.CODSUCURSAL AND ME_Documentos.DOC_NUMERO = ME_Docproductos.DOC_NUMERO AND 
             ME_Documentos.CODDOC = ME_Docproductos.CODDOC AND ME_Documentos.EMP_NIT = ME_Docproductos.EMP_NIT
             WHERE  (ME_Documentos.CODSUCURSAL = '${sucursal}') 
-            AND (ME_Documentos.DOC_FECHA = '${fecha}') 
             AND (ME_Documentos.CODDOC = '${coddoc}') 
             AND (ME_Documentos.DOC_NUMERO = '${ncorrelativo}')`;
 

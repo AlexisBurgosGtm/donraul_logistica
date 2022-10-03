@@ -1,4 +1,4 @@
-const DbName = "donraul_offline3";
+const DbName = "donraul_offline4";
 
 var tblDocumentos = {
     name: 'documentos',
@@ -33,7 +33,8 @@ var tblDocumentos = {
         entrega_direccion:{dataType: "string"},
         entrega_referencia:{dataType: "string"},
         entrega_lat:{dataType: "string"},
-        entrega_long:{dataType: "string"}
+        entrega_long:{dataType: "string"},
+        domicilio: {dataType: "string"}
     }
 };
 

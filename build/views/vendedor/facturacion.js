@@ -135,7 +135,7 @@ function getView(){
         gridTempVenta :()=>{
             return `
                 <div class="row">
-                        <label class="text-info" id="lbNomClien">Consumidor Final</label>
+                        <label class="text-info hidden" id="lbNomClien">Consumidor Final</label>
                         <div id="panel-2" class="panel col-12">
 
                             <div class="panel-hdr">
@@ -1748,8 +1748,13 @@ async function fcnFinalizarPedido(){
 
       
     let codcliente = GlobalSelectedCodCliente;
-    let ClienteNombre = document.getElementById('txtNombre').value;
-    let dirclie = document.getElementById('txtDireccion').value; // CAMPO DIR_ENTREGA
+    let nit = document.getElementById('txtCliNit').value;
+    let ClienteNombre = document.getElementById('txtCliNombre').value;
+    GlobalSelectedNomCliente = ClienteNombre;
+    
+    let dirclie = document.getElementById('txtCliDireccion').value; // CAMPO DIR_ENTREGA
+    GlobalSelectedDirCliente = dirclie;
+
     let obs = document.getElementById('cmbEntregaTipoDoc').value; //document.getElementById('txtEntregaObs').value; 
     let direntrega = "SN"; //document.getElementById('txtEntregaDireccion').value; //CAMPO MATSOLI
     let codbodega = GlobalCodBodega;
@@ -1776,19 +1781,19 @@ async function fcnFinalizarPedido(){
 
     let cmbVendedor = document.getElementById('cmbVendedor');
 
-    let nit = document.getElementById('txtNit').value;
+  
 
     let latdoc = document.getElementById('lbDocLat').innerText;
     let longdoc = document.getElementById('lbDocLong').innerText;
 
             let tipo_pago = document.getElementById('cmbEntregaConcre').value;
             let tipo_doc = document.getElementById('cmbEntregaTipoDoc').value;
-            let entrega_contacto = document.getElementById('txtEntregaContacto').value || document.getElementById('txtNit').value;
-            let entrega_telefono = document.getElementById('txtEntregaTelefono').value || '0';
+            let entrega_contacto = document.getElementById('txtEntregaContacto').value || document.getElementById('txtNombre').value;
+            let entrega_telefono = document.getElementById('txtEntregaTelefono').value || '00';
             let entrega_direccion = document.getElementById('txtEntregaDireccion').value || 'SN';
             let entrega_referencia = document.getElementById('txtEntregaReferencia').value || 'SN';
-            let entrega_lat = document.getElementById('lbEntregaLat').innerText;
-            let entrega_long = document.getElementById('lbEntregaLong').innerText;
+            let entrega_lat = document.getElementById('lbEntregaLat').innerText || '0';
+            let entrega_long = document.getElementById('lbEntregaLong').innerText || '0';
             
 
         document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1 fa-spin"></i>';
@@ -1848,7 +1853,8 @@ async function fcnFinalizarPedido(){
                                     entrega_direccion:entrega_direccion,
                                     entrega_referencia:entrega_referencia,
                                     entrega_lat:entrega_lat,
-                                    entrega_long:entrega_long
+                                    entrega_long:entrega_long,
+                                    domicilio:GlobalSelectedDomicilio
                                 })
                                 .then(async(response) => {
                                     const data = response.data;
@@ -1890,16 +1896,13 @@ async function fcnFinalizarPedido(){
                                             entrega_direccion:entrega_direccion,
                                             entrega_referencia:entrega_referencia,
                                             entrega_lat:entrega_lat,
-                                            entrega_long:entrega_long
+                                            entrega_long:entrega_long,
+                                            domicilio:GlobalSelectedDomicilio
                                         };
                                         console.log(datospedido);
                                         insertVenta(datospedido)
                                         .then(async()=>{
-                                            
-                                        
-                                            //setLog(`<label class="text-info">No se logró Enviar este pedido, se intentará guardarlo en el teléfono</label>`,'rootWait');
-                                            //$('#modalWait').modal('hide');
-                                            //btnCerrarModalWait.click();
+                                    
                                             hideWaitForm();
 
                                             document.getElementById('btnEntregaCancelar').click();
@@ -1953,9 +1956,6 @@ async function fcnFinalizarPedido(){
 
                                     setLog(`<label class="text-info">Ha ocurrido un error y no se pudo enviar, se intentará guardar en el teléfono</label>`,'rootWait');
                                 
-                                    //funciones.showToast('Ha ocurrido un error y no se pudo enviar, se intentará guardar en el teléfono');
-                                    //$('#modalWait').modal('hide');
-                                    
                                                         //guarda el pedido localmente
                                                         var datospedido = {
                                                             CODSUCURSAL:GlobalCodSucursal,
@@ -1987,7 +1987,8 @@ async function fcnFinalizarPedido(){
                                                             entrega_direccion:entrega_direccion,
                                                             entrega_referencia:entrega_referencia,
                                                             entrega_lat:entrega_lat,
-                                                            entrega_long:entrega_long
+                                                            entrega_long:entrega_long,
+                                                            domicilio:GlobalSelectedDomicilio
                                                         };
                                                         console.log(datospedido);
                                                         insertVenta(datospedido)
@@ -2078,16 +2079,21 @@ async function fcnFinalizarPedido(){
                                             CODVEN:Number(cmbVendedor.value),
                                             LAT:latdoc,
                                             LONG:longdoc,
-                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped)
+                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped),
+                                            tipo_pago:tipo_pago,
+                                            tipo_doc:tipo_doc,
+                                            entrega_contacto:entrega_contacto,
+                                            entrega_telefono:entrega_telefono,
+                                            entrega_direccion:entrega_direccion,
+                                            entrega_referencia:entrega_referencia,
+                                            entrega_lat:entrega_lat,
+                                            entrega_long:entrega_long,
+                                            domicilio:GlobalSelectedDomicilio
                                         };
                                        
                                         insertVenta(datospedido)
                                         .then(async()=>{
                                             
-                                        
-                                            //setLog(`<label class="text-info">No se logró Enviar este pedido, se intentará guardarlo en el teléfono</label>`,'rootWait');
-                                            //$('#modalWait').modal('hide');
-                                            //btnCerrarModalWait.click();
                                             hideWaitForm();
 
                                             document.getElementById('btnEntregaCancelar').click();

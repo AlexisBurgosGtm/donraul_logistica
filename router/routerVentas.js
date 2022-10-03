@@ -872,7 +872,7 @@ router.post("/insertventa", async (req,res)=>{
     
     const {jsondocproductos,codsucursal,empnit,anio,mes,dia,coddoc,correl,fecha,fechaentrega,formaentrega,codcliente,nomclie,codbodega,totalcosto,
         totalprecio,nitclie,dirclie,obs,direntrega,usuario,codven,lat,long,hora,
-        tipo_pago,tipo_doc,entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long} = req.body;
+        tipo_pago,tipo_doc,entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long,domicilio} = req.body;
   
     let app = codsucursal;
   
@@ -957,7 +957,7 @@ router.post("/insertventa", async (req,res)=>{
                 ABONOSANTICIPO, SALDOANTICIPO, DOC_PRODEXENTO, PUNTOSGANADOS, PUNTOSUSADOS,
                 APL_ANTICIPO, COD_DEPARTA, FIRMAELECTRONICA, DOC_CODDOCRETENCION, DOC_SERIERETENCION,
                 DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL,
-                TIPO_PAGO,TIPO_DOC,ENTREGA_CONTACTO,ENTREGA_TELEFONO,ENTREGA_DIRECCION,ENTREGA_REFERENCIA,ENTREGA_LAT,ENTREGA_LONG
+                TIPO_PAGO,TIPO_DOC,ENTREGA_CONTACTO,ENTREGA_TELEFONO,ENTREGA_DIRECCION,ENTREGA_REFERENCIA,ENTREGA_LAT,ENTREGA_LONG,DOMICILIO
                 ) 
                 VALUES (
                 '${empnit}', ${anio}, ${mes}, '${coddoc}', '${correlativo}',
@@ -988,7 +988,10 @@ router.post("/insertventa", async (req,res)=>{
                 0, 0, 0, 0, 0,
                 '', '', '', '', '',
                 '', '', 0, ${lat},${long},'${app}',
-                '${tipo_pago}','${tipo_doc}','${entrega_contacto}','${entrega_telefono}','${entrega_direccion}','${entrega_referencia}',${entrega_lat},${entrega_long}
+                '${tipo_pago}','${tipo_doc}','${entrega_contacto}',
+                '${entrega_telefono}','${entrega_direccion}',
+                '${entrega_referencia}',${entrega_lat},
+                ${entrega_long},'${domicilio}'
                 );`
                    
                 qrycorrelativo =`   UPDATE ME_TIPODOCUMENTOS 
