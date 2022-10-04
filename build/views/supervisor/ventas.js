@@ -33,7 +33,7 @@ function getView(){
                                 </div>
                                 <div class="col-4">
                                     <button class="btn btn-success shadow hand" id="btnVentasMarca">
-                                        Ventas Mes/Marca
+                                        Ventas Mes/Productos
                                     </button>
                                 </div>
                                 <div class="col-4">
@@ -92,6 +92,8 @@ function getView(){
                   
 
                 </div>
+
+                ${view.modal_productos_vendedor()}
                
             `
         },
@@ -122,20 +124,7 @@ function getView(){
                 
                 <hr class="solid">
                 
-                <div class="row text-right">
-                    <label>Total Marcas:</label>
-                    <h5 class="text-danger negrita" id="lbTotalVentadiaMarcas">---</h5>
-                </div>
-                
-                <table class="table table-responsive table-striped table-hover table-bordered">
-                        <thead class="bg-trans-gradient text-white">
-                        <tr>
-                            <td>Marca</td>
-                            <td>Importe</td>
-                        </tr>
-                        </thead>
-                        <tbody id="tblVtaDiaMarcas"></tbody>
-                </table>
+                             
 
                 `
         },
@@ -149,8 +138,12 @@ function getView(){
                     <table class="table table-responsive table-striped table-hover table-bordered">
                         <thead class="bg-trans-gradient text-white">
                         <tr>
-                            <td>Marca</td>
-                            <td>Importe</td>
+                            <td>Producto</td>
+                            <td>Unidades</td>
+                            <td>TotalCosto</td>
+                            <td>TotalVenta</td>
+                            <td>Utilidad</td>
+                            <td>Margen</td>
                         </tr>
                         </thead>
                         <tbody id="tblMesMarcas"></tbody>
@@ -177,6 +170,56 @@ function getView(){
                 <tbody id="tblVentasVendedoresMes"></tbody>
             </table>
             `
+        },
+        modal_productos_vendedor: ()=>{
+            return `
+            <div class="modal fade" id="modalProductosVendedor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-right" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label class="modal-title text-danger h3" id="">Productos Vendidos del Vendedor</label>
+                        </div>
+
+                        <div class="modal-body">
+                           
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-danger hand shadow btn-md" data-dismiss="modal">
+                                            Cerrar(x)
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+
+                                        <label>Total Venta:</label>
+                                        <h5 class="text-danger negrita" id="lbtotalMesMarcasV">---</h5>
+
+
+                                    </div>
+
+                                </div>
+
+                                <table class="table table-responsive table-striped table-hover table-bordered">
+                                    <thead class="bg-trans-gradient text-white">
+                                    <tr>
+                                        <td>Producto</td>
+                                        <td>Unidades</td>
+                                        <td>TotalCosto</td>
+                                        <td>TotalVenta</td>
+                                        <td>Utilidad</td>
+                                        <td>Margen</td>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tblMesMarcasV"></tbody>
+                                </table>
+                     
+
+                        
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            `
         }
     }
 
@@ -197,13 +240,15 @@ function addListeners(){
     cmbAnio.value = f.getFullYear();
 
     cmbMes.addEventListener('change',()=>{
-        apigen.supervisor_marcasmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas');
+        //apigen.supervisor_marcasmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas');
         apigen.supervisor_vendedores_mes(cmbMes.value,cmbAnio.value, 'tblVentasVendedoresMes','lbTotalVentaVendedoresMes');
+        apigen.supervisor_productosmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas')
     });
 
     cmbAnio.addEventListener('change',()=>{
-        apigen.supervisor_marcasmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas');
+        //apigen.supervisor_marcasmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas');
         apigen.supervisor_vendedores_mes(cmbMes.value,cmbAnio.value, 'tblVentasVendedoresMes','lbTotalVentaVendedoresMes');
+        apigen.supervisor_productosmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas')
     });
     
 
@@ -211,7 +256,8 @@ function addListeners(){
     document.getElementById('txtFecha').addEventListener('change',()=>{
         //btnVentasDia.click();
         apigen.supervisor_ventadia(funciones.devuelveFecha('txtFecha'), 'tblVtaDia','lbTotalVentadia');
-        apigen.supervisor_marcas_dia(funciones.devuelveFecha('txtFecha'), 'tblVtaDiaMarcas','lbTotalVentadiaMarcas')
+        //apigen.supervisor_marcas_dia(funciones.devuelveFecha('txtFecha'), 'tblVtaDiaMarcas','lbTotalVentadiaMarcas')
+        
     })
 
     document.getElementById('txtFecha').value = funciones.getFecha();
@@ -222,7 +268,7 @@ function addListeners(){
 
         document.getElementById('tab-inicio').click();
         
-        //apigen.supervisor_ventadia(funciones.devuelveFecha('txtFecha'), 'tblVtaDia','lbTotalVentadia')
+        apigen.supervisor_ventadia(funciones.devuelveFecha('txtFecha'), 'tblVtaDia','lbTotalVentadia')
 
     });
 
@@ -231,7 +277,7 @@ function addListeners(){
 
         document.getElementById('tab-marcas').click();
 
-        apigen.supervisor_marcasmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas')
+        apigen.supervisor_productosmes(cmbMes.value,cmbAnio.value, 'tblMesMarcas','lbtotalMesMarcas')
     })
 
     
@@ -247,7 +293,7 @@ function addListeners(){
 
     //iniciarles DEL
     apigen.supervisor_ventadia(funciones.devuelveFecha('txtFecha'), 'tblVtaDia','lbTotalVentadia');
-    apigen.supervisor_marcas_dia(funciones.devuelveFecha('txtFecha'), 'tblVtaDiaMarcas','lbTotalVentadiaMarcas');
+    //apigen.supervisor_marcas_dia(funciones.devuelveFecha('txtFecha'), 'tblVtaDiaMarcas','lbTotalVentadiaMarcas');
 
     funciones.slideAnimationTabs();
 
@@ -259,3 +305,12 @@ function initView(){
     addListeners();
 
 };
+
+
+
+function getDetalleProductos(codven){
+
+    $('#modalProductosVendedor').modal('show');
+    apigen.supervisor_productosfechaven(codven,funciones.devuelveFecha('txtFecha'), 'tblMesMarcasV','lbtotalMesMarcasV');
+
+}

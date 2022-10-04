@@ -3254,12 +3254,12 @@ let apigen = {
                     total = total + Number(rows.TOTALPRECIO);
                     let promedio = Number(rows.TOTALPRECIO) / Number(rows.PEDIDOS);
                     strdata = strdata + `
-                    <tr>
+                    <tr class="hand" onclick="getDetalleProductos('${rows.CODVEN}')">
                         <td>${rows.NOMVEN}</td>
                         <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
                         <td>${rows.PEDIDOS}</td>
                         <td>${funciones.setMoneda(promedio,'Q')}</td>
-                        <td>${ funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
+                        <td>${funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
                     </tr>
                     `
             })
@@ -3273,6 +3273,90 @@ let apigen = {
             strdata = '';
             container.innerHTML = '';
         });
+    },
+    supervisor_productosmes: async(mes,anio,idContenedor,idLbTotal)=>{
+
+        let container = document.getElementById(idContenedor);
+        container.innerHTML = GlobalLoader;
+        
+        let lbTotal = document.getElementById(idLbTotal);
+        lbTotal.innerText = '---';
+
+        let strdata = '';
+     
+        axios.post('/ventas/reporteproductossmes', {
+            sucursal: GlobalCodSucursal,
+            mes:mes,
+            anio:anio
+        })
+        .then((response) => {
+            const data = response.data.recordset;
+            let total =0;
+            data.map((rows)=>{
+                    total = total + Number(rows.TOTALPRECIO);
+                    strdata = strdata + `<tr>
+                                            <td>${rows.DESPROD}
+                                                <br>
+                                                <small class="negrita">Código:${rows.CODPROD}</small>
+                                            </td>
+                                            <td>${rows.TOTALUNIDADES}</td>
+                                            <td>${funciones.setMoneda(rows.TOTALCOSTO,'Q')}</td>
+                                            <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
+                                            <td>${funciones.setMoneda(Number(rows.TOTALPRECIO)-Number(rows.TOTALCOSTO),'Q')}</td>
+                                            <td>${funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
+                                        </tr>`
+            })
+            container.innerHTML = strdata;
+            lbTotal.innerText = funciones.setMoneda(total,'Q ');
+        }, (error) => {
+            funciones.AvisoError('Error en la solicitud');
+            strdata = '';
+            container.innerHTML = '';
+            lbTotal.innerText = 'Q 0.00';
+        });
+           
+    },
+    supervisor_productosfechaven: async(codven,fecha,idContenedor,idLbTotal)=>{
+
+        let container = document.getElementById(idContenedor);
+        container.innerHTML = GlobalLoader;
+        
+        let lbTotal = document.getElementById(idLbTotal);
+        lbTotal.innerText = '---';
+
+        let strdata = '';
+     
+        axios.post('/ventas/reporteproductosfechaven', {
+            sucursal: GlobalCodSucursal,
+            fecha:fecha,
+            codven:codven
+        })
+        .then((response) => {
+            const data = response.data.recordset;
+            let total =0;
+            data.map((rows)=>{
+                    total = total + Number(rows.TOTALPRECIO);
+                    strdata = strdata + `<tr>
+                                            <td>${rows.DESPROD}
+                                                <br>
+                                                <small class="negrita">Código:${rows.CODPROD}</small>
+                                            </td>
+                                            <td>${rows.TOTALUNIDADES}</td>
+                                            <td>${funciones.setMoneda(rows.TOTALCOSTO,'Q')}</td>
+                                            <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
+                                            <td>${funciones.setMoneda(Number(rows.TOTALPRECIO)-Number(rows.TOTALCOSTO),'Q')}</td>
+                                            <td>${funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
+                                        </tr>`
+            })
+            container.innerHTML = strdata;
+            lbTotal.innerText = funciones.setMoneda(total,'Q ');
+        }, (error) => {
+            funciones.AvisoError('Error en la solicitud');
+            strdata = '';
+            container.innerHTML = '';
+            lbTotal.innerText = 'Q 0.00';
+        });
+           
     },
     supervisor_marcasmes: async(mes,anio,idContenedor,idLbTotal)=>{
 
