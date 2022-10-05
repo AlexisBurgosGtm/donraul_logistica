@@ -2640,7 +2640,7 @@ let apigen = {
 
 
         
-        let strEncabezado = `DISTRIBUIDORA ${GlobalEmpNombre} \n Recordatorio de Pedido \n --------------------------------- \n`;
+        let strEncabezado = `${GlobalEmpNombre} \n Recordatorio de Pedido \n --------------------------------- \n`;
 
         let strdata = '';
 
@@ -2666,7 +2666,8 @@ let apigen = {
             footer = `--------------------------------- \n Total a Pagar: ${funciones.setMoneda(total,'Q')}`
             msg = strEncabezado + strdata + footer;
             msg = encodeURIComponent(msg);
-            window.open('https://api.whatsapp.com/send?phone='+numero+'&text='+msg);
+            //window.open('https://api.whatsapp.com/send?phone='+numero+'&text='+msg);
+            window.open('https://wa.me/502'+numero+'?text='+msg);
         }, (error) => {
             funciones.AvisoError('Error en la solicitud');
             strdata = '';
