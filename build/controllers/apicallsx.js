@@ -2667,7 +2667,7 @@ let apigen = {
             msg = strEncabezado + strdata + footer;
             msg = encodeURIComponent(msg);
             //window.open('https://api.whatsapp.com/send?phone='+numero+'&text='+msg);
-            window.open('https://wa.me/502'+numero+'?text='+msg);
+            window.open('https://wa.me/'+numero+'?text='+msg);
         }, (error) => {
             funciones.AvisoError('Error en la solicitud');
             strdata = '';
