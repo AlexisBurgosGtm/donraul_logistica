@@ -2769,7 +2769,7 @@ let apigen = {
     },
     digitadorConfirmarPedido: async(sucursal,codven,coddoc,correlativo,embarque)=>{
         return new Promise((resolve,reject)=>{
-            axios.put('/digitacion/pedidoconfirmar',{
+            axios.put('/digitacion/pedidoconfirmar2',{
                 sucursal:sucursal,
                 coddoc:coddoc,
                 correlativo:correlativo,

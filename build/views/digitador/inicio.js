@@ -47,21 +47,21 @@ function getView(){
             <div class="card">
                 <br>
                 <div class="row">
-                    <div class="col-1"></div>
-                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
+                
+                    <div class="col-0 hidden">
                         
                         <select class="form-control hidden" id="cmbEmbarques">
                         </select>
                     </div>
 
                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                        <button class="btn btn-md btn-danger" id="btnPedidoBloquear">
+                        <button class="btn btn-md btn-danger hidden" id="btnPedidoBloquear">
                             <i class="fal fa-globe"></i>
                             Finalizar
                         </button>
-                        <button class="btn btn-md btn-success hidden" id="btnPedidoConfirmar">
-                            <i class="fal fa-bell"></i>
-                            Confirmar
+                        <button class="btn btn-md hand shadow btn-success" id="btnPedidoConfirmar">
+                            <i class="fal fa-check"></i>
+                            Confirmar de entregado
                         </button>
                     </div>
 
@@ -285,6 +285,26 @@ async function addListeners(){
         funciones.Confirmacion('¿Está seguro que desea CONFIRMAR este Pedido?')
         .then((value)=>{
             if(value==true){
+                apigen.digitadorConfirmarPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'ENTREGADO')
+                .then(()=>{
+                    funciones.Aviso('Pedido CONFIRMADO exitosamente!!')
+                    digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+                    $("#modalMenu").modal('hide');
+                })
+                .catch(()=>{
+                    funciones.AvisoError('No se pudo CONFIRMAR :(')
+                })
+            }
+        })
+
+    });
+
+    /**
+      btnPedidoConfirmar.addEventListener('click',()=>{
+        
+        funciones.Confirmacion('¿Está seguro que desea CONFIRMAR este Pedido?')
+        .then((value)=>{
+            if(value==true){
                 apigen.digitadorConfirmarPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,cmbEmbarques.value)
                 .then(()=>{
                     funciones.Aviso('Pedido CONFIRMADO exitosamente!!')
@@ -298,6 +318,7 @@ async function addListeners(){
         })
 
     });
+     */
 
     await apigen.digitadorComboEmbarques('cmbEmbarques');
     
@@ -330,6 +351,33 @@ function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
     .then((value)=>{
         if(value==true){
 
+            apigen.digitadorQuitarRowPedido(idRow,coddoc,correlativo,totalprecio,totalcosto)
+            .then(async()=>{
+                
+                await digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+                document.getElementById(idRow).remove();
+                
+                digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+
+                funciones.Aviso('Item removido exitosamente !!')
+            })
+            .catch((error)=>{
+                console.log(error)
+                funciones.AvisoError('No se pudo remover el item')
+            })
+            
+            
+        }
+    })    
+};
+
+function editProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
+    funciones.Confirmacion('¿Está seguro que desea EDITAR este Producto en este Pedido?')
+    .then((value)=>{
+        if(value==true){
+
+            return;
+            
             apigen.digitadorQuitarRowPedido(idRow,coddoc,correlativo,totalprecio,totalcosto)
             .then(async()=>{
                 
@@ -594,16 +642,20 @@ function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal)
                                 <b class="text-info">${rows.CODMEDIDA}</b>-<b>Cant: ${rows.CANTIDAD}</b>
                             </td>
                             <td>${funciones.setMoneda(rows.PRECIO,"")}</td>
-                            <td>${funciones.setMoneda(rows.IMPORTE,"")}
-                                <div class="row">
-                                    <div class="col-6">
-                                        <button class="btn btn-danger btn-md btn-circle"
+                            <td>${funciones.setMoneda(rows.IMPORTE,"")}</td>
+                            <td>
+                                <button class="btn btn-info btn-md btn-circle hand shadow"
                                             onclick="deleteProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO})">
-                                            <i class="fal fa-trash"></i>
-                                        </button>              
-                                    </div>
-                                </div>
+                                            <i class="fal fa-edit"></i>
+                                </button>              
                             </td>
+                            <td>
+                                <button class="btn btn-danger btn-md btn-circle hand shadow"
+                                            onclick="editProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO})">
+                                            <i class="fal fa-trash"></i>
+                                </button>              
+                            </td>
+                            
                         </tr>
                         `
         })

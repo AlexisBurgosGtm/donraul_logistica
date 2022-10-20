@@ -29,6 +29,15 @@ router.put('/pedidoconfirmar', async(req,res)=>{
 
 });
 
+router.put('/pedidoconfirmar2', async(req,res)=>{
+    const {sucursal,codven,coddoc,correlativo,embarque} = req.body;
+
+    let qry = `UPDATE ME_DOCUMENTOS SET DOC_ESTATUS='I', DOC_NUMORDEN='${embarque}' WHERE CODSUCURSAL='${sucursal}' AND CODVEN=${codven} AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}'`;   
+
+    execute.Query(res,qry);
+
+});
+
 router.post("/pedidostipoprecio", async(req,res)=>{
     const {sucursal,codven}  = req.body;
     
