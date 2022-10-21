@@ -30,9 +30,10 @@ router.put('/pedidoconfirmar', async(req,res)=>{
 });
 
 router.put('/pedidoconfirmar2', async(req,res)=>{
-    const {sucursal,codven,coddoc,correlativo,embarque} = req.body;
+    const {sucursal,coddoc,correlativo,embarque} = req.body;
 
-    let qry = `UPDATE ME_DOCUMENTOS SET DOC_ESTATUS='I', DOC_NUMORDEN='${embarque}' WHERE CODSUCURSAL='${sucursal}' AND CODVEN=${codven} AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}'`;   
+    let qry = `UPDATE ME_DOCUMENTOS SET DOC_ESTATUS='I', DOC_NUMORDEN='${embarque}' 
+                WHERE CODSUCURSAL='${sucursal}' AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}'`;   
 
     execute.Query(res,qry);
 
@@ -43,7 +44,10 @@ router.post("/pedidostipoprecio", async(req,res)=>{
     
     let qry = '';
     qry = `SELECT ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.CODVEN, ME_Documentos.CODSUCURSAL, ME_Docproductos.CODPROD, 
-            ME_Docproductos.DESCRIPCION AS DESPROD, ME_Docproductos.CODMEDIDA, ME_Docproductos.CANTIDAD, ME_Docproductos.PRECIO, ME_Docproductos.TOTALPRECIO, ME_Docproductos.TIPOPRECIO
+            ME_Docproductos.DESCRIPCION AS DESPROD, ME_Docproductos.CODMEDIDA, ME_Docproductos.CANTIDAD, 
+            ME_Docproductos.PRECIO, 
+            ME_Docproductos.TOTALPRECIO, 
+            ME_Docproductos.TIPOPRECIO, ME_Docproductos.COSTO, ME_Docproductos.TOTALCOSTO
             FROM ME_Documentos LEFT OUTER JOIN
                 ME_Tipodocumentos ON ME_Documentos.CODSUCURSAL = ME_Tipodocumentos.CODSUCURSAL AND ME_Documentos.CODDOC = ME_Tipodocumentos.CODDOC AND 
                 ME_Documentos.EMP_NIT = ME_Tipodocumentos.EMP_NIT LEFT OUTER JOIN
@@ -144,7 +148,11 @@ router.post("/detallepedido", async(req,res)=>{
     
         
     let qry = '';
-    qry = `SELECT ME_Docproductos.CODPROD, ME_Docproductos.DESCRIPCION AS DESPROD, ME_Docproductos.CODMEDIDA, ME_Docproductos.CANTIDAD, ME_Docproductos.PRECIO, ME_Docproductos.TOTALPRECIO AS IMPORTE, ME_Docproductos.DOC_ITEM, ME_Docproductos.TOTALCOSTO
+    qry = `SELECT ME_Docproductos.CODPROD, ME_Docproductos.DESCRIPCION AS DESPROD, ME_Docproductos.CODMEDIDA, 
+                    ME_Docproductos.CANTIDAD, ME_Docproductos.PRECIO, 
+                    ME_Docproductos.TOTALPRECIO AS IMPORTE, 
+                    ME_Docproductos.COSTO, 
+                    ME_Docproductos.DOC_ITEM, ME_Docproductos.TOTALCOSTO
             FROM ME_Documentos LEFT OUTER JOIN
             ME_Docproductos ON ME_Documentos.CODSUCURSAL = ME_Docproductos.CODSUCURSAL AND ME_Documentos.DOC_NUMERO = ME_Docproductos.DOC_NUMERO AND 
             ME_Documentos.CODDOC = ME_Docproductos.CODDOC AND ME_Documentos.EMP_NIT = ME_Docproductos.EMP_NIT
@@ -167,6 +175,38 @@ router.put("/pedidoquitaritem", async(req,res)=>{
 
 });
 
+router.post("/updaterowpedido", async(req,res)=>{
+
+    const {sucursal,coddoc,correlativo,item,cantidad,precio,totalprecio,totalcosto} = req.body;
+
+    let qryDocProd = `UPDATE ME_DOCPRODUCTOS
+                SET CANTIDAD=${cantidad},CANTIDADINV=${cantidad}, 
+                TOTALCOSTO=${totalcosto}, PRECIO=${precio}, TOTALPRECIO=${totalprecio}
+        WHERE CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}' AND DOC_ITEM=${item} AND CODSUCURSAL='${sucursal}';`
+
+  
+    execute.Query(res, qryDocProd);
+
+});
+
+
+router.post("/updatedocumentototal", async(req,res)=>{
+
+    const {sucursal,coddoc,correlativo,totalprecio,totalcosto} = req.body;
+
+    let qry = `UPDATE ME_DOCUMENTOS 
+                            SET DOC_TOTALCOSTO=${totalcosto}, 
+                            DOC_TOTALVENTA=${totalprecio}, 
+                            DOC_SUBTOTALIVA=${totalprecio}, 
+                            DOC_SUBTOTAL=${totalprecio}, 
+                            DOC_TOTCOSINV=${totalcosto} 
+                        WHERE CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}' AND CODSUCURSAL='${sucursal}';`
+
+    
+
+    execute.Query(res, qry);
+
+});
 
 router.post("/embarquespendientes", async(req,res)=>{
      const sucursal = req.body.sucursal;

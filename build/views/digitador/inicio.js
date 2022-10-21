@@ -67,12 +67,11 @@ function getView(){
 
                 </div>
                 <br>
-                <div class="table-responsive">
+                <div class="table-responsive col-12">
                     <table class="table table-responsive table-hover table-striped table-bordered">
                         <thead class="bg-trans-gradient text-white">
                             <tr>
                                 <td>Producto</td>
-                                <td>Medida</td>
                                 <td>Cant</td>
                                 <td>Precio</td>
                                 <td>Subtotal</td>
@@ -229,11 +228,71 @@ function getView(){
                 </div>
             </div>
             `
+        },
+        modalCambiarCantidadProducto :()=>{
+            return `
+                <div class="modal fade" id="modalCambiarCantidadProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-md" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <label class="modal-title text-info h3" id="">Cambiar cantidad de producto</label>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                </button>
+                            </div>
+                
+                            <div class="modal-body shadow">
+                                    <div class="">            
+                                        
+                                        <div class="form-group">
+                                            <label>Nueva cantidad:</label>
+                                            <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevaCant">
+                                        </div>                                                             
+                                            
+                                        <div class="form-group">
+                                            <label>Nuevo Precio:</label>
+                                            <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevoPrecio">
+                                        </div> 
+
+                                        <div class="form-group">
+                                            <label>Subtotal</label>
+                                            <br>
+                                            <h3 id="lbCantNuevoSubtotal">0</h3>
+                                        </div> 
+
+                                    </div>
+                                    
+                                    <br>
+            
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <button class="btn btn-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="">
+                                                <i class="fal fa-times mr-1"></i>
+                                                Cancelar
+                                            </button>                                
+                                        </div>
+            
+                                        <div class="col-1"></div>
+            
+                                        <div class="col-5">
+                                            <button class="btn btn-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnCantGuardar">
+                                                <i class="fal fa-check mr-1"></i>Aceptar
+                                            </button>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                            
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>`
         }
     };
 
     root.innerHTML = view.encabezado() + view.listado() + view.listaTipoPrecio();
-    rootMenuLateral.innerHTML = view.detallepedido() + view.modalCantidad();
+    rootMenuLateral.innerHTML = view.detallepedido() + view.modalCambiarCantidadProducto() + view.modalCantidad();
     
 };
 
@@ -277,7 +336,7 @@ async function addListeners(){
         
     });
 
-    let cmbEmbarques = document.getElementById('cmbEmbarques');
+    //let cmbEmbarques = document.getElementById('cmbEmbarques');
 
     let btnPedidoConfirmar = document.getElementById('btnPedidoConfirmar');
     btnPedidoConfirmar.addEventListener('click',()=>{
@@ -285,14 +344,27 @@ async function addListeners(){
         funciones.Confirmacion('¿Está seguro que desea CONFIRMAR este Pedido?')
         .then((value)=>{
             if(value==true){
+
+                
+                
+                btnPedidoConfirmar.disabled = true;
+                btnPedidoConfirmar.innerHTML = '<i class="fal fa-check fa-spin"></i>Confirmando...';
+
                 apigen.digitadorConfirmarPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'ENTREGADO')
                 .then(()=>{
+
                     funciones.Aviso('Pedido CONFIRMADO exitosamente!!')
                     digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                     $("#modalMenu").modal('hide');
+
+                    btnPedidoConfirmar.disabled = false;
+                    btnPedidoConfirmar.innerHTML = `<i class="fal fa-check"></i>Confirmar de entregado`;
                 })
                 .catch(()=>{
-                    funciones.AvisoError('No se pudo CONFIRMAR :(')
+                    funciones.AvisoError('No se pudo CONFIRMAR :(');
+
+                    btnPedidoConfirmar.disabled = false;
+                    btnPedidoConfirmar.innerHTML = `<i class="fal fa-check"></i>Confirmar de entregado`;
                 })
             }
         })
@@ -320,8 +392,9 @@ async function addListeners(){
     });
      */
 
-    await apigen.digitadorComboEmbarques('cmbEmbarques');
-    
+    //await apigen.digitadorComboEmbarques('cmbEmbarques');
+    addEventsModalCambioCantidad();
+
 };
 
 function iniciarVistaDigitador(){
@@ -371,28 +444,98 @@ function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
     })    
 };
 
-function editProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
+
+function addEventsModalCambioCantidad(){
+
+
+
+    document.getElementById('btnCantGuardar').addEventListener('click',()=>{
+
+        let nuevacantidad = Number(document.getElementById('txtCantNuevaCant').value);
+        let nuevoprecio = Number(document.getElementById('txtCantNuevoPrecio').value);
+
+
+
+        if(nuevacantidad>0){
+            fcnUpdateTempRow(GlobalSelectedId,nuevacantidad,nuevoprecio)
+           
+        }else{
+            funciones.AvisoError('Escriba una cantidad válida')
+        }  
+    });
+    
+    document.getElementById('txtCantNuevaCant').addEventListener('change',()=>{
+      
+        let nuevacantidad = Number(document.getElementById('txtCantNuevaCant').value);
+        let nuevoprecio = Number(document.getElementById('txtCantNuevoPrecio').value);
+
+            let subtotal = nuevacantidad * nuevoprecio;
+
+            document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
+    });
+
+    document.getElementById('txtCantNuevoPrecio').addEventListener('change',()=>{
+      
+        let nuevacantidad = Number(document.getElementById('txtCantNuevaCant').value);
+        let nuevoprecio = Number(document.getElementById('txtCantNuevoPrecio').value);
+
+            let subtotal = nuevacantidad * nuevoprecio;
+
+            document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
+    });
+
+};
+
+function fcnUpdateTempRow(id,cantidad,precio){
+
+    
+    //--------------------------
+    if(Number(GlobalSelectedCosto)>Number(precio)){
+            funciones.AvisoError('Precio menor al costo, por favor rectifique');
+            return;
+    };
+    //--------------------------
+ 
+    document.getElementById('btnCantGuardar').innerHTML = `<i class="fal fa-check mr-1 fa-spin"></i>Actualizando...`;
+    document.getElementById('btnCantGuardar').disabled = true;
+
+    update_row_pedido(id,cantidad,precio)
+            .then(()=>{
+                
+                document.getElementById('btnCantGuardar').innerHTML = `<i class="fal fa-check mr-1"></i>Aceptar`;
+                document.getElementById('btnCantGuardar').disabled = false;
+
+                $('#modalCambiarCantidadProducto').modal('hide');
+
+                digitadorDetallePedido('',GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'tblDetallePedido','lbTotalDetallePedido');
+               
+             
+            })
+            .catch((err)=>{
+                
+                document.getElementById('btnCantGuardar').innerHTML = `<i class="fal fa-check mr-1"></i>Aceptar`;
+                document.getElementById('btnCantGuardar').disabled = false;
+
+                funciones.AvisoError('No se logró editar...');
+            })
+};
+
+function editProductoPedido(idRow,coddoc,correlativo,cantidad,costo,precio){
     funciones.Confirmacion('¿Está seguro que desea EDITAR este Producto en este Pedido?')
     .then((value)=>{
         if(value==true){
 
-            return;
-            
-            apigen.digitadorQuitarRowPedido(idRow,coddoc,correlativo,totalprecio,totalcosto)
-            .then(async()=>{
-                
-                await digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
-                document.getElementById(idRow).remove();
-                
-                digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
-
-                funciones.Aviso('Item removido exitosamente !!')
-            })
-            .catch((error)=>{
-                console.log(error)
-                funciones.AvisoError('No se pudo remover el item')
-            })
-            
+            GlobalSelectedId = idRow;
+            GlobalSelectedExistencia = Number(0);
+            GlobalSelectedCosto = Number(costo);
+    
+            document.getElementById('txtCantNuevaCant').value = cantidad;
+            document.getElementById('txtCantNuevoPrecio').value = precio;
+    
+            let subtotal = cantidad * precio;
+            document.getElementById('lbCantNuevoSubtotal').innerText = funciones.setMoneda(subtotal,'Q');
+        
+            $("#modalCambiarCantidadProducto").modal('show');
             
         }
     })    
@@ -449,9 +592,37 @@ function iniciarModalCantidad(){
 
 };
 
-function fcnUpdateRowPedido(idRow,cant){
-    
-    funciones.Aviso('En esta función se cambiará el total');
+
+
+
+function update_row_pedido(idrow,cantidad,precio){
+   
+    let totalprecio = Number(precio) * Number(cantidad);
+    let totalcosto = Number(GlobalSelectedCosto) * Number(cantidad);
+
+    console.log('costo: ' + totalcosto);
+   
+    return new Promise((resolve,reject)=>{
+             
+        axios.post('/digitacion/updaterowpedido',{
+            sucursal:GlobalCodSucursal,
+            item:idrow,
+            coddoc:GlobalSelectedCoddoc,
+            correlativo:GlobalSelectedCorrelativo,
+            cantidad:cantidad,
+            precio:precio,
+            totalprecio:totalprecio,
+            totalcosto:totalcosto
+        })
+        .then((response) => {
+            
+           resolve();             
+        }, (error) => {
+            
+            reject();
+        });
+
+    })
 
 };
 
@@ -535,7 +706,7 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                 let f = funciones.convertDateNormal(rows.FECHA);
 
                 strdata = strdata + `
-                        <div class="card shadow col-12 p-2 card-rounded">
+                        <div class="card shadow col-12 p-2 card-rounded border-info">
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-6">
@@ -612,6 +783,9 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
 
 function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal){
 
+    varPedidoTotalCosto = 0;
+    varPedidoTotalPrecio = 0;
+
     let container = document.getElementById(idContenedor);
     container.innerHTML = GlobalLoader;
     
@@ -632,26 +806,31 @@ function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal)
         const data = response.data.recordset;
         let total =0;
         data.map((rows)=>{
+            
+            varPedidoTotalCosto += Number(rows.TOTALCOSTO);
+            varPedidoTotalPrecio += Number(rows.IMPORTE);
+
                 total = total + Number(rows.IMPORTE);
                 strdata = strdata + `
                         <tr id='${rows.DOC_ITEM}'>
-                            <td colspan="3">${rows.DESPROD}
+                            <td>${rows.DESPROD}
                                 <br>
                                 <small class="text-danger">${rows.CODPROD}</small>
-                                <br>
-                                <b class="text-info">${rows.CODMEDIDA}</b>-<b>Cant: ${rows.CANTIDAD}</b>
                             </td>
+
+                            <td><b class="text-info">${rows.CODMEDIDA}</b>-<b>Cant: ${rows.CANTIDAD}</b></td>
+
                             <td>${funciones.setMoneda(rows.PRECIO,"")}</td>
                             <td>${funciones.setMoneda(rows.IMPORTE,"")}</td>
                             <td>
                                 <button class="btn btn-info btn-md btn-circle hand shadow"
-                                            onclick="deleteProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO})">
+                                            onclick="editProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.CANTIDAD},${rows.COSTO},${rows.PRECIO})">
                                             <i class="fal fa-edit"></i>
                                 </button>              
                             </td>
                             <td>
                                 <button class="btn btn-danger btn-md btn-circle hand shadow"
-                                            onclick="editProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO})">
+                                            onclick="deleteProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO})">
                                             <i class="fal fa-trash"></i>
                                 </button>              
                             </td>
@@ -661,11 +840,38 @@ function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal)
         })
         container.innerHTML = strdata;
         lbTotal.innerText = `${funciones.setMoneda(total,'Q')}`;
+        
+        update_total_documento()
+        .then(()=>{ document.getElementById('btnRecargar').click();});
+
     }, (error) => {
         funciones.AvisoError('Error en la solicitud');
         strdata = '';
         container.innerHTML = '';
         lbTotal.innerText = 'Q0.00';
+        varPedidoTotalCosto = 0;
+        varPedidoTotalPrecio = 0;
     });
        
-}
+};
+
+function update_total_documento(){
+   
+    return new Promise((resolve,reject)=>{
+             
+        axios.post('/digitacion/updatedocumentototal',{
+            sucursal:GlobalCodSucursal,
+            coddoc:GlobalSelectedCoddoc,
+            correlativo:GlobalSelectedCorrelativo,
+            totalprecio:varPedidoTotalPrecio,
+            totalcosto:varPedidoTotalCosto
+        })
+        .then((response) => {
+           resolve();             
+        }, (error) => {
+            reject();
+        });
+
+    })
+
+};

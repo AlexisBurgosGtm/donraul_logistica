@@ -61,6 +61,9 @@ let GlobalSelectedExento = 0;
 let GlobalSelectedCosto = 0;
 let GlobalSelectedPrecio = 0;
 let GlobalSelectedExistencia = 0;
+let varPedidoTotalCosto = 0;
+let varPedidoTotalPrecio = 0;
+
 // global vars para cantidad producto
 
 let GlobalSelectedCodEmbarque ='';
