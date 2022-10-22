@@ -48,20 +48,21 @@ function getView(){
                 <br>
                 <div class="row">
                 
-                    <div class="col-0 hidden">
-                        
-                        <select class="form-control hidden" id="cmbEmbarques">
-                        </select>
+                    <div class="col-6">
+                            <button class="btn btn-md hand shadow btn-danger" id="btnPedidoConfirmar">
+                                <i class="fal fa-check"></i>
+                                Confirmar de entregado
+                            </button>
                     </div>
 
-                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div class="col-6">
                         <button class="btn btn-md btn-danger hidden" id="btnPedidoBloquear">
                             <i class="fal fa-globe"></i>
                             Finalizar
                         </button>
-                        <button class="btn btn-md hand shadow btn-success" id="btnPedidoConfirmar">
-                            <i class="fal fa-check"></i>
-                            Confirmar de entregado
+                        <button class="btn btn-md hand shadow btn-success" id="btnPedidoAgregar">
+                            <i class="fal fa-plus"></i>
+                            Agregar producto
                         </button>
                     </div>
 
@@ -109,7 +110,7 @@ function getView(){
                     <div class="modal-body">
                         <div class="row">
                             <div class="table-responsive" id="">
-                                <table class="table table-responsive table-hover table-striped table-bordered">
+                                <table class="table table-hover table-striped table-bordered">
                                     <thead class="bg-trans-gradient text-white">
                                         <tr>
                                             <td>Documento</td>
@@ -132,102 +133,6 @@ function getView(){
             </div>
         </div>`
 
-        },
-        modalCantidad:()=>{
-            return `
-            <div class="modal fade" id="ModalCantidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-md" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <label class="modal-title text-danger h3" id="">Nueva Cantidad</label>
-                        </div>
-
-                        <div class="modal-body">
-
-                            <div class="row">
-                                <div class="col-2">
-                                    <h1 class="text-danger fw-700">Cant:</h1>
-                                </div>
-                                <div class="col-8 text-center">
-                                    <h1 class="text-danger fw-700" id="lbCalcTotal">0</h1>
-                                </div>
-                                <div class="col-2"></div>
-                            </div>
-                            
-                            <br>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc1">1</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc2">2</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc3">3</button>
-                                </div>
-                            </div>
-                            
-                            <br>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc4">4</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc5">5</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc6">6</button>
-                                </div>
-                            </div>
-                            
-                            <br>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc7">7</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc8">8</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc9">9</button>
-                                </div>
-                            </div>
-                            <br>
-                            <div class="row">
-                                <div class="col-4">
-                            
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-xl btn-circle btn-info" id="btnCalc0">0</button>
-                                </div>
-                                <div class="col-4">
-                            
-                                </div>
-                            </div>
-
-                            <br><br><br>
-
-                            <div class="row">
-                                <div class="col-4">
-                                    <button class="btn btn-danger btn-md" id="btnCalcCancelar">Cancelar</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-primary btn-md" id="btnCalcLimpiar">Limpiar</button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-success btn-md" id="btnCalcAceptar">Aceptar</button>
-                                </div>
-                            </div>
-                        
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
-            `
         },
         modalCambiarCantidadProducto :()=>{
             return `
@@ -288,18 +193,72 @@ function getView(){
                         </div>
                     </div>
                 </div>`
+        },
+        modalListaProductos :()=>{
+            return `
+            <div class="modal fade modal-with-scroll" id="ModalBusqueda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-right" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label class="modal-title text-danger h3" id="">Búsqueda de Productos</label>
+                          
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="input-group">
+                                    <select class="form-control col-3 shadow border-secondary negrita border-left-0 border-right-0 border-top-0 hidden" id="cmbTipoPrecio">
+                                        <option value="P">P</option>
+                                        <option value="C">C</option>
+                                        <option value="B">B</option>
+                                        <option value="A">A</option>
+                                        <option value="K">K</option>
+                                    </select>
+                                    <input id="txtBusqueda" type="text" ref="txtBusqueda" class="bg-amarillo form-control col-7 shadow" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
+                                    <div class="input-group-prepend">
+                                        <button class="btn btn-success btn-rounded waves-effect waves-themed shadow" type="button" id="btnBuscarProducto">
+                                            <i class="fal fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <table class="table table-responsive table-striped table-hover">
+                            <thead class="bg-secondary text-white">
+                                <tr>
+                                    <td>Producto</td>
+                                    <td>Precio</td>                         
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody id="tblResultadoBusqueda">
+                            
+
+                            </tbody>
+                        </table>
+                        </div>
+                        
+                    
+                    </div>
+                </div>
+                <div class="shortcut-menu align-left">
+                    <button class="btn btn-danger btn-sm" id="btnCerrarModalLista">
+                        <i class="fal fa-angle-double-left"></i>Atrás
+                    </button>
+                </div>
+            </div>
+            
+            `
         }
     };
 
     root.innerHTML = view.encabezado() + view.listado() + view.listaTipoPrecio();
-    rootMenuLateral.innerHTML = view.detallepedido() + view.modalCambiarCantidadProducto() + view.modalCantidad();
+    rootMenuLateral.innerHTML = view.detallepedido() + view.modalCambiarCantidadProducto() + view.modalListaProductos();
     
 };
 
 async function addListeners(){
-    
-    iniciarModalCantidad();
-
+   
+   
     //tipo de lista
     let cmbStatus = document.getElementById('cmbStatus');
     cmbStatus.addEventListener('change',()=>{
@@ -371,26 +330,23 @@ async function addListeners(){
 
     });
 
-    /**
-      btnPedidoConfirmar.addEventListener('click',()=>{
+  
+    let btnPedidoAgregar = document.getElementById('btnPedidoAgregar');
+    btnPedidoAgregar.addEventListener('click',()=>{
         
-        funciones.Confirmacion('¿Está seguro que desea CONFIRMAR este Pedido?')
-        .then((value)=>{
-            if(value==true){
-                apigen.digitadorConfirmarPedido(GlobalCodSucursal,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,cmbEmbarques.value)
-                .then(()=>{
-                    funciones.Aviso('Pedido CONFIRMADO exitosamente!!')
-                    digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
-                    $("#modalMenu").modal('hide');
-                })
-                .catch(()=>{
-                    funciones.AvisoError('No se pudo CONFIRMAR :(')
-                })
-            }
-        })
+        $("#ModalBusqueda").modal('show');
 
     });
-     */
+
+    document.getElementById('btnBuscarProducto').addEventListener('click',()=>{
+        fcnBusquedaProducto('txtBusqueda','tblResultadoBusqueda','cmbTipoPrecio');
+       
+    });
+
+
+    document.getElementById('btnCerrarModalLista').addEventListener('click',()=>{
+        $("#ModalBusqueda").modal('hide');
+    })
 
     //await apigen.digitadorComboEmbarques('cmbEmbarques');
     addEventsModalCambioCantidad();
@@ -403,9 +359,91 @@ function iniciarVistaDigitador(){
 
 };
 
-function getDetallePedido(fecha,coddoc,correlativo){
+
+function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
+    
+    let cmbTipoPrecio = document.getElementById(idTipoPrecio);
+
+    let filtro = document.getElementById(idFiltro).value;
+    
+    let tabla = document.getElementById(idTablaResultado);
+    tabla.innerHTML = GlobalLoader;
+
+
+    let str = ""; 
+
+    selectProducto(filtro)
+    .then((response) => {
+        const data = response;
+        //con esta variable determino el tipo de precio a usar            
+        let pre = 0;
+            
+            data.map((rows)=>{
+                let exist = Number(rows.EXISTENCIA)/Number(rows.EQUIVALE); let strC = '';
+                if(Number(rows.EXISTENCIA<=0)){strC='bg-danger text-white'}else{strC='bg-success text-white'};
+                let totalexento = 0;
+                if (rows.EXENTO==1){totalexento=Number(rows.PRECIO)}
+                
+                switch (cmbTipoPrecio.value) {
+                    case 'P':
+                        pre = Number(rows.PRECIO)
+                        break;
+                    case 'C':
+                        pre = Number(rows.PRECIOC)
+                        break;
+                    case 'B':
+                        pre = Number(rows.PRECIOB)
+                        break;
+                    case 'A':
+                        pre = Number(rows.PRECIOA)
+                        break;
+                    case 'K':
+                        pre = Number(0.01)
+                        break;
+     
+                }
+
+                str += `<tr id="${rows.CODPROD}" onclick="getDataMedidaProducto('${rows.CODPROD}','${funciones.quitarCaracteres(rows.DESPROD,'"'," plg",true)}','${rows.CODMEDIDA}',1,${rows.EQUIVALE},${rows.EQUIVALE},${rows.COSTO},${pre},${totalexento},${Number(rows.EXISTENCIA)});" class="border-bottom">
+                <td >
+                    ${funciones.quitarCaracteres(rows.DESPROD,'"'," pulg",true)}
+                    <br>
+                    <small class="text-danger"><b>${rows.CODPROD}</b></small><small class="text-info">//Escala:${rows.DESPROD3}</small>
+                    <br>
+                    <b class"bg-danger text-white">${rows.CODMEDIDA}</b>
+                    <small>(${rows.EQUIVALE})</small>
+                </td>
+                <td>${funciones.setMoneda(pre || 0,'Q ')}
+                    <br>
+                    <small class="${strC}">E:${funciones.setMoneda(exist,'')}</small>
+                </td>
+                
+                <td>
+                    <button class="btn btn-sm btn-success btn-circle text-white" 
+                    onclick="getDataMedidaProducto('${rows.CODPROD}','${funciones.quitarCaracteres(rows.DESPROD,'"'," plg",true)}','${rows.CODMEDIDA}',1,${rows.EQUIVALE},${rows.EQUIVALE},${rows.COSTO},${pre},${totalexento},${Number(rows.EXISTENCIA)});">
+                        +
+                    </button>
+                <td>
+                
+            </tr>`
+            })
+            tabla.innerHTML= str;
+        
+    }, (error) => {
+        console.log(error);
+    })
+    .catch((error)=>{
+        //funciones.AvisoError(error);
+        tabla.innerHTML ='<label>Debe descargar los productos al menos una vez al día.. Descárguelos nuevamente por favor.</label>';
+    })
+
+
+
+
+};
+
+function getDetallePedido(fecha,coddoc,correlativo,st, cliente){
     GlobalSelectedFecha = fecha;
-    lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
+    lbMenuTitulo.innerText = `${cliente}`; //` Pedido: ${coddoc}-${correlativo}`;
     digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
     $("#modalMenu").modal('show');
 };
@@ -542,58 +580,6 @@ function editProductoPedido(idRow,coddoc,correlativo,cantidad,costo,precio){
 };
 
 
-function iniciarModalCantidad(){
-    let total = document.getElementById('lbCalcTotal');
-    total.innerText = "";
-    let btnCalcAceptar = document.getElementById('btnCalcAceptar');
-    let btnCalcLimpiar = document.getElementById('btnCalcLimpiar');
-    let btnCalcCancelar = document.getElementById('btnCalcCancelar');
-
-    let b0 = document.getElementById('btnCalc0');
-    let b1 = document.getElementById('btnCalc1');
-    let b2 = document.getElementById('btnCalc2');
-    let b3 = document.getElementById('btnCalc3');
-    let b4 = document.getElementById('btnCalc4');
-    let b5 = document.getElementById('btnCalc5');
-    let b6 = document.getElementById('btnCalc6');
-    let b7 = document.getElementById('btnCalc7');
-    let b8 = document.getElementById('btnCalc8');
-    let b9 = document.getElementById('btnCalc9');
-
-    b0.addEventListener('click',()=>{total.innerText = total.innerText + "0"})
-    b1.addEventListener('click',()=>{total.innerText = total.innerText + "1"})
-    b2.addEventListener('click',()=>{total.innerText = total.innerText + "2"})
-    b3.addEventListener('click',()=>{total.innerText = total.innerText + "3"})
-    b4.addEventListener('click',()=>{total.innerText = total.innerText + "4"})
-    b5.addEventListener('click',()=>{total.innerText = total.innerText + "5"})
-    b6.addEventListener('click',()=>{total.innerText = total.innerText + "6"})
-    b7.addEventListener('click',()=>{total.innerText = total.innerText + "7"})
-    b8.addEventListener('click',()=>{total.innerText = total.innerText + "8"})
-    b9.addEventListener('click',()=>{total.innerText = total.innerText + "9"})
-    btnCalcLimpiar.addEventListener('click',()=>{total.innerText = ""})
-
-    btnCalcAceptar.addEventListener('click',async ()=>{
-        let n = Number(total.innerText);
-        
-        fcnUpdateRowPedido();
-        //fcnUpdateTempRow(GlobalSelectedId,n)
-        //.then(async()=>{
-            
-            //
-        //})
-        total.innerText = "";
-        
-        $("#ModalCantidad").modal('hide');
-    })
-
-    btnCalcCancelar.addEventListener('click',()=>{
-        $("#ModalCantidad").modal('hide');
-    });
-
-};
-
-
-
 
 function update_row_pedido(idrow,cantidad,precio){
    
@@ -664,7 +650,7 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                 if(rows.DOMICILIO=='SI'){
                     strClassStatus='bg-danger text-white';
                     domicilio='ENTREGA DOMICILIO';
-                    tblentrega = `<table class="table">
+                    tblentrega = `<table class="table-bordered">
                                    
                                     <tbody>
                                         <tr>
@@ -709,6 +695,7 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                         <div class="card shadow col-12 p-2 card-rounded border-info">
                             <div class="card-body">
                                 <div class="row">
+
                                     <div class="col-6">
                                         <b>Fecha: ${f}</b>
                                         <br>
@@ -716,34 +703,35 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                         <br>
                                         <small class="negrita">${rows.NOMVEN}</small>
                                     </div>
-                                    <div class="col-6" onclick="getDetallePedido('${f}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}')">
+                                    <div class="col-6" onclick="getDetallePedido('${f}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}','${rows.NIT} - ${rows.NOMCLIE}')">
                                         <h2 class="negrita text-danger text-right">${funciones.setMoneda(rows.IMPORTE,'Q')}</h2>
                                     </div>
+
                                 </div>   
                                 
-                                <hr class="solid">
+                                <br class="solid">
 
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                                             <small class="negrita text-danger">Datos de Facturación:</small>
                                             <br>
-                                            <table class="table">
+                                            <table class="table-bordered">
                                                 <tbody>
                                                     <tr>
-                                                        <td>Nit:</td>
+                                                        <td>Nit: </td>
                                                         <td>${rows.NIT}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Nombre:</td>
+                                                        <td>Nombre: </td>
                                                         <td>${rows.NOMCLIE}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Dirección:</td>
+                                                        <td>Dirección: </td>
                                                         <td>${rows.DIRCLIE}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Tipo Documento</td>
-                                                        <td class="negrita ${strClassRowSt}">${rows.OBS}</td>
+                                                        <td>Tipo Documento: </td>
+                                                        <td class="negrita ${strClassRowSt}"> ${rows.OBS}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -818,7 +806,7 @@ function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal)
                                 <small class="text-danger">${rows.CODPROD}</small>
                             </td>
 
-                            <td><b class="text-info">${rows.CODMEDIDA}</b>-<b>Cant: ${rows.CANTIDAD}</b></td>
+                            <td><b>${rows.CANTIDAD} - ${rows.CODMEDIDA}</b></td>
 
                             <td>${funciones.setMoneda(rows.PRECIO,"")}</td>
                             <td>${funciones.setMoneda(rows.IMPORTE,"")}</td>
