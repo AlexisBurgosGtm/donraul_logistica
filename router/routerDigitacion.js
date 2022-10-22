@@ -84,7 +84,7 @@ router.post("/pedidospendientes", async(req,res)=>{
     ME_Documentos.ENTREGA_REFERENCIA, 
     ME_Documentos.ENTREGA_LAT, 
     ME_Documentos.ENTREGA_LONG,
-    ME_Documentos.DOMICILIO
+    ME_Documentos.DOMICILIO, ME_Documentos.DOC_ANO AS ANIO, ME_Documentos.DOC_MES AS MES
 FROM            ME_Documentos LEFT OUTER JOIN
     ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
 WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ESTATUS = 'O') AND (ME_Documentos.ISCENVIADO = 0)
@@ -117,7 +117,7 @@ router.post("/pedidosbloqueados", async(req,res)=>{
                          ME_Documentos.ENTREGA_REFERENCIA, 
                          ME_Documentos.ENTREGA_LAT, 
                          ME_Documentos.ENTREGA_LONG, 
-                         ME_Documentos.DOMICILIO
+                         ME_Documentos.DOMICILIO,ME_Documentos.DOC_ANO AS ANIO, ME_Documentos.DOC_MES AS MES
 FROM            ME_Documentos LEFT OUTER JOIN
                          ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
 WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ESTATUS = 'A') AND (ME_Documentos.ISCENVIADO = 0)
@@ -152,7 +152,7 @@ router.post("/detallepedido", async(req,res)=>{
                     ME_Docproductos.CANTIDAD, ME_Docproductos.PRECIO, 
                     ME_Docproductos.TOTALPRECIO AS IMPORTE, 
                     ME_Docproductos.COSTO, 
-                    ME_Docproductos.DOC_ITEM, ME_Docproductos.TOTALCOSTO
+                    ME_Docproductos.DOC_ITEM, ME_Docproductos.TOTALCOSTO, ME_Docproductos.DOC_ANO AS ANIO, ME_Docproductos.DOC_MES AS MES
             FROM ME_Documentos LEFT OUTER JOIN
             ME_Docproductos ON ME_Documentos.CODSUCURSAL = ME_Docproductos.CODSUCURSAL AND ME_Documentos.DOC_NUMERO = ME_Docproductos.DOC_NUMERO AND 
             ME_Documentos.CODDOC = ME_Docproductos.CODDOC AND ME_Documentos.EMP_NIT = ME_Docproductos.EMP_NIT

@@ -24,7 +24,10 @@
   }
 
 
-
+.negrita-subrayado {
+    text-decoration: underline;
+    font-weight: bold;
+}
 
 
 .currSign:before {

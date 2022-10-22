@@ -360,6 +360,7 @@ function iniciarVistaDigitador(){
 };
 
 
+// LISTA DE PRODUCTOS
 function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
     
     let cmbTipoPrecio = document.getElementById(idTipoPrecio);
@@ -441,10 +442,67 @@ function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
 
 };
 
-function getDetallePedido(fecha,coddoc,correlativo,st, cliente){
-    GlobalSelectedFecha = fecha;
+function getDataMedidaProducto(codprod,desprod,codmedida,cantidad,equivale,totalunidades,costo,precio,exento,existencia){
+   
+        
+
+
+        insert_nuevo_producto('P', codprod,desprod, codmedida, Number(equivale), Number(cantidad), Number(totalunidades), Number(costo), Number(precio), (Number(costo)*Number(cantidad)), (Number(precio)*Number(cantidad)) )
+        .then(()=>{
+            funciones.showToast('Producto agregado exitosamente!!');
+            getDetallePedido(varPedidoMes,varPedidoAnio,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'','');
+        })
+        .catch((err)=>{
+            
+            console.log(err);
+            funciones.AvisoError('No se pudo agregar');
+
+        })
+    
+
+};
+
+
+function insert_nuevo_producto(tipoprecio, codprod, desprod, codmedida, equivale, cantidad, totalunidades, costo, precio, totalcosto, totalprecio){
+   
+    return new Promise((resolve,reject)=>{
+             
+        axios.post('/ventas/insert_row_docproductos',{
+            sucursal:GlobalCodSucursal,
+            coddoc:GlobalSelectedCoddoc,
+            correlativo:GlobalSelectedCorrelativo,
+            empnit: GlobalCodSucursal,
+            anio: varPedidoAnio, 
+            mes: varPedidoMes,
+            tipoprecio: tipoprecio,
+            codprod: codprod,
+            desprod: desprod,
+            codmedida: codmedida,
+            cantidad: cantidad,
+            equivale: equivale,
+            totalunidades: totalunidades,
+            costo: costo,
+            precio: precio,
+            totalprecio: totalprecio,
+            totalcosto: totalcosto
+        })
+        .then((response) => {
+           resolve();             
+        }, (error) => {
+            reject();
+        });
+
+    })
+
+};
+
+
+
+
+function getDetallePedido(mes,anio,coddoc,correlativo,st, cliente){
+    //GlobalSelectedFecha = fecha;
     lbMenuTitulo.innerText = `${cliente}`; //` Pedido: ${coddoc}-${correlativo}`;
-    digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+    digitadorDetallePedido(mes,anio,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
     $("#modalMenu").modal('show');
 };
 
@@ -468,7 +526,7 @@ function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
                 await digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                 document.getElementById(idRow).remove();
                 
-                digitadorDetallePedido(GlobalSelectedFecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
+                digitadorDetallePedido(varPedidoMes,varPedidoAnio,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
 
                 funciones.Aviso('Item removido exitosamente !!')
             })
@@ -545,7 +603,7 @@ function fcnUpdateTempRow(id,cantidad,precio){
 
                 $('#modalCambiarCantidadProducto').modal('hide');
 
-                digitadorDetallePedido('',GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'tblDetallePedido','lbTotalDetallePedido');
+                digitadorDetallePedido(varPedidoMes,varPedidoAnio,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'tblDetallePedido','lbTotalDetallePedido');
                
              
             })
@@ -650,33 +708,33 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                 if(rows.DOMICILIO=='SI'){
                     strClassStatus='bg-danger text-white';
                     domicilio='ENTREGA DOMICILIO';
-                    tblentrega = `<table class="table-bordered">
+                    tblentrega = `<table class="">
                                    
                                     <tbody>
                                         <tr>
                                             <td>
                                                 <small class="${strClassStatus}">${domicilio}</small>
                                             </td>
-                                            <td> 
+                                            <td>  
                                                 <button class="btn btn-md btn-warning shadow hand" onclick="funciones.gotoGoogleMaps('${rows.ENTREGA_LAT}','${rows.ENTREGA_LONG}')">
                                                     <i class="fal fa-map"></i> Ver en el mapa
                                                 </button>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Contacto:</td>
+                                            <td class="negrita-subrayado">Contacto:</td>
                                             <td>${rows.ENTREGA_CONTACTO}</td>
                                         </tr>
                                         <tr>
-                                            <td>Teléfono:</td>
+                                            <td class="negrita-subrayado">Teléfono:</td>
                                             <td>${rows.ENTREGA_TELEFONO}</td>
                                         </tr>
                                         <tr>
-                                            <td>Dirección:</td>
+                                            <td class="negrita-subrayado">Dirección:</td>
                                             <td>${rows.ENTREGA_DIRECCION}</td>
                                         </tr>
                                         <tr>
-                                            <td>Referencia:</td>
+                                            <td class="negrita-subrayado">Referencia:</td>
                                             <td>${rows.ENTREGA_REFERENCIA}</td>
                                         </tr>
                                     </tbody>
@@ -703,7 +761,7 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                         <br>
                                         <small class="negrita">${rows.NOMVEN}</small>
                                     </div>
-                                    <div class="col-6" onclick="getDetallePedido('${f}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}','${rows.NIT} - ${rows.NOMCLIE}')">
+                                    <div class="col-6 hand" onclick="getDetallePedido('${rows.MES}','${rows.ANIO}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}','${rows.NIT} - ${rows.NOMCLIE}')">
                                         <h2 class="negrita text-danger text-right">${funciones.setMoneda(rows.IMPORTE,'Q')}</h2>
                                     </div>
 
@@ -715,22 +773,22 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                     <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
                                             <small class="negrita text-danger">Datos de Facturación:</small>
                                             <br>
-                                            <table class="table-bordered">
+                                            <table class="">
                                                 <tbody>
                                                     <tr>
-                                                        <td>Nit: </td>
+                                                        <td class="negrita-subrayado">Nit: </td>
                                                         <td>${rows.NIT}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Nombre: </td>
+                                                        <td class="negrita-subrayado">Nombre: </td>
                                                         <td>${rows.NOMCLIE}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Dirección: </td>
+                                                        <td class="negrita-subrayado">Dirección: </td>
                                                         <td>${rows.DIRCLIE}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Tipo Documento: </td>
+                                                        <td class="negrita-subrayado">Tipo Documento: </td>
                                                         <td class="negrita ${strClassRowSt}"> ${rows.OBS}</td>
                                                     </tr>
                                                 </tbody>
@@ -767,10 +825,11 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
        
 };
 
+function digitadorDetallePedido(mes,anio,coddoc,correlativo,idContenedor,idLbTotal){
 
-
-function digitadorDetallePedido(fecha,coddoc,correlativo,idContenedor,idLbTotal){
-
+    
+    varPedidoAnio = Number(anio);
+    varPedidoMes = Number(mes);
     varPedidoTotalCosto = 0;
     varPedidoTotalPrecio = 0;
 

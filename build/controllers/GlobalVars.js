@@ -63,6 +63,8 @@ let GlobalSelectedPrecio = 0;
 let GlobalSelectedExistencia = 0;
 let varPedidoTotalCosto = 0;
 let varPedidoTotalPrecio = 0;
+let varPedidoAnio = 0;
+let varPedidoMes = 0;
 
 // global vars para cantidad producto
 

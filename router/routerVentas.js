@@ -298,6 +298,62 @@ router.post("/tempVentas", async(req,res)=>{
 
 });
 
+
+
+// inserta un nuevo registro en temp ventas   
+router.post("/insert_row_docproductos", async(req,res)=>{
+        
+    
+    let anio = req.body.anio; 
+    let mes = req.body.mes;
+    let correlativo = req.body.correlativo;
+    let coddoc = req.body.coddoc;
+    let empnit = req.body.empnit;
+    let tipoprecio = req.body.tipoprecio;
+    let codprod = req.body.codprod;
+    let desprod = req.body.desprod;
+    let codmedida= req.body.codmedida;
+    let cantidad=Number(req.body.cantidad);
+    let equivale = Number(req.body.equivale);
+    let totalunidades = Number(req.body.totalunidades);
+    let costo = Number(req.body.costo);
+    let precio=Number(req.body.precio);
+    let totalcosto =Number(req.body.totalcosto);
+    let totalprecio=Number(req.body.totalprecio);
+     
+    let qry = '';
+
+    qry = `INSERT INTO ME_DOCPRODUCTOS 
+    (EMP_NIT,DOC_ANO,DOC_MES,CODDOC,DOC_NUMERO,
+    DOC_ITEM,CODPROD,CODMEDIDA,CANTIDAD,EQUIVALE,
+    CANTIDADINV,COSTO,PRECIO,TOTALCOSTO,TOTALPRECIO,
+    BODEGAENTRADA,BODEGASALIDA,SUBTOTAL,DESCUENTOPROD,PORDESCUPROD,
+    DESCUENTOFAC,PORDESCUFAC,TOTALDESCUENTO,DESCRIPCION,SUBTOTALPROD,
+    TIPOCAMBIO,PRODPRECIO,CANTIDADENVIADA,CODFAC,NUMFAC,
+    ITEMFAC,NOAFECTAINV, DOCPESO,COSTOINV,FLETE,TOTALPRECIOFIN,PRECIOFIN,TOTALCOSTOINV,CANTIDADBONI,CODOPR,NUMOPR,
+    ITEMOPR,CODINV,NUMINV,ITEMINV,TIPOCLIE,LISTA,PORIVA,VALORIVA,NOLOTE,VALORIMPU1,DESEMPAQUE,
+    SALDOINVANTCOM,NCUENTAMESA,CUENTACERRADA,COSTODOL,COSTOINVDOL,TOTALCOSTODOL,TOTALCOSTOINVDOL,
+    IMPCOMBUSTIBLE,CODVENPROD,COMIVEN,SOBREPRECIO,CODREG,NUMREG,ITEMREG,CANTIDADORIGINAL,CANTIDADMODIFICADA,NSERIETARJETA,
+    CODOC,NUMOC,PORTIMBREPRENSA,VALORTIMBREPRENSA,CODTIPODESCU,TOTALPUNTOS,ITEMOC,CODPRODORIGEN,CODMEDIDAORIGEN,
+    CANTIDADDEVUELTA,CODARANCEL,TIPOPRECIO,CODSUCURSAL) 
+    VALUES ('${empnit}',${anio},${mes},'${coddoc}','${correlativo}',
+    ${0},'${codprod}','${codmedida}',${cantidad},${equivale},
+    ${totalunidades},${costo},${precio},${totalcosto},${totalprecio},
+    '','01',${totalprecio},0,0,
+    0,0,0,'${desprod}',${totalprecio},
+    1,${precio},0,'','',
+    0,0,0,${costo},0,${totalprecio},
+    ${precio},${totalcosto},0,'','',0,'','',0,'P','',
+     0,0,'SN',0,'',0,'',0,0,${costo},0,${totalcosto},0,0,0,0,'','',0,0,0,'','','',0,0,'',0,0,'','',0,'','${tipoprecio}','${empnit}' 
+    );`
+
+        
+    console.log(qry);
+
+   execute.Query(res,qry);
+
+});
+
 // elimina un item de la venta
 router.delete("/tempVentas", async(req,res)=>{
     let id=Number(req.body.id);
