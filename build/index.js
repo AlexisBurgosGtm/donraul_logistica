@@ -164,18 +164,19 @@ btnUpdate.addEventListener('click',()=>{
                         if (noOfRowsInserted > 0) {
                             let porc = (Number(contador) / Number(totalrows)) * 100;
                             //setLog(`<label>Productos agregados: ${contador} de ${totalrows} (${porc.toFixed(2)}%)</label>`,'rootWait')
-                            //btnUpdate.innerHTML = `<i>${porc.toFixed(0)}%</i>`;
+                            btnUpdate.innerHTML = `<i style="font-size:70%">${porc.toFixed(0)}%</i>`;
                             //btnUpdate.disabled = false;
                 
                             contador += 1;
                             if(totalrows==contador){
                                 
-                                btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
+                                //btnUpdate.innerHTML = '<i class="fal fa-sync"></i>';
                                 btnUpdate.disabled = false;
                                 //$('#modalWait').modal('hide');
-                                funciones.Aviso('Productos descargados exitosamente!!')
-                                //funciones.showToast('Productos descargados exitosamente!!')
-                                
+                                //funciones.Aviso('Productos descargados exitosamente!!')
+                                funciones.showToast('Productos descargados exitosamente!!')
+
+                                document.getElementById('btnUpdate').innerHTML = '<i class="fal fa-sync"></i>';
                             }
                         }
                     });

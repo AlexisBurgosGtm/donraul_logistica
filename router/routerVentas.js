@@ -26,16 +26,7 @@ router.post('/loadpedido',async(req,res)=>{
     const {sucursal, usuario, coddoc, correlativo} = req.body;
     
     let qry='';
-    let qryold = `SELECT EMP_NIT AS EMPNIT, CODPROD, DESCRIPCION AS DESPROD, 
-        CODMEDIDA, CANTIDAD, EQUIVALE, CANTIDADINV AS TOTALUNIDADES, 
-        COSTO, PRECIO, TOTALCOSTO, TOTALPRECIO, 0 AS EXENTO, 
-        '${usuario}' AS USUARIO, TIPOPRECIO, '${sucursal}' AS CODSUCURSAL 
-        FROM ME_DOCPRODUCTOS
-        WHERE CODSUCURSAL='${sucursal}' 
-        AND CODDOC='${coddoc}' 
-        AND DOC_NUMERO='${correlativo}'; `
-
-
+    
         qry = `
         SELECT ME_Docproductos.EMP_NIT AS EMPNIT, ME_Docproductos.CODPROD, ME_Docproductos.DESCRIPCION AS DESPROD, ME_Docproductos.CODMEDIDA, 
                          ME_Docproductos.CANTIDAD, ME_Docproductos.EQUIVALE, ME_Docproductos.CANTIDADINV AS TOTALUNIDADES, ME_Docproductos.COSTO, ME_Docproductos.PRECIO, 
@@ -621,10 +612,19 @@ router.post("/listapedidos", async(req,res)=>{
     const {sucursal,codven,fecha}  = req.body;
     
     let qry = '';
-    qry = `SELECT        ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.NITCLIE AS CODCLIE, 
+    qry = `SELECT ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.NITCLIE AS CODCLIE, 
     ME_Clientes.NOMFAC AS NEGOCIO, ME_Documentos.DOC_NOMREF AS NOMCLIE, 
                              ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.LAT, ME_Documentos.LONG, 
-                             ME_Documentos.DOC_OBS AS OBS, ME_Documentos.DOC_MATSOLI AS DIRENTREGA, ME_Documentos.DOC_ESTATUS AS ST
+                             ME_Documentos.DOC_OBS AS OBS, ME_Documentos.DOC_MATSOLI AS DIRENTREGA, ME_Documentos.DOC_ESTATUS AS ST,
+                             ME_Documentos.TIPO_PAGO,
+                             ME_Documentos.TIPO_DOC,
+                             ME_Documentos.ENTREGA_CONTACTO,
+                             ME_Documentos.ENTREGA_TELEFONO,
+                             ME_Documentos.ENTREGA_DIRECCION,
+                             ME_Documentos.ENTREGA_REFERENCIA,
+                             ME_Documentos.ENTREGA_LAT,
+                             ME_Documentos.ENTREGA_LONG,
+                             ME_Documentos.DOMICILIO
     FROM            ME_Documentos LEFT OUTER JOIN
                              ME_Clientes ON ME_Documentos.NITCLIE = ME_Clientes.NITCLIE AND ME_Documentos.CODSUCURSAL = ME_Clientes.CODSUCURSAL
     WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_FECHA = '${fecha}') AND (ME_Documentos.CODVEN = ${codven}) AND (ME_Documentos.DOC_ESTATUS <> 'A')`

@@ -897,7 +897,7 @@ function getView(){
 
 };
 
-async function iniciarVistaVentas(nit,nombre,direccion){
+async function iniciarVistaVentas(nit,nombre,direccion,st){
 
     
     //inicializa la vista
@@ -1173,6 +1173,19 @@ async function iniciarVistaVentas(nit,nombre,direccion){
         document.getElementById('lbEntregaLong').innerText = '0';
     });
 
+
+
+    if(st=='LOAD'){
+        document.getElementById('cmbEntregaConcre').value = Global_tipo_pago;
+        document.getElementById('cmbEntregaTipoDoc').value = Global_tipo_doc;
+        document.getElementById('txtEntregaContacto').value = Global_entrega_contacto;
+        document.getElementById('txtEntregaTelefono').value = Global_entrega_telefono;
+        document.getElementById('txtEntregaDireccion').value = Global_entrega_direccion;
+        document.getElementById('txtEntregaReferencia').value = Global_entrega_referencia;
+        document.getElementById('lbEntregaLat').innerText = Global_entrega_lat;
+        document.getElementById('lbEntregaLong').innerText = Global_entrega_long;
+    };
+    
     funciones.slideAnimationTabs();
     
 };

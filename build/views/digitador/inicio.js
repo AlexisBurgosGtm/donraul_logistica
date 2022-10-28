@@ -171,7 +171,7 @@ function getView(){
             
                                     <div class="row">
                                         <div class="col-5">
-                                            <button class="btn btn-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="">
+                                            <button class="btn btn-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" id="btnCantCancelar">
                                                 <i class="fal fa-times mr-1"></i>
                                                 Cancelar
                                             </button>                                
@@ -347,6 +347,12 @@ async function addListeners(){
     document.getElementById('btnCerrarModalLista').addEventListener('click',()=>{
         $("#ModalBusqueda").modal('hide');
     })
+
+    document.getElementById('btnCantCancelar').addEventListener('click',()=>{
+        $("#modalCambiarCantidadProducto").modal('hide');
+    })
+
+    //btnCantCancelar
 
     //await apigen.digitadorComboEmbarques('cmbEmbarques');
     addEventsModalCambioCantidad();

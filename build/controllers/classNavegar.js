@@ -131,12 +131,12 @@ let classNavegar = {
             window.history.pushState({"page":1}, "clientes", '/clientes');
         })
     },
-    ventas: async(nit,nombre,direccion)=>{
+    ventas: async(nit,nombre,direccion,st)=>{
         
             funciones.loadScript('./views/vendedor/facturacion.js','root')
             .then(()=>{
                 GlobalSelectedForm ='VENTAS';
-                iniciarVistaVentas(nit,nombre,direccion);
+                iniciarVistaVentas(nit,nombre,direccion,st);
                 window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
             })
           

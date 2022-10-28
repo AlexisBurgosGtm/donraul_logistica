@@ -51,6 +51,18 @@ let GlobalSelectedCodCliente;
 let GlobalSelectedNomCliente;
 let GlobalSelectedDirCliente;
 
+
+let Global_tipo_pago ='';
+let Global_tipo_doc ='';
+let Global_entrega_contacto ='';
+let Global_entrega_telefono ='';
+let Global_entrega_direccion ='';
+let Global_entrega_referencia ='';
+let Global_entrega_lat ='';
+let Global_entrega_long ='';
+let Global_domicilio ='';
+
+
 // global vars para cantidad producto
 let GlobalSelectedCodprod = '';
 let GlobalSelectedDesprod = '';

@@ -210,6 +210,7 @@ function getView(){
 
 function addListeners(){
 
+
     document.getElementById('btnVenta').addEventListener('click',()=>{
             classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
     });
@@ -287,6 +288,7 @@ function inicializarVistaLogro(){
     addListeners();
 };
 
+
 function getRptDinero2(mes,anio){
     apigen.reporteDinero2(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
 };
@@ -338,7 +340,10 @@ function deletePedidoVendedor(fecha,coddoc,correlativo,st){
 
 };
 
-function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st){
+
+function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st,
+    tipo_pago,tipo_doc,
+    entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long,domicilio){
 
     GlobalSelectedSt = st;
     GlobalSelectedFecha = fecha;
@@ -347,6 +352,15 @@ function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st){
     GlobalSelectedCodCliente=codclie;
     GlobalSelectedNomCliente=nomclie;
     GlobalSelectedDirCliente=dirclie;
+    Global_tipo_pago = tipo_pago;
+    Global_tipo_doc = tipo_doc;
+    Global_entrega_contacto = entrega_contacto;
+    Global_entrega_telefono = entrega_telefono;
+    Global_entrega_direccion = entrega_direccion;
+    Global_entrega_referencia = entrega_referencia;
+    Global_entrega_lat = entrega_lat;
+    Global_entrega_long = entrega_long;
+    Global_domicilio = domicilio;
 
     lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
     apigen.digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
@@ -468,7 +482,7 @@ function cargarPedidoEdicion(coddoc,correlativo,st){
                                             funciones.showToast('Pedido anterior eliminado con éxito!!');
                                             
                                             $('#modalWait').modal('hide');
-                                            classNavegar.ventas(GlobalSelectedCodCliente,GlobalSelectedNomCliente,GlobalSelectedDirCliente);
+                                            classNavegar.ventas(GlobalSelectedCodCliente,GlobalSelectedNomCliente,GlobalSelectedDirCliente,'LOAD');
                                         })
                                         .catch(()=>{
                                             $('#modalWait').modal('hide');

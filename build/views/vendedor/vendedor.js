@@ -721,4 +721,6 @@ function send_solicitud_cliente(codclie,nitclie,tiponegocio,negocio,nomclie,dirc
         });
     })
 
-}
+};
+
+

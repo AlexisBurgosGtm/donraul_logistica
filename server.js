@@ -29,6 +29,7 @@ var path = __dirname + '/'
 
 //manejador de rutas
 router.use(function (req,res,next) {
+ 
   /*
       // Website you wish to allow to connect
       res.setHeader('Access-Control-Allow-Origin', '*');
@@ -39,7 +40,8 @@ router.use(function (req,res,next) {
         // Set to true if you need the website to include cookies in the requests sent
       res.setHeader('Access-Control-Allow-Credentials', true);
   */
-  console.log("/" + req.toString());
+
+  //console.log("/" + req.toString());
   next();
 });
 
@@ -91,7 +93,6 @@ app.use("/",router);
 
 app.use("*",function(req,res){
   res.redirect('/');
-  //res.send('<h1 class="text-danger">NO DISPONIBLE</h1>');
 });
 
 
