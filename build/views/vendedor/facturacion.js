@@ -1300,8 +1300,8 @@ function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
         let pre = 0;
             
             data.map((rows)=>{
-                let exist = Number(rows.EXISTENCIA)/Number(rows.EQUIVALE); let strC = '';
-                if(Number(rows.EXISTENCIA<=0)){strC='bg-danger text-white'}else{strC='bg-success text-white'};
+                let exist = Number(rows.EXISTENCIA)/Number(rows.EQUIVALE); let strC = ''; let strCfont = '';
+                if(Number(rows.EXISTENCIA<=0)){strC='bg-danger text-white'; strCfont='text-danger negrita'}else{strC='bg-success text-white'; strCfont='text-info negrita'};
                 let totalexento = 0;
                 if (rows.EXENTO==1){totalexento=Number(rows.PRECIO)}
                 
@@ -1328,14 +1328,14 @@ function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
                 <td >
                     ${funciones.quitarCaracteres(rows.DESPROD,'"'," pulg",true)}
                     <br>
-                    <small class="text-danger"><b>${rows.CODPROD}</b></small><small class="text-info">//Escala:${rows.DESPROD3}</small>
+                    <small class="${strCfont}"><b>${rows.CODPROD}</b></small><small class="text-info">//Escala:${rows.DESPROD3}</small>
                     <br>
                     <b class"bg-danger text-white">${rows.CODMEDIDA}</b>
                     <small>(${rows.EQUIVALE})</small>
                 </td>
                 <td>${funciones.setMoneda(pre || 0,'Q ')}
                     <br>
-                    <small class="${strC}">E:${funciones.setMoneda(exist,'')}</small>
+                    <h5 class="${strCfont}">E:${funciones.setMoneda(exist,'')}</h5>
                 </td>
                 
                 <td>

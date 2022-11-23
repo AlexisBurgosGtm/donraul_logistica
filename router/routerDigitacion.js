@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 router.put('/pedidobloquear', async(req,res)=>{
-    const {sucursal,coddoc,correlativo} = req.body;
+    const {sucursal,coddoc,correlativo,status} = req.body;
 
-    let qry = `UPDATE ME_DOCUMENTOS SET DOC_ESTATUS='A' WHERE CODSUCURSAL='${sucursal}' AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}'`;
+    let qry = `UPDATE ME_DOCUMENTOS SET DOC_ESTATUS='${status}' WHERE CODSUCURSAL='${sucursal}' AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}'`;
     
     execute.Query(res,qry);
 

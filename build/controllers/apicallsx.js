@@ -2723,13 +2723,14 @@ let apigen = {
         });
            
     },
-    digitadorBloquearPedido: async(sucursal,coddoc,correlativo)=>{
+    digitadorBloquearPedido: async(sucursal,coddoc,correlativo,status)=>{
         
         return new Promise((resolve,reject)=>{
             axios.put('/digitacion/pedidobloquear',{
                 sucursal:sucursal,
                 coddoc:coddoc,
-                correlativo:correlativo
+                correlativo:correlativo,
+                status:status
             })
             .then((response) => {
                 

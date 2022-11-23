@@ -643,17 +643,30 @@ function editProductoPedido(idRow,coddoc,correlativo,cantidad,costo,precio){
     })    
 };
 
-function anular_venta(coddoc,correlativo){
+function anular_venta(coddoc,correlativo,idbtn,status){
+
+    let btn = document.getElementById(idbtn);
+
     funciones.Confirmacion('¿Está seguro que desea ANULAR este Pedido?')
     .then((value)=>{
         if(value==true){
-            apigen.digitadorBloquearPedido(GlobalCodSucursal,coddoc,correlativo)
+            btn.disabled = true;
+            btn.innerHTML = 'ESPERE POR FAVOR...';
+
+            apigen.digitadorBloquearPedido(GlobalCodSucursal,coddoc,correlativo,status)
             .then(()=>{
                 funciones.Aviso('Pedido ANULADO exitosamente!!')
                 digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
                 $("#modalMenu").modal('hide');
             })
             .catch(()=>{
+                if(cmbStatus.value=='A'){
+                    btn.innerHTML = '<i class="fal fa-sync"></i> ACTIVAR VENTA';
+                }else{
+                    btn.innerHTML = '<i class="fal fa-trash"></i> ANULAR VENTA';
+                }
+                
+                btn.disabled = false;
                 funciones.AvisoError('No se pudo Bloquear :(')
             })
         }
@@ -725,6 +738,8 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
         let strClassStatus = '';
         let strClassRowSt = '';
         data.map((rows)=>{
+                let idbtn = '';
+                idbtn = `btnAnular${rows.CODDOC + '-' + rows.CORRELATIVO}`;
                 let domicilio = ''; let tblentrega = '';
                 if(rows.DOMICILIO=='SI'){
                     strClassStatus='bg-danger text-white';
@@ -765,11 +780,22 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                     domicilio='TIENDA';
                     tblentrega = '';
                 }
-                if(rows.ST=='A'){strClassRowSt='bg-danger text-white'}else{strClassRowSt=''}
+                let strBtnAnular = '';
+                if(rows.ST=='A'){
+                    strClassRowSt='bg-danger text-white';
+                    strBtnAnular = `<button id="${idbtn}" class="btn btn-info hand shadow" onclick="anular_venta('${rows.CODDOC}','${rows.CORRELATIVO}','${idbtn}','O')">
+                                    <i class="fal fa-sync"></i>ACTIVAR VENTA
+                                </button>`;
+                }else{
+                    strClassRowSt='';
+                    strBtnAnular = `<button id="${idbtn}" class="btn btn-danger hand shadow" onclick="anular_venta('${rows.CODDOC}','${rows.CORRELATIVO}','${idbtn}' 'A')">
+                                    <i class="fal fa-trash"></i> ANULAR VENTA
+                                </button>`;
+                }
                 total = total + Number(rows.IMPORTE);
                 totalpedidos = totalpedidos + 1;
                 let f = funciones.convertDateNormal(rows.FECHA);
-
+                
                 strdata = strdata + `
                         <div class="card shadow col-12 p-2 card-rounded border-info">
                             <div class="card-body">
@@ -824,10 +850,7 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                     </div>
                                     <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
                                         <br><br><br><br>
-                                        <button class="btn btn-danger hand shadow" onclick="anular_venta('${rows.CODDOC}','${rows.CORRELATIVO}')">
-                                            <i class="fal fa-trash"></i> ANULAR VENTA
-                                        </button>
-
+                                        ${strBtnAnular}
                                     </div>
                                 </div>
 
