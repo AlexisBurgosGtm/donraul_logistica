@@ -10,7 +10,7 @@ function getView(){
                         <div class="input-group">
                             <select class="form-control" id="cmbStatus">
                                 <option value="O">Pendientes</option>
-                                <option value="A">Finalizado</option>
+                                <option value="A">Anulados</option>
                             </select>
                             <div class="input-group-prepend">
                                 <button class="btn btn-info waves-effect waves-themed shadow" type="button" id="btnRecargar">
