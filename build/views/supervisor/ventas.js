@@ -287,7 +287,8 @@ function addListeners(){
         document.getElementById('tab-vendedor').click();
 
         apigen.supervisor_vendedores_mes(cmbMes.value,cmbAnio.value, 'tblVentasVendedoresMes','lbTotalVentaVendedoresMes')
-    })
+    
+    });
 
 
 
@@ -312,5 +313,13 @@ function getDetalleProductos(codven){
 
     $('#modalProductosVendedor').modal('show');
     apigen.supervisor_productosfechaven(codven,funciones.devuelveFecha('txtFecha'), 'tblMesMarcasV','lbtotalMesMarcasV');
+
+}
+
+
+function getDetalleProductosMes(codven){
+
+    $('#modalProductosVendedor').modal('show');
+    apigen.supervisor_productos_mes(codven,cmbMes.value,cmbAnio.value, 'tblMesMarcasV','lbtotalMesMarcasV');
 
 }

@@ -863,12 +863,12 @@ router.post('/rptrankingvendedoressucursal2', async(req,res)=>{
 router.post('/rptrankingvendedoressucursalmes', async(req,res)=>{
     const {anio,mes,sucursal} = req.body;
 
-    let qry = `SELECT  ME_Vendedores.NOMVEN, COUNT(ME_Documentos.CODDOC) AS PEDIDOS, SUM(ME_Documentos.DOC_TOTALVENTA) AS TOTALPRECIO,
+    let qry = `SELECT  ME_Documentos.CODVEN, ME_Vendedores.NOMVEN, COUNT(ME_Documentos.CODDOC) AS PEDIDOS, SUM(ME_Documentos.DOC_TOTALVENTA) AS TOTALPRECIO,
     SUM(ME_Documentos.DOC_TOTALCOSTO) AS TOTALCOSTO
     FROM            ME_Documentos LEFT OUTER JOIN
                              ME_Vendedores ON ME_Documentos.CODVEN = ME_Vendedores.CODVEN AND ME_Documentos.CODSUCURSAL = ME_Vendedores.CODSUCURSAL
                 WHERE (ME_Documentos.DOC_ESTATUS <> 'A') AND (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_ANO = ${anio}) AND (ME_Documentos.DOC_MES = ${mes})
-                GROUP BY ME_Vendedores.NOMVEN
+                GROUP BY ME_Documentos.CODVEN, ME_Vendedores.NOMVEN
                 ORDER BY TOTALPRECIO DESC`;
     
 
@@ -978,6 +978,34 @@ router.post('/reporteproductosfechaven',async(req,res)=>{
         GROUP BY ME_Docproductos.CODPROD, ME_Docproductos.DESCRIPCION, ME_Documentos.DOC_FECHA, ME_Documentos.CODVEN`;
 
                 console.log(qry);
+
+    execute.Query(res,qry);
+
+
+});
+
+
+router.post('/reporteproductos_mes',async(req,res)=>{
+
+    const {mes,anio,sucursal,codven} = req.body;
+
+    let qry = `SELECT ME_Docproductos.CODPROD, 
+                        ME_Docproductos.DESCRIPCION AS DESPROD, 
+                        SUM(ME_Docproductos.CANTIDADINV) AS TOTALUNIDADES, 
+                        SUM(ME_Docproductos.TOTALCOSTO) AS TOTALCOSTO, 
+                        SUM(ME_Docproductos.TOTALPRECIO) AS TOTALPRECIO
+        FROM  ME_Documentos LEFT OUTER JOIN
+            ME_Docproductos ON ME_Documentos.CODSUCURSAL = ME_Docproductos.CODSUCURSAL AND ME_Documentos.DOC_MES = ME_Docproductos.DOC_MES AND ME_Documentos.DOC_ANO = ME_Docproductos.DOC_ANO AND
+            ME_Documentos.CODDOC = ME_Docproductos.CODDOC AND ME_Documentos.DOC_NUMERO = ME_Docproductos.DOC_NUMERO LEFT OUTER JOIN
+            ME_Tipodocumentos ON ME_Documentos.CODSUCURSAL = ME_Tipodocumentos.CODSUCURSAL AND ME_Documentos.CODDOC = ME_Tipodocumentos.CODDOC
+        WHERE  (ME_Tipodocumentos.TIPODOC = 'PED') 
+            AND (ME_Documentos.DOC_ESTATUS <> 'A') 
+            AND (ME_Documentos.CODSUCURSAL = '${sucursal}')
+            AND (ME_Documentos.CODVEN = ${codven})
+            AND (ME_Documentos.DOC_ANO = ${anio})
+            AND (ME_Documentos.DOC_MES = ${mes})
+        GROUP BY ME_Docproductos.CODPROD, ME_Docproductos.DESCRIPCION, ME_Documentos.CODVEN, ME_Documentos.DOC_MES, ME_Documentos.DOC_ANO`;
+
 
     execute.Query(res,qry);
 

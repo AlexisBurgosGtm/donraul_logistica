@@ -3361,6 +3361,49 @@ let apigen = {
         });
            
     },
+    supervisor_productos_mes: async(codven,mes,anio,idContenedor,idLbTotal)=>{
+
+        let container = document.getElementById(idContenedor);
+        container.innerHTML = GlobalLoader;
+        
+        let lbTotal = document.getElementById(idLbTotal);
+        lbTotal.innerText = '---';
+
+        let strdata = '';
+     
+        axios.post('/ventas/reporteproductos_mes', {
+            sucursal: GlobalCodSucursal,
+            anio:anio,
+            mes:mes,
+            codven:codven
+        })
+        .then((response) => {
+            const data = response.data.recordset;
+            let total =0;
+            data.map((rows)=>{
+                    total = total + Number(rows.TOTALPRECIO);
+                    strdata = strdata + `<tr>
+                                            <td>${rows.DESPROD}
+                                                <br>
+                                                <small class="negrita">Código:${rows.CODPROD}</small>
+                                            </td>
+                                            <td>${rows.TOTALUNIDADES}</td>
+                                            <td>${funciones.setMoneda(rows.TOTALCOSTO,'Q')}</td>
+                                            <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
+                                            <td>${funciones.setMoneda(Number(rows.TOTALPRECIO)-Number(rows.TOTALCOSTO),'Q')}</td>
+                                            <td>${funciones.getMargenUtilidad(Number(rows.TOTALPRECIO),Number(rows.TOTALCOSTO))}</td>
+                                        </tr>`
+            })
+            container.innerHTML = strdata;
+            lbTotal.innerText = funciones.setMoneda(total,'Q ');
+        }, (error) => {
+            funciones.AvisoError('Error en la solicitud');
+            strdata = '';
+            container.innerHTML = '';
+            lbTotal.innerText = 'Q 0.00';
+        });
+           
+    },
     supervisor_marcasmes: async(mes,anio,idContenedor,idLbTotal)=>{
 
         let container = document.getElementById(idContenedor);
@@ -3453,7 +3496,7 @@ let apigen = {
                     total = total + Number(rows.TOTALPRECIO);
                     let promedio = Number(rows.TOTALPRECIO) / Number(rows.PEDIDOS);
                     strdata = strdata + `
-                    <tr>
+                    <tr onclick="getDetalleProductosMes('${rows.CODVEN}')">
                         <td>${rows.NOMVEN}</td>
                         <td>${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
                         <td>${rows.PEDIDOS}</td>
