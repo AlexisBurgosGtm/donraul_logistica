@@ -643,7 +643,22 @@ function editProductoPedido(idRow,coddoc,correlativo,cantidad,costo,precio){
     })    
 };
 
-
+function anular_venta(coddoc,correlativo){
+    funciones.Confirmacion('¿Está seguro que desea ANULAR este Pedido?')
+    .then((value)=>{
+        if(value==true){
+            apigen.digitadorBloquearPedido(GlobalCodSucursal,coddoc,correlativo)
+            .then(()=>{
+                funciones.Aviso('Pedido ANULADO exitosamente!!')
+                digitadorPedidosVendedor(GlobalCodSucursal,'tblPedidos','lbTotal',cmbStatus.value)
+                $("#modalMenu").modal('hide');
+            })
+            .catch(()=>{
+                funciones.AvisoError('No se pudo Bloquear :(')
+            })
+        }
+    })
+}
 
 function update_row_pedido(idrow,cantidad,precio){
    
@@ -776,7 +791,7 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                 <br class="solid">
 
                                 <div class="row">
-                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                             <small class="negrita text-danger">Datos de Facturación:</small>
                                             <br>
                                             <table class="">
@@ -801,13 +816,19 @@ function digitadorPedidosVendedor(sucursal,idContenedor,idLbTotal,st){
                                             </table>
                                        
                                     </div>
-                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                    <div class="col-sm-12 col-md-5 col-lg-5 col-xl-5">
                                             
                                             <div class="table-responsive">
                                                 ${tblentrega}                                            
                                             </div>
                                     </div>
+                                    <div class="col-sm-6 col-md-2 col-lg-2 col-xl-2">
+                                        <br><br><br><br>
+                                        <button class="btn btn-danger hand shadow" onclick="anular_venta('${rows.CODDOC}','${rows.CORRELATIVO}')">
+                                            <i class="fal fa-trash"></i> ANULAR VENTA
+                                        </button>
 
+                                    </div>
                                 </div>
 
                               
