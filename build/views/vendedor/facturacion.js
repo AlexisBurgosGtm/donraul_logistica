@@ -1073,8 +1073,8 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
             funciones.GetDataNit(txtCliNit.value)
             .then((json)=>{
                 
-                document.getElementById('txtCliNombre').value = json.descripcion;
-                document.getElementById('txtCliDireccion').value = json.direcciones.direccion;    
+                document.getElementById('txtCliNombre').value = json.toUpperCase();
+                document.getElementById('txtCliDireccion').value = "CIUDAD";    
             })
             .catch(()=>{
                 funciones.showToast('Nit no existe o no se pudo verificar');

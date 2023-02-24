@@ -158,12 +158,19 @@ let funciones = {
 
       return new Promise((resolve, reject) => {
                             
-        let url = 'https://free.feel.com.gt/api/v1/obtener_contribuyente';
+        let alias = 'RAGARO';
+        let llave = 'D64AC98049FA8487D86828B73A709D67';
+
+        let url = `/datosnit?nit=${nit}&fel_alias=${alias}&fel_llave=${llave}`;
         
-        axios.post(url,{nit: nit})
+        axios.get(url)
         .then((response) => {
             let json = response.data;
+            json = json.replace(","," ");
+            json = json.replace(",,"," ");
+            json = json.replace(","," ");
             console.log(response.data);
+
             resolve(json);
         }, (error) => {
             console.log(error);
