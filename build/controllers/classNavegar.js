@@ -44,83 +44,66 @@ let classNavegar = {
         })
     },
     inicioVendedor : async ()=>{
-        let strFooter =    `<button class="btn btn-sm hidden"  id="btnMenu2VendedorClientesMapa">
-                                <i class="fal fa-map"></i>
-                                Mapa
-                            </button> 
-                            <button class="btn btn-sm  hidden"  id="btnMenu2VendedorClientes">
-                                <i class="fal fa-shopping-cart"></i>
-                                Clientes
-                            </button>
-                          
-                            <button class="btn btn-sm hidden" id="btnMenu2VendedorLogro">
-                                <i class="fal fa-chart-pie"></i>
-                                Logro
-                            </button>
+        
+        rootMenuLateral.innerHTML = `
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card card-rounded hand shadow border-naranja" id="btnLogro">
+                            <div class="card-body p-4 negrita text-naranja" style="font-size:180%">
+                                <i class="fal fa-chart-pie"></i> Lista Pedidos
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="col-6">
+                        <div class="card card-rounded hand shadow border-naranja" id="btnVenta">
+                            <div class="card-body p-4 negrita text-naranja" style="font-size:180%">
+                                <i class="fal fa-edit"></i> Crear Pedido
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card card-rounded hand shadow border-naranja">
+                            <div class="card-body p-4 negrita text-naranja" style="font-size:180%">
+                                <i class="fal fa-list"></i> Lista Precios
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card card-rounded hand shadow border-naranja">
+                            <div class="card-body p-4 negrita text-naranja" style="font-size:180%">
+                                <i class="fal fa-dollar-sign"></i> Crear Cotización
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        `;
 
-                            <button class="btn btn-sm hidden" id="btnMenu2Censo">
-                                <i class="fal fa-edit"></i>
-                                .
-                            </button>
-                            <button class="btn btn-sm hidden"  id="btnMenu2VendedorSync">
-                                <i class="fal fa-sync"></i>
-                                Desc
-                            </button>
-                    
-                            `
+        document.getElementById('btnLogro').addEventListener('click',()=>{
+            hideMenuLateral();
+            classNavegar.logrovendedor();
+        });
 
-                    rootMenuFooter.innerHTML = strFooter;
-                                                 
-                    let btnMenu2VendedorClientes = document.getElementById('btnMenu2VendedorClientes');
-                    btnMenu2VendedorClientes.addEventListener('click',()=>{
-                        classNavegar.inicioVendedorListado();
-                    });
+        document.getElementById('btnVenta').addEventListener('click',()=>{
+            hideMenuLateral();
+            classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
+        });
 
+        btnMenu.style = "visibility:visible";
 
-                    let btnMenu2VendedorClientesMapa = document.getElementById('btnMenu2VendedorClientesMapa');
-                    btnMenu2VendedorClientesMapa.addEventListener('click',()=>{
-                        classNavegar.ventasMapaClientes();
-                    });
+        classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
 
-             
-             
-                    let btnMenu2VendedorLogro = document.getElementById('btnMenu2VendedorLogro');
-                    btnMenu2VendedorLogro.addEventListener('click',()=>{
-                        classNavegar.logrovendedor();
-                    });
-
-                 
-                    let btnMenu2Censo = document.getElementById('btnMenu2Censo');
-                    btnMenu2Censo.addEventListener('click',()=>{
-
-                        funciones.Aviso('Opción no disponible de momento');
-
-                    });
-
-                    let btnMenu2VendedorSync = document.getElementById('btnMenu2VendedorSync');
-                    btnMenu2VendedorSync.addEventListener('click',()=>{
-                        $('#modalSync').modal('show');
-                    });
-
-                 
-                    //actualiza la ubicación del empleado
-                    await classEmpleados.updateMyLocation();
-
-                  
-                    //classNavegar.inicioVendedorListado();
-                    classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
-
-
-                    let btnMConfig = document.getElementById('btnMConfig');
-                    btnMConfig.addEventListener('click',()=>{
-                        if(GlobalSelectedForm=='LOGIN'){
-                            funciones.AvisoError('Debe iniciar sesión para ver esta sección');
-                            return;
-                        };
-                        classNavegar.ConfigVendedor();
-                    });
-
-                  
+        let btnMConfig = document.getElementById('btnMConfig');
+        btnMConfig.addEventListener('click',()=>{
+                if(GlobalSelectedForm=='LOGIN'){
+                    funciones.AvisoError('Debe iniciar sesión para ver esta sección');
+                    return;
+                };
+                classNavegar.ConfigVendedor();
+        });          
              
     },
     inicioVendedorListado :async ()=>{
@@ -184,7 +167,7 @@ let classNavegar = {
         })             
     },
     logrovendedor: (historial)=>{
-        funciones.loadScript('../views/pedidos/vendedorlogro.js','root')
+        funciones.loadScript('../views/vendedor/objetivo.js','root')
             .then(()=>{
                 GlobalSelectedForm='LOGROVENDEDOR';
                 inicializarVistaLogro();

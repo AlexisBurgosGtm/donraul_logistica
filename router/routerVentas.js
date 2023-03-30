@@ -86,14 +86,6 @@ router.post('/eliminarpedidocargado',async(req,res)=>{
 
 // VENTANA DE VENTAS
 ///////////////////////////////////////
-router.get("/json", async(req,res)=>{
-    let qry = `SELECT       ME_Productos.CODPROD, ME_Productos.DESPROD, ME_Precios.CODMEDIDA, ME_Precios.EQUIVALE, ME_Precios.COSTO, ME_Precios.PRECIO
-    FROM            ME_Productos INNER JOIN
-                             ME_Precios ON ME_Productos.EMP_NIT = ME_Precios.EMP_NIT AND ME_Productos.CODPROD = ME_Precios.CODPROD AND ME_Productos.CODSUCURSAL = ME_Precios.CODSUCURSAL
-    WHERE        (ME_Productos.CODSUCURSAL = 'ME-IZABAL') FOR XML AUTO`
-    execute.Query(res,qry);
-
-})
 
 // VENTAS BUSCAR PRODUCTO POR DESCRIPCION
 router.get("/buscarproducto", async(req,res)=>{
@@ -179,115 +171,8 @@ router.post("/buscarproductotodos", async(req,res)=>{
 
 })
 
-// obtiene el total de temp ventas según sea el usuario
-router.get("/tempVentastotal", async(req,res)=>{
-    let empnit = req.query.empnit;
-    let usuario = req.query.usuario;
-    let token = req.query.token;
-    let app = req.query.app;
-
-    let qry = '';
 
 
-            qry = `SELECT COUNT(CODPROD) AS TOTALITEMS, SUM(TOTALCOSTO) AS TOTALCOSTO, SUM(TOTALPRECIO) AS TOTALPRECIO, SUM(EXENTO) AS TOTALEXENTO
-            FROM ME_TEMP_VENTAS
-            WHERE (CODSUCURSAL = '${app}') AND (USUARIO = '${usuario}')`        
-
-    execute.Query(res,qry);
-    
-});
-
-// obtiene el grid de temp ventas
-router.get("/tempVentas", async(req,res)=>{
-    let empnit = req.query.empnit;
-    let coddoc = req.query.coddoc;
-    let usuario = req.query.usuario;
-    let token = req.query.token;
-    let app = req.query.app;
-
-    let qry = '';
-
-    qry = `SELECT 
-            ME_TEMP_VENTAS.ID,ME_TEMP_VENTAS.CODPROD, 
-            ME_TEMP_VENTAS.DESPROD, 
-            ME_TEMP_VENTAS.CODMEDIDA, 
-            ME_TEMP_VENTAS.CANTIDAD, 
-            ME_TEMP_VENTAS.EQUIVALE,
-            ME_TEMP_VENTAS.COSTO,
-            ME_TEMP_VENTAS.TOTALCOSTO,  
-            ME_TEMP_VENTAS.PRECIO, 
-            ME_TEMP_VENTAS.TOTALPRECIO
-                FROM ME_TEMP_VENTAS 
-            WHERE (ME_TEMP_VENTAS.CODSUCURSAL = '${app}') AND (ME_TEMP_VENTAS.USUARIO = '${usuario}')
-            ORDER BY ME_TEMP_VENTAS.ID DESC`
-
-       
-    execute.Query(res,qry);
-    
-});
-
-// obtiene row de temp ventas
-router.post("/tempVentasRow", async(req,res)=>{
-    
-    const {id,app} = req.body;
-
-    let qry = '';
-    
-    qry = `SELECT ID,CODPROD,DESPROD,CODMEDIDA,CANTIDAD,EQUIVALE,COSTO,PRECIO,EXENTO FROM ME_TEMP_VENTAS WHERE ID=${id}`
-  
-    execute.Query(res,qry);
-    
-});
-
-// ACTUALIZA el grid de temp ventas
-router.put("/tempVentasRow", async(req,res)=>{
-    
-    const {app,id,totalcosto,totalprecio,cantidad,totalunidades,exento} = req.body;
-    
-    let qry = '';
-    
-    qry = `UPDATE ME_TEMP_VENTAS SET CANTIDAD=${cantidad},TOTALCOSTO=${totalcosto},TOTALPRECIO=${totalprecio},TOTALUNIDADES=${totalunidades},EXENTO=${exento} WHERE ID=${id}`
-    
-    
-    execute.Query(res,qry);
-    
-});
-
-// inserta un nuevo registro en temp ventas   
-router.post("/tempVentas", async(req,res)=>{
-        
-    let empnit = req.body.empnit;
-    let usuario = req.body.usuario;
-    let token = req.body.token;
-
-    let tipoprecio = req.body.tipoprecio;
-
-    let codprod = req.body.codprod;
-    let desprod = req.body.desprod;
-    let codmedida= req.body.codmedida;
-    let cantidad=Number(req.body.cantidad);
-    let equivale = Number(req.body.equivale);
-    let totalunidades = Number(req.body.totalunidades);
-    let costo = Number(req.body.costo);
-    let precio=Number(req.body.precio);
-    let totalcosto =Number(req.body.totalcosto);
-    let totalprecio=Number(req.body.totalprecio);
-    let exento=Number(req.body.exento);
-
-    let coddoc = req.body.coddoc;
-
-
-    let app = req.body.app;
-    let qry = '';
-
-    qry = `INSERT INTO ME_TEMP_VENTAS 
-            (EMPNIT,CODPROD,DESPROD,CODMEDIDA,CANTIDAD,EQUIVALE,TOTALUNIDADES,COSTO,PRECIO,TOTALCOSTO,TOTALPRECIO,EXENTO,USUARIO,TIPOPRECIO,CODSUCURSAL) 
-    VALUES ('${empnit}','${codprod}','${desprod}','${codmedida}',${cantidad},${equivale},${totalunidades},${costo},${precio},${totalcosto},${totalprecio},${exento},'${usuario}','${tipoprecio}','${app}')`        
-     
-        
-   execute.Query(res,qry);
-
-});
 
 
 
@@ -345,27 +230,8 @@ router.post("/insert_row_docproductos", async(req,res)=>{
 
 });
 
-// elimina un item de la venta
-router.delete("/tempVentas", async(req,res)=>{
-    let id=Number(req.body.id);
-    
 
-      let qry = `DELETE FROM ME_TEMP_VENTAS WHERE ID=${id}`
-    
-   execute.Query(res,qry);
 
-});
-
-// elimina un item de la venta todos 
-router.post("/tempVentastodos", async(req,res)=>{
-    const{empnit,usuario,app} = req.body;
-    let qry = "";
-   
-    qry = `DELETE FROM ME_TEMP_VENTAS WHERE CODSUCURSAL='${app}' AND USUARIO='${usuario}'`
-
-    execute.Query(res,qry);
-
-});
 
 // SIN USAR
 // VENTAS BUSCAR CLIENTE POR NIT O CODIGO
@@ -379,164 +245,6 @@ router.get("/buscarcliente", async(req,res)=>{
 
     execute.Query(res,qry);
 
-});
-
-// INSERTA UN PEDIDO EN LAS TABLAS DE DOCUMENTOS Y DOCPRODUCTOS
-router.post("/documentos", async (req,res)=>{
-    
-    const {app,empnit,anio,mes,dia,coddoc,fecha,fechaentrega,formaentrega,codcliente,nomclie,codbodega,totalcosto,totalprecio,nitclie,
-        dirclie,obs,direntrega,usuario,codven,lat,long,
-        tipo_pago,tipo_doc,entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long} = req.body;
-    
-
-    let correlativo = req.body.correlativo;
-    let ncorrelativo = correlativo;
-
-    //variables sin asignar
-    let concre = 'CRE';
-    let abono = totalprecio; 
-    let saldo = totalprecio;
-    let pagotarjeta = 0; let recargotarjeta = 0;
-    let codrep = 0;
-    let totalexento=0;
-
-    switch (correlativo.toString().length) {
-        case 1:
-            correlativo = '         ' + correlativo;
-        break;
-        case 2:
-            correlativo = '        ' + correlativo;
-        break;
-        case 3:
-            correlativo = '       ' + correlativo;
-            
-        break;
-        case 4:
-            correlativo = '      ' + correlativo;
-            break;
-        case 5:
-            correlativo = '     ' + correlativo;
-            break;
-        case 6:
-            correlativo = '    ' + correlativo;
-            break;
-        case 7:
-            correlativo = '   ' + correlativo;
-            break;
-        case 8:
-            correlativo = '  ' + correlativo;
-        break;
-        case 9:
-            correlativo = ' ' + correlativo;
-        break;
-        case 10:
-            correlativo = correlativo;
-        break;
-        default:
-            break;
-    };
-    
-    let nuevocorrelativo = Number(ncorrelativo) + 1;
-
-
-    let qry = ''; // inserta los datos en la tabla documentos
-    let qrydoc = ''; // inserta los datos de la tabla docproductos
-    let qrycorrelativo = ''; //actualiza el correlativo del documento
-
-            qry = `INSERT INTO ME_DOCUMENTOS (
-                EMP_NIT, DOC_ANO, DOC_MES, CODDOC, DOC_NUMERO, 
-                CODCAJA, DOC_FECHA, DOC_NUMREF, DOC_NOMREF, BODEGAENTRADA,
-                BODEGASALIDA, USUARIO, DOC_ESTATUS, DOC_TOTALCOSTO, DOC_TOTALVENTA,
-                DOC_HORA, DOC_FVENCE, DOC_DIASCREDITO, DOC_CONTADOCREDITO, DOC_DESCUENTOTOTAL,
-                DOC_DESCUENTOPROD, DOC_PORDESCUTOTAL, DOC_IVA, DOC_SUBTOTALIVA, DOC_SUBTOTAL,
-                NITCLIE, DOC_PORDESCUFAC, CODVEN, DOC_ABONOS, DOC_SALDO,
-                DOC_VUELTO, DOC_NIT, DOC_PAGO, DOC_CODREF, DOC_TIPOCAMBIO,
-                DOC_PARCIAL, DOC_ANTICIPO, ANT_CODDOC, ANT_DOCNUMERO, DOC_OBS,
-                DOC_PORCENTAJEIVA, DOC_ENVIO, DOC_CUOTAS, DOC_TIPOCUOTA, 
-                DIVA_NUMINT, FRT_CODIGO, TRANSPORTE, DOC_REFPEDIDO, DOC_REFFACTURA,
-                CODPROV, DOC_TOTALOTROS, DOC_RECIBO, DOC_MATSOLI, DOC_REFERENCIA, 
-                DOC_LUGAR, DOC_ANOMBREDE, DOC_IVAEXO, DOC_VALOREXO, DOC_SECTOR,
-                DOC_DIRENTREGA, DOC_CANTENV, DOC_EXP, DOC_FECHAENT, TIPOPRODUCCION,
-                DOC_TOTCOSINV, DOC_TOTALFIN, USUARIOENUSO, DOC_IMPUESTO1, DOC_TOTALIMPU1,
-                DOC_PORCOMI, DOC_DOLARES, CODMESA, DOC_TIPOOPE, USUARIOAUTORIZA, 
-                NUMAUTORIZA, DOC_TEMPORADA, DOC_INGUAT,
-                CODVENBOD,
-                CODHABI, DOC_SERIE,
-                CTABAN, NUMINTBAN, 
-                CODVENEMP,
-                DOC_TOTCOSDOL, DOC_TOTCOSINVDOL, CODUNIDAD,
-                TOTCOMBUSTIBLE, DOC_CODCONTRA, DOC_NUMCONTRA, INTERES, ABONOINTERES,
-                SALDOINTERES, NUMEROCORTE, DOC_PORLOCAL, DOC_NUMORDEN, DOC_FENTREGA,
-                DOC_INTERESADO, DOC_RECIBE, NUMEROROLLO, COD_CENTRO, GENCUOTA,
-                DOC_PORINGUAT, DOC_INGUATEXENTO, DOC_TIPOTRANIVA, DOC_PORTIMBREPRE, DOC_TIMBREPRENSA,
-                ABONOSANTICIPO, SALDOANTICIPO, DOC_PRODEXENTO, PUNTOSGANADOS, PUNTOSUSADOS,
-                APL_ANTICIPO, COD_DEPARTA, FIRMAELECTRONICA, DOC_CODDOCRETENCION, DOC_SERIERETENCION,
-                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL,
-                TIPO_PAGO,TIPO_DOC,ENTREGA_CONTACTO,ENTREGA_TELEFONO,ENTREGA_DIRECCION,ENTREGA_REFERENCIA,ENTREGA_LAT,ENTREGA_LONG
-                ) 
-                VALUES (
-                '${empnit}', ${anio}, ${mes}, '${coddoc}', '${correlativo}',
-                '', '${fecha}', '', '${nomclie}', '',
-                '${codbodega}', '${usuario}', 'O', ${totalcosto}, ${totalprecio},
-                0, '${fecha}', 0, '${concre}', 0,
-                0, 0, 0, ${totalprecio}, ${totalprecio},
-                '${nitclie}', 0, '${codven}', 0, ${saldo}, 
-                0, '${nitclie}', 0, '', 1, 
-                0, 0, '', '', '${obs}',
-                0, 0, 0, 0, 
-                0, '', '${formaentrega}', '', '',
-                '', 0, 0, '${direntrega}', '', 
-                '', '', '', 0, '', 
-                '${dirclie}', '', '', '${fechaentrega}', '',
-                ${totalcosto}, 0, '', 0, 0,
-                0, 0, '', 0,'',
-                0, 0, 0,
-                0,
-                '', '', 
-                0, 0, 
-                0,
-                0, 0, '',
-                0, '', '', 0, 0, 
-                0, 0, 0, '','NO',
-                '', '', 0, '', '',
-                0, 'N', 'C', 0, 0,
-                0, 0, 0, 0, 0,
-                '', '', '', '', '',
-                '', '', 0, ${lat},${long},'${app}',
-                '${tipo_pago}','${tipo_doc}','${entrega_contacto}','${entrega_telefono}','${entrega_direccion}','${entrega_referencia}',${entrega_lat},${entrega_long}
-                );`
-                  //GETANSINULL()
-            qrydoc = `INSERT INTO ME_DOCPRODUCTOS 
-                  (EMP_NIT,DOC_ANO,DOC_MES,CODDOC,DOC_NUMERO,
-                  DOC_ITEM,CODPROD,CODMEDIDA,CANTIDAD,EQUIVALE,
-                  CANTIDADINV,COSTO,PRECIO,TOTALCOSTO,TOTALPRECIO,
-                  BODEGAENTRADA,BODEGASALIDA,SUBTOTAL,DESCUENTOPROD,PORDESCUPROD,
-                  DESCUENTOFAC,PORDESCUFAC,TOTALDESCUENTO,DESCRIPCION,SUBTOTALPROD,
-                  TIPOCAMBIO,PRODPRECIO,CANTIDADENVIADA,CODFAC,NUMFAC,
-                  ITEMFAC,NOAFECTAINV, DOCPESO,COSTOINV,FLETE,TOTALPRECIOFIN,PRECIOFIN,TOTALCOSTOINV,CANTIDADBONI,CODOPR,NUMOPR,
-                  ITEMOPR,CODINV,NUMINV,ITEMINV,TIPOCLIE,LISTA,PORIVA,VALORIVA,NOLOTE,VALORIMPU1,DESEMPAQUE,
-                  SALDOINVANTCOM,NCUENTAMESA,CUENTACERRADA,COSTODOL,COSTOINVDOL,TOTALCOSTODOL,TOTALCOSTOINVDOL,
-                  IMPCOMBUSTIBLE,CODVENPROD,COMIVEN,SOBREPRECIO,CODREG,NUMREG,ITEMREG,CANTIDADORIGINAL,CANTIDADMODIFICADA,NSERIETARJETA,
-                  CODOC,NUMOC,PORTIMBREPRENSA,VALORTIMBREPRENSA,CODTIPODESCU,TOTALPUNTOS,ITEMOC,CODPRODORIGEN,CODMEDIDAORIGEN,
-                  CANTIDADDEVUELTA,CODARANCEL,TIPOPRECIO,CODSUCURSAL) 
-                  SELECT 
-                  EMPNIT,${anio} as DOC_ANO,${mes} AS DOC_MES,'${coddoc}' AS CODDOC,'${correlativo}' AS DOC_NUMERO,
-                  ID AS DOC_ITEM,CODPROD,CODMEDIDA,CANTIDAD, EQUIVALE,
-                  TOTALUNIDADES AS CANTIDADINV,COSTO,PRECIO,TOTALCOSTO,TOTALPRECIO,
-                  '','${codbodega}',
-                  TOTALPRECIO,0,0,0,0,0,DESPROD,TOTALPRECIO,1,PRECIO,0,'','',0,0,
-                  0,COSTO,0,TOTALPRECIO,
-                  PRECIO,TOTALCOSTO,0,'','',0,'','',0,
-                  'P',
-                  '',
-                  0,0,'SN',0,'',0,'',0,0,COSTO,0,TOTALCOSTO,0,0,0,0,'','',0,0,0,'','','',0,0,'',0,0,'','',0,'',TIPOPRECIO,'${app}'
-                  FROM ME_TEMP_VENTAS   
-                  WHERE EMPNIT='${empnit}' AND USUARIO='${usuario}';`
-            qrycorrelativo =`UPDATE ME_TIPODOCUMENTOS SET CORRELATIVO=${nuevocorrelativo} WHERE CODSUCURSAL='${app}' AND CODDOC='${coddoc}';`
-            
- 
-    execute.Query(res,qrycorrelativo + qry + qrydoc);
-    
 });
 
 
@@ -567,10 +275,12 @@ router.post('/historialcliente',async (req,res)=>{
 
 //Elimina un pedido, desde el vendedor
 router.post("/deletepedidovendedor",async(req,res)=>{
-    const {sucursal,fecha,codven,coddoc,correlativo} = req.body;
+    const {sucursal,coddoc,correlativo} = req.body;
 
-    let qry = `DELETE FROM ME_DOCUMENTOS WHERE CODSUCURSAL='${sucursal}' AND CODDOC='${coddoc}' AND DOC_FECHA='${fecha}' AND DOC_NUMERO='${correlativo}' AND DOC_ESTATUS='O'; `
-    let qryprods = `DELETE FROM ME_DOCPRODUCTOS WHERE CODSUCURSAL='${sucursal}' AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}' ;`
+    let qry = `DELETE FROM DOCUMENTOS 
+                    WHERE EMP_NIT='${sucursal}' AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}';`
+    let qryprods = `DELETE FROM DOCPRODUCTOS 
+                    WHERE EMP_NIT='${sucursal}' AND CODDOC='${coddoc}' AND DOC_NUMERO='${correlativo}' ;`
     execute.Query(res, qry + qryprods);
 
 })
@@ -607,44 +317,44 @@ router.post("/totalventadia", async(req,res)=>{
     execute.Query(res,qry);
 });
 
-// LISTA DE PEDIDOS POR UNA FECHA
-router.post("/listapedidos", async(req,res)=>{
-    const {sucursal,codven,fecha}  = req.body;
+
+router.post("/lista_pedidos", async(req,res)=>{
+    const {sucursal,coddoc,fecha}  = req.body;
     
     let qry = '';
-    qry = `SELECT ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.NITCLIE AS CODCLIE, 
-    ME_Clientes.NOMFAC AS NEGOCIO, ME_Documentos.DOC_NOMREF AS NOMCLIE, 
-                             ME_Documentos.DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, ISNULL(ME_Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.LAT, ME_Documentos.LONG, 
-                             ME_Documentos.DOC_OBS AS OBS, ME_Documentos.DOC_MATSOLI AS DIRENTREGA, ME_Documentos.DOC_ESTATUS AS ST,
-                             ME_Documentos.TIPO_PAGO,
-                             ME_Documentos.TIPO_DOC,
-                             ME_Documentos.ENTREGA_CONTACTO,
-                             ME_Documentos.ENTREGA_TELEFONO,
-                             ME_Documentos.ENTREGA_DIRECCION,
-                             ME_Documentos.ENTREGA_REFERENCIA,
-                             ME_Documentos.ENTREGA_LAT,
-                             ME_Documentos.ENTREGA_LONG,
-                             ME_Documentos.DOMICILIO
-    FROM            ME_Documentos LEFT OUTER JOIN
-                             ME_Clientes ON ME_Documentos.NITCLIE = ME_Clientes.NITCLIE AND ME_Documentos.CODSUCURSAL = ME_Clientes.CODSUCURSAL
-    WHERE        (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.DOC_FECHA = '${fecha}') AND (ME_Documentos.CODVEN = ${codven}) AND (ME_Documentos.DOC_ESTATUS <> 'A')`
+    qry = `SELECT Documentos.CODDOC, 
+            Documentos.DOC_NUMERO AS CORRELATIVO, 
+            Documentos.NITCLIE AS CODCLIE, 
+            Clientes.NOMFAC AS NEGOCIO, 
+            Documentos.DOC_NOMREF AS NOMCLIE, 
+                             Documentos.DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, 
+                             ISNULL(Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, 
+                             Documentos.DOC_FECHA AS FECHA, 
+                             Documentos.DOC_LATITUD AS LAT, 
+                             Documentos.DOC_LONGITUD AS LONG, 
+                             Documentos.DOC_OBS AS OBS, 
+                             Documentos.DOC_MATSOLI AS DIRENTREGA, 
+                             Documentos.DOC_ESTATUS AS ST,
+                             '' AS TIPO_PAGO,
+                             '' AS TIPO_DOC,
+                             '' AS ENTREGA_CONTACTO,
+                             '' AS ENTREGA_TELEFONO,
+                             '' AS ENTREGA_DIRECCION,
+                             '' AS ENTREGA_REFERENCIA,
+                             '' AS ENTREGA_LAT,
+                             '' AS ENTREGA_LONG,
+                             '' AS DOMICILIO
+                        FROM Documentos LEFT OUTER JOIN
+                            Clientes ON Documentos.NITCLIE = Clientes.NITCLIE AND 
+                            Documentos.EMP_NIT = Clientes.EMP_NIT
+    WHERE        (Documentos.EMP_NIT = '${sucursal}') AND
+    (Documentos.DOC_FECHA = '${fecha}') AND (Documentos.CODDOC = '${coddoc}') AND (Documentos.DOC_ESTATUS <> 'A')`
 
+    console.log(qry);
     
     execute.Query(res,qry);
 });
 
-// LISTA DE PEDIDOS POR UNA FECHA
-router.post("/BACKUP_listapedidos", async(req,res)=>{
-    const {sucursal,codven,fecha}  = req.body;
-    
-    let qry = '';
-    qry = `SELECT CODDOC, DOC_NUMERO AS CORRELATIVO, NITCLIE AS CODCLIE, DOC_NOMREF AS NOMCLIE, DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, ISNULL(DOC_TOTALVENTA,0) AS IMPORTE, DOC_FECHA AS FECHA, LAT, LONG, DOC_OBS AS OBS, DOC_MATSOLI AS DIRENTREGA, DOC_ESTATUS AS ST
-            FROM ME_Documentos
-            WHERE (CODSUCURSAL = '${sucursal}') AND (DOC_FECHA = '${fecha}') AND (CODVEN = ${codven}) AND (DOC_ESTATUS<>'A')`
-
-    
-    execute.Query(res,qry);
-});
 
 
 //reporte de productos del dia y vendedor
@@ -1033,7 +743,7 @@ router.post("/insertventa", async (req,res)=>{
       correlativo = getCorrelativo(correlativo);
 
     tblDocproductos.map((p)=>{
-        qrydoc = qrydoc + `INSERT INTO ME_DOCPRODUCTOS 
+        qrydoc = qrydoc + `INSERT INTO DOCPRODUCTOS 
         (EMP_NIT,DOC_ANO,DOC_MES,CODDOC,DOC_NUMERO,
         DOC_ITEM,CODPROD,CODMEDIDA,CANTIDAD,EQUIVALE,
         CANTIDADINV,COSTO,PRECIO,TOTALCOSTO,TOTALPRECIO,
@@ -1045,7 +755,7 @@ router.post("/insertventa", async (req,res)=>{
         SALDOINVANTCOM,NCUENTAMESA,CUENTACERRADA,COSTODOL,COSTOINVDOL,TOTALCOSTODOL,TOTALCOSTOINVDOL,
         IMPCOMBUSTIBLE,CODVENPROD,COMIVEN,SOBREPRECIO,CODREG,NUMREG,ITEMREG,CANTIDADORIGINAL,CANTIDADMODIFICADA,NSERIETARJETA,
         CODOC,NUMOC,PORTIMBREPRENSA,VALORTIMBREPRENSA,CODTIPODESCU,TOTALPUNTOS,ITEMOC,CODPRODORIGEN,CODMEDIDAORIGEN,
-        CANTIDADDEVUELTA,CODARANCEL,TIPOPRECIO,CODSUCURSAL) 
+        CANTIDADDEVUELTA,CODARANCEL) 
         VALUES ('${p.EMPNIT}',${anio},${mes},'${coddoc}','${correlativo}',
         ${p.ID},'${p.CODPROD}','${p.CODMEDIDA}',${p.CANTIDAD},${p.EQUIVALE},
         ${p.TOTALUNIDADES},${p.COSTO},${p.PRECIO},${p.TOTALCOSTO},${p.TOTALPRECIO},
@@ -1054,7 +764,7 @@ router.post("/insertventa", async (req,res)=>{
         1,${p.PRECIO},0,'','',
         0,0,0,${p.COSTO},0,${p.TOTALPRECIO},
         ${p.PRECIO},${p.TOTALCOSTO},0,'','',0,'','',0,'P','',
-         0,0,'SN',0,'',0,'',0,0,${p.COSTO},0,${p.TOTALCOSTO},0,0,0,0,'','',0,0,0,'','','',0,0,'',0,0,'','',0,'','${p.TIPOPRECIO}','${codsucursal}' 
+         0,0,'SN',0,'',0,'',0,0,${p.COSTO},0,${p.TOTALCOSTO},0,0,0,0,'','',0,0,0,'','','',0,0,'',0,0,'','',0,'' 
         );`
     });
 
@@ -1064,9 +774,9 @@ router.post("/insertventa", async (req,res)=>{
 
 
     //variables sin asignar
-    let concre = 'CRE';
+    let concre = tipo_pago;//'CON';
     let abono = totalprecio; 
-    let saldo = totalprecio;
+    let saldo = 0;
     let pagotarjeta = 0; let recargotarjeta = 0;
     let codrep = 0;
     let totalexento=0;
@@ -1074,7 +784,7 @@ router.post("/insertventa", async (req,res)=>{
   
     let nuevocorrelativo = Number(ncorrelativo) + 1;
 
-            qry = `INSERT INTO ME_DOCUMENTOS (
+            qry = `INSERT INTO DOCUMENTOS (
                 EMP_NIT, DOC_ANO, DOC_MES, CODDOC, DOC_NUMERO, 
                 CODCAJA, DOC_FECHA, DOC_NUMREF, DOC_NOMREF, BODEGAENTRADA,
                 BODEGASALIDA, USUARIO, DOC_ESTATUS, DOC_TOTALCOSTO, DOC_TOTALVENTA,
@@ -1102,21 +812,20 @@ router.post("/insertventa", async (req,res)=>{
                 DOC_PORINGUAT, DOC_INGUATEXENTO, DOC_TIPOTRANIVA, DOC_PORTIMBREPRE, DOC_TIMBREPRENSA,
                 ABONOSANTICIPO, SALDOANTICIPO, DOC_PRODEXENTO, PUNTOSGANADOS, PUNTOSUSADOS,
                 APL_ANTICIPO, COD_DEPARTA, FIRMAELECTRONICA, DOC_CODDOCRETENCION, DOC_SERIERETENCION,
-                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, LAT, LONG, CODSUCURSAL,
-                TIPO_PAGO,TIPO_DOC,ENTREGA_CONTACTO,ENTREGA_TELEFONO,ENTREGA_DIRECCION,ENTREGA_REFERENCIA,ENTREGA_LAT,ENTREGA_LONG,DOMICILIO
+                DOC_NUMRETENCION, FIRMAISC, ISCENVIADO, DOC_LATITUD, DOC_LONGITUD
                 ) 
                 VALUES (
                 '${empnit}', ${anio}, ${mes}, '${coddoc}', '${correlativo}',
                 '', '${fecha}', '', '${nomclie}', '',
-                '${codbodega}', '${usuario}', 'O', ${totalcosto}, ${totalprecio},
+                '${codbodega}', '${usuario}', 'I', ${totalcosto}, ${totalprecio},
                 '${hora}', '${fecha}', 0, '${concre}', 0,
                 0, 0, 0, ${totalprecio}, ${totalprecio},
                 '${nitclie}', 0, '${codven}', 0, ${saldo}, 
                 0, '${nitclie}', 0, '', 1, 
-                0, 0, '', '', '${obs}',
+                0, 0, '', '', 'D:${obs} - C:${entrega_contacto} T:${entrega_telefono}',
                 0, 0, 0, 0, 
                 0, '', '${formaentrega}', '', '',
-                '', 0, 0, '${direntrega}', '', 
+                '', 0, 0, '${entrega_direccion}', '', 
                 '', '', '', 0, '', 
                 '${dirclie}', '', '', '${fechaentrega}', '',
                 ${totalcosto}, 0, '', 0, 0,
@@ -1133,39 +842,21 @@ router.post("/insertventa", async (req,res)=>{
                 0, 'N', 'C', 0, 0,
                 0, 0, 0, 0, 0,
                 '', '', '', '', '',
-                '', '', 0, ${lat},${long},'${app}',
-                '${tipo_pago}','${tipo_doc}','${entrega_contacto}',
-                '${entrega_telefono}','${entrega_direccion}',
-                '${entrega_referencia}',${entrega_lat},
-                ${entrega_long},'${domicilio}'
+                '', '', 0, ${lat},${long}
                 );`
                    
-                qrycorrelativo =`   UPDATE ME_TIPODOCUMENTOS 
+                qrycorrelativo =`   UPDATE TIPODOCUMENTOS 
                                         SET CORRELATIVO=${nuevocorrelativo} 
-                                        WHERE CODSUCURSAL='${codsucursal}' AND CODDOC='${coddoc}';
-                                    UPDATE ME_USUARIOS 
-                                        SET CORRELATIVO=${nuevocorrelativo} 
-                                        WHERE CODSUCURSAL='${codsucursal}' AND CODDOC='${coddoc}';`
+                                        WHERE EMP_NIT='${codsucursal}' AND CODDOC='${coddoc}';
+                                   `
       
     execute.Query(res, qrycorrelativo + qry + qrydoc);
     
 });
 
-router.post("/updatecorrelativo", async (req,res)=>{
 
-    const {codsucursal,coddoc,correlativo} = req.body;
 
-    let nuevocorrelativo = Number(correlativo) + 1;
 
-    let qrycorrelativo =`UPDATE ME_TIPODOCUMENTOS 
-                            SET CORRELATIVO=${nuevocorrelativo} 
-                            WHERE CODSUCURSAL='${codsucursal}' AND CODDOC='${coddoc}';
-                        UPDATE ME_USUARIOS 
-                            SET CORRELATIVO=${nuevocorrelativo} 
-                            WHERE CODSUCURSAL='${codsucursal}' AND CODDOC='${coddoc}';`
-    execute.Query(res,qrycorrelativo);
-
-});
 
 function getCorrelativo(correlativo){
     let numdoc = '';

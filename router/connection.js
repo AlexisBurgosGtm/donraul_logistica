@@ -1,8 +1,17 @@
-﻿const config = {
-	user: 'db_a6478c_prueba_admin',
-	password: 'razors1805',
-	server: 'sql5079.site4now.net',
-	database: 'db_a6478c_prueba',
+﻿const xconfig = {
+	user: 'iEx',
+	password: 'iEx',
+	server: '172.26.167.250',
+	database: 'VENTAS',
+	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
+};
+
+
+const config = {
+	user: 'iEx',
+	password: 'iEx',
+	server: 'ELORIGEN\\SQLDEV',
+	database: 'VENTAS',
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
 
@@ -20,7 +29,8 @@ let execute = {
 			new sql.Request(pool1)
 			.query(sqlqry, (err, result) => {
 				if(err){
-					res.send(err.message)
+					res.send('error');
+					console.log(err.message);
 				}else{
 					res.send(result);
 				}					
@@ -29,35 +39,13 @@ let execute = {
 		  })
 		  pool1.on('error', err => {
 			  console.log('error sql = ' + err);
+			  res.send('error');
 			  sql.close();
 		  })
 		} catch (error) {
-		  res.send('Error al ejecutar la consulta: ' + error)   
-		  sql.close();
-		}
-	},
-	QueryNoSend : (res,sqlqry)=>{
-		
-		//console.log('ejecutando consulta... ');	
-
-		try {
-		  const pool1 = new sql.ConnectionPool(config, err => {
-			new sql.Request(pool1)
-			.query(sqlqry, (err, result) => {				
-				if(err){
-					res.send(err.message)
-				}else{
-					res.send('Ejecución exitosa');
-				}					
-			})
-			sql.close();  
-		  })
-		  pool1.on('error', err => {
-			  console.log('error sql = ' + err);
-			  sql.close();
-		  })
-		} catch (error) {
-		  res.send('Error al ejecutar la consulta: ' + error)   
+			console.log('Error sql: ' + error);
+			res.send('error');
+			//res.send('Error al ejecutar la consulta: ' + error)   
 		  sql.close();
 		}
 	},

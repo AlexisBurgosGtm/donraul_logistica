@@ -1,5 +1,33 @@
 function getView(){
     let view = {
+        body:()=>{
+            return `
+                <div class="col-12 p-0 bg-white">
+                    <div class="tab-content" id="myTabHomeContent">
+                        <div class="tab-pane fade show active" id="empresas" role="tabpanel" aria-labelledby="receta-tab">
+
+                       
+                        </div>
+                        <div class="tab-pane fade" id="usuario" role="tabpanel" aria-labelledby="home-tab">
+                          
+                        </div>    
+                    </div>
+
+                    <ul class="nav nav-tabs hidden" id="myTabHome" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active negrita text-success" id="tab-dia" data-toggle="tab" href="#empresas" role="tab" aria-controls="profile" aria-selected="false">
+                                <i class="fal fa-list"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link negrita text-danger" id="tab-mes" data-toggle="tab" href="#usuario" role="tab" aria-controls="home" aria-selected="true">
+                                <i class="fal fa-comments"></i></a>
+                        </li>         
+                    </ul>
+
+                </div>
+               
+            `
+        },
         login : ()=>{
             return `
         <div class="row">
@@ -18,13 +46,10 @@ function getView(){
 
                             </div>
                             <div class="col-4">
-                                <img src="./favicon.png" width="60" height="60">                            
+                                <img src="./favicon.png" width="100" height="100">                            
                             </div>
                             <div class="col-4" align="right">
-                                <br>
-                                <button class="btn btn-outline-info btn-lg btn-circle shadow" onclick="funciones.shareAppWhatsapp();">
-                                        <i class="fal fa-paper-plane"></i>
-                                </button>
+                              
                             </div>    
                         </div>
                         
@@ -32,7 +57,7 @@ function getView(){
                     <div class="card-body">
                         <form class="" id="frmLogin" autocomplete="off">
                             <div class="form-group">
-                                <select class="negrita form-control border-secondary border-top-0 border-right-0 border-left-0" id="cmbSucursal">
+                                <select class="negrita form-control border-naranja border-top-0 border-right-0 border-left-0" id="cmbSucursal">
                                     
                                 </select>
                                 
@@ -45,7 +70,7 @@ function getView(){
                                             <i class="fal fa-user"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control border-secondary border-top-0 border-right-0 border-left-0" type="text" id="txtUser" placeholder="Escriba su usuario" required="true">
+                                    <input class="form-control border-naranja border-top-0 border-right-0 border-left-0" type="text" id="txtUser" placeholder="Escriba su usuario" required="true">
                                 </div>
                                 
                             </div>
@@ -56,20 +81,19 @@ function getView(){
                                             <i class="fal fa-lock"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control border-secondary border-top-0 border-right-0 border-left-0" type="password" id="txtPass" placeholder="Escriba su contraseña" required="true">
+                                    <input class="form-control border-naranja border-top-0 border-right-0 border-left-0" type="password" id="txtPass" placeholder="Escriba su contraseña" required="true">
                                 </div>
                                         
                             </div>
                             <br>
                             <div class="form-group" align="center">
-                                <button class="btn btn-secondary btn-lg shadow col-12 btn-rounded"  type="submit" id="btnIniciar">
+                                <button class="btn btn-naranja hand btn-xl btn-circle shadow waves-effect"  type="submit" id="btnIniciar">
                                     <i class="fal fa-unlock"></i>
-                                    Ingresar
                                 </button>
                             </div>
                             <div class="form-group" align="right">
                                 
-                                <small class="text-secondary">Caché: v1.9</small>
+                                <small class="text-secondary">Update: 29.03.2023</small>
                                 <br>
                                 <small>
                                     <a href="https://apigen.whatsapp.com/send?phone=50257255092&text=Ayudame%20con%20la%20app%20de%20don%20Eraul_logistica...%20">
@@ -114,13 +138,14 @@ function addListeners(){
         btnIniciar.disabled = true;
         apigen.empleadosLogin(frmLogin.cmbSucursal.value,frmLogin.txtUser.value,frmLogin.txtPass.value)
         .then(()=>{
+            GlobalEmpnit = frmLogin.cmbSucursal.value;
             //document.body.requestFullscreen();
             //por lo visto se deshabilitan las scroll bars en fullscreen
-            selectDateDownload();
+            //selectDateDownload();
         })
         .catch(()=>{
             btnIniciar.disabled = false;
-            btnIniciar.innerHTML = '<i class="fal fa-unlock"></i>Ingresar'
+            btnIniciar.innerHTML = '<i class="fal fa-unlock"></i>'
         });
     });
 

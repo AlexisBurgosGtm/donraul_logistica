@@ -1,4 +1,13 @@
 ﻿//var socket = io();
+let btnMenu = document.getElementById('btnMenuPrincipal');
+btnMenu.style="visibility:hidden";
+
+btnMenu.addEventListener('click',()=>{
+    
+    showMenuLateral();
+
+});
+
 
 //inicializa la instalacion de la app
 funciones.instalationHandlers('btnInstalarApp');

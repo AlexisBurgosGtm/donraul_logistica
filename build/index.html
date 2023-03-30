@@ -185,12 +185,12 @@
 
                     <div class="leftbutton2">
                         <div class="row">
-                            <button class="btn btn-outline-secondary btn-lg btn-icon rounded-circle shadow" id="btnPedidosPend">
+                            <button class="btn btn-outline-secondary btn-lg btn-icon rounded-circle shadow hidden" id="btnPedidosPend">
                                 <i class="fal fa-bell"></i>0
                             </button>
                         </div>
                         <div class="row">
-                            <button class="btn btn-primary btn-lg btn-icon rounded-circle shadow" id="btnUpdate">
+                            <button class="btn btn-primary btn-lg btn-icon rounded-circle shadow hidden" id="btnUpdate">
                                 <i class="fal fa-sync"></i>
                             </button>
                         </div>
@@ -198,6 +198,12 @@
                         
                    
                    </div>
+
+                   <div class="btn-middle-r">
+                        <button class="btn bg-naranja text-white btn-xl btn-circle hand shadow" id="btnMenuPrincipal">
+                            <i class="fal fa-home"></i>
+                        </button>
+                    </div>
                     
                     <!-- this overlay is activated only when mobile menu is triggered -->
                     <div class="page-content-overlay" data-action="toggle" data-class="mobile-nav-on"></div> <!-- END Page Content -->
@@ -227,28 +233,21 @@
         <div class="modal fade js-modal-settings modal-backdrop-transparent" tabindex="-1" role="dialog" aria-hidden="true" id="modalMenu">
             <div class="modal-dialog modal-dialog-right modal-lg">
                 <div class="modal-content">
-                    <div class="dropdown-header bg-danger d-flex justify-content-center align-items-center w-100">
+                    <div class="dropdown-header bg-naranja d-flex justify-content-center align-items-center w-100">
                         <h4 class="m-0 text-center color-white" id="lbMenuTitulo">
-                            Opciones
-                            <small class="mb-0 opacity-80">Opciones</small>
+                            Opciones de Usuario
                         </h4>
-                        
-                        
-                        <button type="button" class="close text-white position-absolute pos-top pos-right p-2 m-1 mr-2" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true"><i class="fal fa-times"></i></span>
-                        </button>
                     </div>
-                    <div class="modal-body p-0">
-                        <div class="" id="rootMenuLateral">
-                                                        
-                            
-                            
-                        </div>
-                        <span id="saving"></span>
+                    <div class="modal-body p-4" id="rootMenuLateral">
+                       
+                        
                     </div>
                     <div class="modal-footer">
 
-                        <button class="btn btn-sm btn-danger position-absolute pos-bottom pos-right " id="btnCerrarModalMenuLateral"><<- Regresar</button>
+                        <button class="btn btn-circle btn-secondary btn-xl hand shadow" id="btnCerrarModalMenuLateral">
+                            <i class="fal fa-arrow-left"></i>
+                        </button>
+                        
                     </div>
                 </div>
             </div>

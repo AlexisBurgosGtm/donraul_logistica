@@ -18,13 +18,16 @@ let apigen = {
                             GlobalObjetivoVenta = Number(rows.OBJETIVO);
                             GlobalSelectedDiaUpdated = Number(f.getDate());
                             switch (GlobalTipoUsuario) {
-                                case 'VENDEDOR':
+                                case 'VEN':
                                     classNavegar.inicioVendedor();    
                                     break;
-                                case 'SUPERVISOR':
+                                case 'SUP':
                                     classNavegar.inicio_supervisor();    
                                     break;
-                                case 'DIGITADOR':
+                                case 'CAJA':
+                                    classNavegar.inicio_digitador();
+                                    break;
+                                case 'POS':
                                     classNavegar.inicio_digitador();
                                     break;
                            
@@ -39,49 +42,6 @@ let apigen = {
                     GlobalCoddoc= '';
                     GlobalObjetivoVenta =0;
                     GlobalSelectedDiaUpdated = 0;
-                    funciones.AvisoError('Usuario o Contraseña incorrectos, intente seleccionando la sucursal a la que pertenece');
-                    reject();
-                }
-            }, (error) => {
-                funciones.AvisoError('Error en la solicitud');
-                reject();
-            });
-
-        })
-        
-
-    },
-    empleadosLogin_ONLINE : (sucursal,user,pass)=>{
-        return new Promise((resolve,reject)=>{
-            axios.post('/empleados/login', {
-                app:GlobalSistema,
-                codsucursal: sucursal,
-                user:user,
-                pass:pass       
-            })
-            .then((response) => {
-                const data = response.data.recordset;
-                if(response.data.rowsAffected[0]==1){
-                    data.map((rows)=>{
-                        if(rows.USUARIO==user){
-                            GlobalCodUsuario = rows.CODIGO;
-                            GlobalUsuario = rows.USUARIO;
-                            GlobalPassUsuario = pass;
-                            GlobalTipoUsuario = rows.TIPO;
-                            GlobalCoddoc= rows.CODDOC;
-                            GlobalCodSucursal = sucursal;
-                            GlobalSistema = sucursal;
-                            
-                            //classNavegar.inicio(GlobalTipoUsuario);     
-                            classNavegar.inicioVendedor();   
-                        }        
-                    })
-                    resolve();
-                }else{
-                    GlobalCodUsuario = 9999
-                    GlobalUsuario = '';
-                    GlobalTipoUsuario = '';
-                    GlobalCoddoc= '';
                     funciones.AvisoError('Usuario o Contraseña incorrectos, intente seleccionando la sucursal a la que pertenece');
                     reject();
                 }
@@ -541,90 +501,6 @@ let apigen = {
                                                 '${rows.CORRELATIVO}','${rows.CODCLIE}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.ST}',
                                                 '${rows.TIPO_PAGO}','${rows.TIPO_DOC}','${rows.ENTREGA_CONTACTO}','${rows.ENTREGA_TELEFONO}','${rows.ENTREGA_DIRECCION}',
                                                 '${rows.ENTREGA_REFERENCIA}','${rows.ENTREGA_LAT}','${rows.ENTREGA_LONG}','${rows.DOMICILIO}');">
-                                                <i class="fal fa-edit"></i>
-                                            </button>    
-                                        </div>
-                                        <div class="col-3">
-                                            <button class="btn btn-danger btn-sm btn-circle"
-                                                onclick="deletePedidoVendedor('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}');">
-                                                <i class="fal fa-trash"></i>
-                                            </button>    
-                                        </div>
-                                        <div class="col-3">
-                                            <button class="btn btn-outline-success btn-sm btn-circle"
-                                                onclick="funciones.enviarPedidoWhatsapp2('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}','${rows.CORRELATIVO}');">
-                                                w
-                                            </button>    
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
-                                </td>
-                            </tr>`
-            })
-            container.innerHTML = tableheader + strdata + tablefoooter;
-            //lbTotal.innerText = `${funciones.setMoneda(total,'Q ')} - Pedidos: ${totalpedidos} - Promedio:${funciones.setMoneda((Number(total)/Number(totalpedidos)),'Q')}`;
-            lbTotal.innerHTML = `<h3 class="negrita text-danger">Importe: ${funciones.setMoneda(total,'Q ')}</h3>
-                                 <h3 class="negrita text-danger">Pedidos: ${totalpedidos}</h3>
-                                 <h3 class="negrita text-danger">Promedio:${funciones.setMoneda((Number(total)/Number(totalpedidos)),'Q')}</h3>`;
-        }, (error) => {
-            funciones.AvisoError('Error en la solicitud');
-            strdata = '';
-            container.innerHTML = '';
-            lbTotal.innerHTML = '-- --';
-        });
-           
-    },
-    BACKUP_pedidosVendedor: async(sucursal,codven,fecha,idContenedor,idLbTotal)=>{
-
-        let container = document.getElementById(idContenedor);
-        container.innerHTML = GlobalLoader;
-        
-        let lbTotal = document.getElementById(idLbTotal);
-        lbTotal.innerText = '---';
-
-        let tableheader = `<table class="table table-responsive table-hover table-striped table-bordered">
-                            <thead class="bg-trans-gradient text-white">
-                                <tr>
-                                    <td>Documento</td>
-                                    <td>Cliente</td>
-                                    <td>Importe</td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblListaPedidos">`;
-        let tablefoooter ='</tbody></table>';
-
-        let strdata = '';
-        let totalpedidos = 0;
-        axios.post('/ventas/listapedidos', {
-            app:GlobalSistema,
-            sucursal: sucursal,
-            codven:codven,
-            fecha:fecha   
-        })
-        .then((response) => {
-            const data = response.data.recordset;
-            let total =0;
-            data.map((rows)=>{
-                    total = total + Number(rows.IMPORTE);
-                    totalpedidos = totalpedidos + 1;
-                    strdata = strdata + `<tr>
-                                <td colspan="2">
-                                        <b class="text-danger">${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
-                                    <br>
-                                        ${rows.NOMCLIE}
-                                    <br>
-                                        <small class="text-secondary">${rows.DIRCLIE + ', ' + rows.DESMUNI}</small>
-                                    <br>
-                                        <small class="text-white bg-secondary">${rows.OBS}</small>
-                                    <br>
-                                    <div class="row">
-                                        <div class="col-3">
-                                        </div>
-                                        <div class="col-3">
-                                            <button class="btn btn-info btn-sm btn-circle"
-                                                onclick="getDetallePedido('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}','${rows.CORRELATIVO}','${rows.CODCLIE}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.ST}');">
                                                 <i class="fal fa-edit"></i>
                                             </button>    
                                         </div>

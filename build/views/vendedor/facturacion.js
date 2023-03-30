@@ -171,9 +171,7 @@ function getView(){
                                 </div>
                             <div>
 
-                            <button class="btn btn-circle btn-xl btn-warning shadow btn-bottom-ml hand" id="btnLogro">
-                                <i class="fal fa-chart-pie"></i>
-                            </button>
+                           
 
                             <button class="btn btn-circle btn-xl btn-success shadow btn-bottom-mr hand" id="btnAgregarProd">
                                 <i class="fal fa-search"></i>
@@ -187,152 +185,6 @@ function getView(){
                     </div>
                     
                 <div id="containerModalesVentas"></div>
-
-            </div>
-        </div>  
-            `
-        },
-        gridTempVentaModalBusquedaProductos :()=>{
-            return `
-        <div class="row">
-            <div id="panel-2" class="panel col-12">
-
-
-                <div class="panel-hdr">
-                    <h2 id="txtTotalVenta" class="text-danger"></h2>
-                    <div class="panel-toolbar">
-                                               
-                        <button class="btn btn-warning" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen">
-                            <i class="fal fa-angle-double-up"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="panel-container show">
-                    <div class="panel-content">
-                        
-                       <div class="col-sm-12 col-md-8 col-lg-8 col-xl-8">
-                            <div class="input-group">
-                                <select class="form-control col-3 shadow border-info hidden" id="cmbTipoPrecio">
-                                    <option value="P">P</option>
-                                    <option value="C">C</option>
-                                    <option value="B">B</option>
-                                    <option value="A">A</option>
-                                    <option value="K">K</option>
-                                </select>
-                                <input id="txtBusqueda" type="text" ref="txtBusqueda" class="form-control col-7  shadow border-info" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
-                                <div class="input-group-prepend">
-                                    <button class="btn btn-info waves-effect waves-themed shadow" type="button" id="btnBuscarProducto">
-                                        <i class="fal fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                   
-                     
-
-                        <div class="table-responsive">
-                            <table class="table table-hover table-striped"><!--mt-5-->
-                                <thead>
-                                    <tr>
-                                        <th class="border-top-0 table-scale-border-bottom fw-700">Producto</th>
-                                        <th class="text-right border-top-0 table-scale-border-bottom fw-700">Medida</th>
-                                        <th class="text-center border-top-0 table-scale-border-bottom fw-700">Cant.</th>
-                                        <th class="text-right border-top-0 table-scale-border-bottom fw-700">Subtotal</th>
-                                        <th class="text-center border-top-0 table-scale-border-bottom fw-700"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblGridTempVentas"></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal fade modal-with-scroll" id="ModalBusqueda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-right" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title text-danger h3" id="">Búsqueda de Productos</label>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
-                               </button>
-                            </div>
-                            <div class="modal-body">
-                            <table class="table table-responsive table-striped table-hover">
-                                <thead class="bg-trans-gradient text-white">
-                                    <tr>
-                                        <td>Producto</td>
-                                        <td>Precio</td>                         
-                                        <td></td>
-                                    </tr>
-                                </thead>
-                                <tbody id="tblResultadoBusqueda">
-                                
-                                </tbody>
-                            </table>
-                            </div>        
-                        </div>
-                    </div>
-
-                    <div class="shortcut-menu align-left">
-                        <button class="btn btn-danger btn-md" data-dismiss="modal">
-                            <i class="fal fa-angle-double-left"></i>Atrás
-                        </button>
-                    </div>
-
-                </div>
-
-                <div class="modal fade  modal-with-scroll" id="ModalCantidadProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-right" role="document">
-                        <div class="modal-content">
-                            <br><br><br><br><br>
-                            <div class="modal-header">
-                                <label class="modal-title" id="txtDesProducto">Azucar don Justo Cabal Kilo</label>
-                            </div>
-                            <div class="modal-body" align="right">
-                                <div class="col-8">
-                                    <div class="row">
-                                        <b id="txtCodMedida">UNIDAD</b>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="input-group">  
-                                                <div class="input-group-prepend">
-                                                    <button class="btn btn-md btn-icon btn-round btn-info" id="btnCantidadDown">
-                                                        -
-                                                    </button>
-                                                </div>
-                                    
-                                                <input type="number" class="text-center form-control" id="txtCantidad" value="1">    
-                                    
-                                                <div class="input-group-append">
-                                                    <button class="btn btn-md btn-icon btn-round btn-info" id="btnCantidadUp">
-                                                        +
-                                                    </button>    
-                                                </div>
-                                            </div>                            
-                                        </div>                              
-                                    </div>
-                                    <div class="col-12">
-                                        <label>Precio: </label>
-                                        <label class="text-success" id="txtPrecioProducto">Q500</label>
-                                        <br>
-                                        <label>Subtotal:</label>
-                                        <label class="text-danger" id="txtSubTotal">Q500</label>
-                                    </div>
-                                    <br>
-                                    <div class="">
-                                        <button type="button" class="btn btn-outline-secondary btn-round" data-dismiss="modal" id="btnCancelarModalProducto">
-                                            <i class="fal fa-ban"></i>Cancelar
-                                        </button>
-                                        <button type="button" class="btn btn-primary btn-round" id="btnAgregarProducto">
-                                            <i class="fal fa-check"></i>Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
             </div>
         </div>  
@@ -353,33 +205,25 @@ function getView(){
             <div class="modal fade  modal-with-scroll" id="ModalBusqueda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-right" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <label class="modal-title text-danger h3" id="">Búsqueda de Productos</label>
+
+                        <div class="modal-body">
+                            <label class="modal-title text-danger h5" id="">Búsqueda de Productos</label>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true"><i class="fal fa-times"></i></span>
                             </button>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="input-group">
-                                    <select class="form-control col-3 shadow border-secondary negrita border-left-0 border-right-0 border-top-0 hidden" id="cmbTipoPrecio">
-                                        <option value="P">P</option>
-                                        <option value="C">C</option>
-                                        <option value="B">B</option>
-                                        <option value="A">A</option>
-                                        <option value="K">K</option>
-                                    </select>
-                                    <input id="txtBusqueda" type="text" ref="txtBusqueda" class="bg-amarillo form-control col-7 shadow" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
+                            <br>
+                                <div class="input-group p-2">
+                                 
+                                    <input id="txtBusqueda" type="text" ref="txtBusqueda" class=" border-naranja bg-amarillo form-control col-12 shadow" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
                                     <div class="input-group-prepend">
-                                        <button class="btn btn-success btn-rounded waves-effect waves-themed shadow" type="button" id="btnBuscarProducto">
+                                        <button class="btn btn-naranja waves-effect waves-themed shadow hand" id="btnBuscarProducto">
                                             <i class="fal fa-search"></i>
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                       
                         <table class="table table-responsive table-striped table-hover">
-                            <thead class="bg-secondary text-white">
+                            <thead class="bg-naranja text-white">
                                 <tr>
                                     <td>Producto</td>
                                     <td>Precio</td>                         
@@ -397,7 +241,7 @@ function getView(){
                     </div>
                 </div>
                 <div class="shortcut-menu align-left">
-                    <button class="btn btn-danger btn-sm" data-dismiss="modal">
+                    <button class="btn btn-danger btn-md" data-dismiss="modal">
                         <i class="fal fa-angle-double-left"></i>Atrás
                     </button>
                 </div>
@@ -556,10 +400,9 @@ function getView(){
                                         <div class="form-group">
                                             <label>Forma de Pago:</label>
                                             <select id="cmbEntregaConcre" class="form-control">
-                                                <option value="CONTADO">CONTADO</option>
-                                                <option value="CREDITO">CREDITO</option>
-                                                <option value="VALE">VALE AL VENDEDOR</option>
-                                                <option value="FACTURA">FACTURA CONTABLE</option>
+                                                <option value="CON">CONTADO</option>
+                                                <option value="CRE">CREDITO</option>
+                                                
                                             </select>
                                         </div>
 
@@ -738,8 +581,8 @@ function getView(){
                                         <div class="form-group">
                                             <label>Forma de Pago:</label>
                                             <select id="cmbEntregaConcre" class="form-control">
-                                                <option value="CONTADO">CONTADO</option>
-                                                <option value="CREDITO">CREDITO</option>
+                                                <option value="CON">CONTADO</option>
+                                                <option value="CRE">CREDITO</option>
                                             </select>
                                         </div>
 
@@ -783,7 +626,7 @@ function getView(){
                                 <input type="text" class="form-control" id="txtEntregaDireccion">
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group hidden">
                                 <label>Referencia entrega</label>
                                 <input type="text" class="form-control" id="txtEntregaReferencia" value="SN">
                             </div>
@@ -908,9 +751,7 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
     lbNomClien.innerText = `${nombre} // ${direccion}`;
     
 
-    document.getElementById('btnLogro').addEventListener('click',()=>{
-        classNavegar.logrovendedor();
-    });
+    
 
     document.getElementById('btnPedido').addEventListener('click',()=>{
         document.getElementById('tab-pedido').click();
@@ -1283,6 +1124,95 @@ function fcnIniciarModalCantidadProductos(){
 
 function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
     
+    //let cmbTipoPrecio = document.getElementById(idTipoPrecio);
+
+    let filtro = document.getElementById(idFiltro).value;
+    
+    let tabla = document.getElementById(idTablaResultado);
+    tabla.innerHTML = GlobalLoader;
+
+
+    let str = ""; 
+
+    get_data_precios(filtro)
+    .then((response) => {
+        const data = response.recordset;
+        console.log(data);
+        //con esta variable determino el tipo de precio a usar            
+        let pre = 0;
+            
+            data.map((rows)=>{
+                let exist = Number(rows.EXISTENCIA)/Number(rows.EQUIVALE); let strC = ''; let strCfont = '';
+                if(Number(rows.EXISTENCIA<=0)){strC='bg-danger text-white'; strCfont='text-danger negrita'}else{strC='bg-success text-white'; strCfont='text-info negrita'};
+                let totalexento = 0;
+                if (rows.EXENTO==1){totalexento=Number(rows.PRECIO)}
+                
+                pre = Number(rows.PRECIO);
+
+                str += `<tr id="${rows.CODPROD}" onclick="getDataMedidaProducto('${rows.CODPROD}','${funciones.quitarCaracteres(rows.DESPROD,'"'," plg",true)}','${rows.CODMEDIDA}',1,${rows.EQUIVALE},${rows.EQUIVALE},${rows.COSTO},${pre},${totalexento},${Number(rows.EXISTENCIA)});" class="border-bottom">
+                <td >
+                    ${funciones.quitarCaracteres(rows.DESPROD,'"'," pulg",true)}
+                    <br>
+                    <small class="${strCfont}"><b>${rows.CODPROD}</b></small><small class="text-info">//Escala:${rows.DESPROD3}</small>
+                    <br>
+                    <b class"bg-danger text-white">${rows.CODMEDIDA}</b>
+                    <small>(${rows.EQUIVALE})</small>
+                </td>
+                <td>${funciones.setMoneda(pre || 0,'Q ')}
+                    <br>
+                    <h5 class="${strCfont}">E:${funciones.setMoneda(exist,'')}</h5>
+                </td>
+                
+                <td>
+                    <button class="btn btn-sm btn-success btn-circle text-white" 
+                    onclick="getDataMedidaProducto('${rows.CODPROD}','${funciones.quitarCaracteres(rows.DESPROD,'"'," plg",true)}','${rows.CODMEDIDA}',1,${rows.EQUIVALE},${rows.EQUIVALE},${rows.COSTO},${pre},${totalexento},${Number(rows.EXISTENCIA)});">
+                        +
+                    </button>
+                <td>
+                
+            </tr>`
+            })
+            tabla.innerHTML= str;
+        
+    }, (error) => {
+        console.log(error);
+    })
+    .catch((error)=>{
+        //funciones.AvisoError(error);
+        tabla.innerHTML ='<label>Debe descargar los productos al menos una vez al día.. Descárguelos nuevamente por favor.</label>';
+    })
+
+
+
+
+};
+
+function get_data_precios(filtro){
+    return new Promise((resolve,reject)=>{
+        axios.post('/productos/buscar_precio',{
+           sucursal:GlobalCodSucursal,
+           filtro:filtro
+        })
+        .then((response) => {
+            let data = response.data;
+            if(response=='error'){
+                reject();
+            }else{
+                if(Number(data.rowsAffected[0])>0){
+                    resolve(data);             
+                }else{
+                    reject();
+                } 
+            }
+                        
+        }, (error) => {
+            reject();
+        });
+    })
+}
+
+function BACKUP_fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
+    
     let cmbTipoPrecio = document.getElementById(idTipoPrecio);
 
     let filtro = document.getElementById(idFiltro).value;
@@ -1407,7 +1337,7 @@ async function fcnAgregarProductoVenta(codprod,desprod,codmedida,cantidad,equiva
     document.getElementById('btnAgregarProducto').disabled = true;
 
     //document.getElementById('tblResultadoBusqueda').innerHTML = '';
-    let cmbTipoPrecio = document.getElementById('cmbTipoPrecio');
+    let cmbTipoPrecio = 'P';//document.getElementById('cmbTipoPrecio');
         let totalcosto = Number(costo) * Number(cantidad);
         let totalprecio = Number(precio) * Number(cantidad);
         console.log('intenta agregar la fila')
@@ -1429,7 +1359,7 @@ async function fcnAgregarProductoVenta(codprod,desprod,codmedida,cantidad,equiva
                     TOTALPRECIO:totalprecio,
                     EXENTO:exento,
                     USUARIO:GlobalUsuario,
-                    TIPOPRECIO:cmbTipoPrecio.value,
+                    TIPOPRECIO:cmbTipoPrecio,
                     EXISTENCIA:GlobalSelectedExistencia
                 };
 
@@ -1816,23 +1746,18 @@ async function fcnFinalizarPedido(){
                 .then((correlativo)=>{
                     correlativoDoc = correlativo;
                     
-                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                    document.getElementById('btnFinalizarPedido').disabled = false;
+                    //document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                    //document.getElementById('btnFinalizarPedido').disabled = false;
 
                     funciones.Confirmacion('¿Está seguro que desea Finalizar este Pedido')
                     .then((value)=>{
                         if(value==true){
-                            setLog(`<label class="text-danger">Creando el pedido a enviar...</label>`,'rootWait');
-                            $('#modalWait').modal('show');
-                            
-                            //document.getElementById('btnFinalizarPedido').innerHTML = GlobalLoader;
+                         
                         
                             gettempDocproductos(GlobalUsuario)
                             .then((response)=>{
                                 let docproductos_ped = response;
                                 
-                                setLog(`<label class="text-info">Pedido creado, enviado pedido...</label>`,'rootWait');
-                                //,,obs,usuario,codven
                                 axios.post('/ventas/insertventa', {
                                     jsondocproductos:JSON.stringify(response),
                                     codsucursal:GlobalCodSucursal,
@@ -1871,93 +1796,21 @@ async function fcnFinalizarPedido(){
                                 })
                                 .then(async(response) => {
                                     const data = response.data;
-                                    if (data.rowsAffected[0]==0){
-                                        
-                                        setLog(`<label class="text-info">No se logró Enviar este pedido, se intentará guardarlo en el teléfono</label>`,'rootWait');
-                                
-                                        //funciones.showToast('No se logró Enviar este pedido, se intentará guardarlo en el teléfono')
-                                        //funciones.AvisoError('No se logró Enviar este pedido, se intentará guardarlo en el teléfono');
-                                        
-                                        //guarda el pedido localmente
-                                        var datospedido = {
-                                            CODSUCURSAL:GlobalCodSucursal,
-                                            EMPNIT: GlobalEmpnit,
-                                            CODDOC:coddoc,
-                                            ANIO:anio,
-                                            MES:mes,
-                                            DIA:dia,
-                                            FECHA:fecha,
-                                            FECHAENTREGA:fechaentrega,
-                                            FORMAENTREGA:cmbTipoEntrega,
-                                            CODCLIE: codcliente,
-                                            NOMCLIE:ClienteNombre,
-                                            TOTALCOSTO:GlobalTotalCostoDocumento,
-                                            TOTALPRECIO:GlobalTotalDocumento,
-                                            NITCLIE:nit,
-                                            DIRCLIE:dirclie,
-                                            OBS:obs,
-                                            DIRENTREGA:direntrega,
-                                            USUARIO:GlobalUsuario,
-                                            CODVEN:Number(cmbVendedor.value),
-                                            LAT:latdoc,
-                                            LONG:longdoc,
-                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped),
-                                            tipo_pago:tipo_pago,
-                                            tipo_doc:tipo_doc,
-                                            entrega_contacto:entrega_contacto,
-                                            entrega_telefono:entrega_telefono,
-                                            entrega_direccion:entrega_direccion,
-                                            entrega_referencia:entrega_referencia,
-                                            entrega_lat:entrega_lat,
-                                            entrega_long:entrega_long,
-                                            domicilio:GlobalSelectedDomicilio
-                                        };
-                                        console.log(datospedido);
-                                        insertVenta(datospedido)
-                                        .then(async()=>{
-                                    
-                                            hideWaitForm();
-
-                                            document.getElementById('btnEntregaCancelar').click();
-                                                                                        
-                                            //actualiza la ubicación del empleado
-                                            await classEmpleados.updateMyLocation();
-                                            
-                                            //actualiza la última venta del cliente
-                                            apigen.updateClientesLastSale(nit,'VENTA');
-                                            
-                                            //elimina el temp ventas asociado al empleado
-                                            deleteTempVenta(GlobalUsuario)
-                    
-                                            
-                                            funciones.showToast('El pedido será guardado localmente, recuerde enviarlo');
-                                        
-                                            //prepara todo para un nuevo pedido
-                                            fcnNuevoPedido();
-                                        })
-                                        .catch(()=>{
-                                            hideWaitForm();
-                                            //btnCerrarModalWait.click();
-                                            //$('#modalWait').modal('hide');
-                                            funciones.AvisoError('No se pudo guardar este pedido')
-                                        })
-
+                                    //if (data.rowsAffected[0]==0){
+                                    if (response=='error'){
+                                            funciones.AvisoError('No se pudo guardar este pedido');
+                                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                            document.getElementById('btnFinalizarPedido').disabled = false;
                                     }else{
                                         
-                                        //$('#modalWait').modal('hide');
-                                        //btnCerrarModalWait.click();
-                                        hideWaitForm();
+                                        document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                        document.getElementById('btnFinalizarPedido').disabled = false;
 
                                         funciones.Aviso('Pedido Generado Exitosamente !!!')
                                     
                                         document.getElementById('btnEntregaCancelar').click();
                                                             
-                                        //actualiza la ubicación del empleado
-                                        await classEmpleados.updateMyLocation();
-                                        
-                                        //actualiza la última venta del cliente
-                                        apigen.updateClientesLastSale(nit,'VENTA');
-                                        //elimina el temp ventas asociado al empleado
+                                     
                                         deleteTempVenta(GlobalUsuario)
 
                                     
@@ -1966,86 +1819,16 @@ async function fcnFinalizarPedido(){
                                     }
                                 }, (error) => {
                                     console.log(error);
-
-                                    setLog(`<label class="text-info">Ha ocurrido un error y no se pudo enviar, se intentará guardar en el teléfono</label>`,'rootWait');
-                                
-                                                        //guarda el pedido localmente
-                                                        var datospedido = {
-                                                            CODSUCURSAL:GlobalCodSucursal,
-                                                            EMPNIT: GlobalEmpnit,
-                                                            CODDOC:coddoc,
-                                                            ANIO:anio,
-                                                            MES:mes,
-                                                            DIA:dia,
-                                                            FECHA:fecha,
-                                                            FECHAENTREGA:fechaentrega,
-                                                            FORMAENTREGA:cmbTipoEntrega,
-                                                            CODCLIE: codcliente,
-                                                            NOMCLIE:ClienteNombre,
-                                                            TOTALCOSTO:GlobalTotalCostoDocumento,
-                                                            TOTALPRECIO:GlobalTotalDocumento,
-                                                            NITCLIE:nit,
-                                                            DIRCLIE:dirclie,
-                                                            OBS:obs,
-                                                            DIRENTREGA:direntrega,
-                                                            USUARIO:GlobalUsuario,
-                                                            CODVEN:Number(cmbVendedor.value),
-                                                            LAT:latdoc,
-                                                            LONG:longdoc,
-                                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped),
-                                                            tipo_pago:tipo_pago,
-                                                            tipo_doc:tipo_doc,
-                                                            entrega_contacto:entrega_contacto,
-                                                            entrega_telefono:entrega_telefono,
-                                                            entrega_direccion:entrega_direccion,
-                                                            entrega_referencia:entrega_referencia,
-                                                            entrega_lat:entrega_lat,
-                                                            entrega_long:entrega_long,
-                                                            domicilio:GlobalSelectedDomicilio
-                                                        };
-                                                        console.log(datospedido);
-                                                        insertVenta(datospedido)
-                                                        .then(async()=>{
-                                                            //funciones.Aviso('El pedido será guardado localmente, recuerde enviarlo');
-                                                            //$('#modalWait').modal('hide'); 
-                                                            //btnCerrarModalWait.click();
-                                                            
-                                                            
-
-                                                            document.getElementById('btnEntregaCancelar').click();
-                                                            
-                                                            //actualiza la ubicación del empleado
-                                                            await classEmpleados.updateMyLocation();
-                                                            
-                                                            //actualiza la última venta del cliente
-                                                            apigen.updateClientesLastSale(nit,'VENTA');
-                                                            //elimina el temp ventas asociado al empleado
-                                                            deleteTempVenta(GlobalUsuario)
-                                                                                                                                                
-                                                            funciones.showToast('El pedido será guardado localmente, recuerde enviarlo');
-
-                                                            //prepara todo para un nuevo pedido
-                                                            fcnNuevoPedido();
-                                                            
-                                                            hideWaitForm();
-
-                                                        })
-                                                        .catch(()=>{
-                                                            hideWaitForm();
-                                                            //btnCerrarModalWait.click();
-                                                            //$('#modalWait').modal('hide'); 
-                                                            funciones.AvisoError('No se pudo guardar este pedido')
-                                                        }) 
-                                                    });        
+                                    funciones.AvisoError('No se pudo guardar este pedido');
+                                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                    document.getElementById('btnFinalizarPedido').disabled = false;
+                                });        
 
                             })
                             .catch((error)=>{
-                                //$('#modalWait').modal('hide');
-                                hideWaitForm();
-                                //btnCerrarModalWait.click();
-                                funciones.AvisoError('No pude crear la tabla de productos del pedido ' + error);
-                                //$('#modalWait').modal('hide');
-                                //document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-check mr-1"></i>Finalizar';
+                                    funciones.AvisoError('No se pudo guardar este pedido');
+                                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                    document.getElementById('btnFinalizarPedido').disabled = false;
                             })
 
                             
@@ -2057,82 +1840,9 @@ async function fcnFinalizarPedido(){
                 })
                 .catch(()=>{
                     console.log('pasa por aqui...');
-                    
+                    funciones.AvisoError('No se pudo guardar este pedido');
                     document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                     document.getElementById('btnFinalizarPedido').disabled = false;
-
-                    gettempDocproductos(GlobalUsuario)
-                    .then((response)=>{
-                        let docproductos_ped = response;
-
-                            //funciones.AvisoError('No se pudo obtener el número de correlativo del pedido, por favor, revise su conexión a internet')
-                            setLog(`<label class="text-info">No se logró Enviar este pedido, se intentará guardarlo en el teléfono</label>`,'rootWait');
-                            $('#modalWait').modal('show');
-                                        
-                                        //guarda el pedido localmente
-                                        var datospedido = {
-                                            CODSUCURSAL:GlobalCodSucursal,
-                                            EMPNIT: GlobalEmpnit,
-                                            CODDOC:coddoc,
-                                            ANIO:anio,
-                                            MES:mes,
-                                            DIA:dia,
-                                            FECHA:fecha,
-                                            FECHAENTREGA:fechaentrega,
-                                            FORMAENTREGA:cmbTipoEntrega,
-                                            CODCLIE: codcliente,
-                                            NOMCLIE:ClienteNombre,
-                                            TOTALCOSTO:GlobalTotalCostoDocumento,
-                                            TOTALPRECIO:GlobalTotalDocumento,
-                                            NITCLIE:nit,
-                                            DIRCLIE:dirclie,
-                                            OBS:obs,
-                                            DIRENTREGA:direntrega,
-                                            USUARIO:GlobalUsuario,
-                                            CODVEN:Number(cmbVendedor.value),
-                                            LAT:latdoc,
-                                            LONG:longdoc,
-                                            JSONPRODUCTOS:JSON.stringify(docproductos_ped),
-                                            tipo_pago:tipo_pago,
-                                            tipo_doc:tipo_doc,
-                                            entrega_contacto:entrega_contacto,
-                                            entrega_telefono:entrega_telefono,
-                                            entrega_direccion:entrega_direccion,
-                                            entrega_referencia:entrega_referencia,
-                                            entrega_lat:entrega_lat,
-                                            entrega_long:entrega_long,
-                                            domicilio:GlobalSelectedDomicilio
-                                        };
-                                       
-                                        insertVenta(datospedido)
-                                        .then(async()=>{
-                                            
-                                            hideWaitForm();
-
-                                            document.getElementById('btnEntregaCancelar').click();
-                                                                                        
-                                            //actualiza la ubicación del empleado
-                                            await classEmpleados.updateMyLocation();
-                                            
-                                            //actualiza la última venta del cliente
-                                            apigen.updateClientesLastSale(nit,'VENTA');
-                                            
-                                            //elimina el temp ventas asociado al empleado
-                                            deleteTempVenta(GlobalUsuario)
-                    
-                                            
-                                            funciones.showToast('El pedido será guardado localmente, recuerde enviarlo');
-                                        
-                                            //prepara todo para un nuevo pedido
-                                            fcnNuevoPedido();
-                                        })
-                                        .catch(()=>{
-                                            hideWaitForm();
-                                            //btnCerrarModalWait.click();
-                                            //$('#modalWait').modal('hide');
-                                            funciones.AvisoError('No se pudo guardar este pedido')
-                                        })
-                    })
                     
                 })
 
@@ -2164,7 +1874,10 @@ async function fcnNuevoPedido(){
     document.getElementById('lbEntregaLat').innerText ='0';
     document.getElementById('lbEntregaLong').innerText ='0';
 
-    classNavegar.inicio(GlobalTipoUsuario);
+    
+    $('#modalWait').modal('hide');
+
+    classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
     
 };
 

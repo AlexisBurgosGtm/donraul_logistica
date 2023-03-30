@@ -6,8 +6,8 @@ let rootMenuFooter = document.getElementById('rootMenuFooter');
 
 let lbMenuTitulo = document.getElementById('lbMenuTitulo');
 let rootMenuLateral = document.getElementById('rootMenuLateral');
-const showMenuLateral =(titulo)=>{ $("#modalMenu").modal('show'); lbMenuTitulo.innerText = titulo;};
-const hideMenuLateral =()=>{ $("#modalMenu").modal('hide'); lbMenuTitulo.innerText = '';};
+const showMenuLateral =(titulo)=>{ $("#modalMenu").modal('show'); };
+const hideMenuLateral =()=>{ $("#modalMenu").modal('hide'); };
 
 let divUsuario = document.getElementById('divUsuario');
 let lbTipo = document.getElementById('lbTipo');
@@ -40,7 +40,7 @@ let GlobalSelectedFecha;
 let GlobalCoddoc = 'PED01';
 let GlobalTotalDocumento = 0;
 let GlobalTotalCostoDocumento = 0;
-let GlobalCodBodega = '01';
+
 let GlobalTipoCobro = 'TERMINAR';
 
 let GlobalSelectedCodven = 0;

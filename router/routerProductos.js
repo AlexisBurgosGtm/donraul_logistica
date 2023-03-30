@@ -4,14 +4,50 @@ const router = express.Router();
 
 // PPUBLICO= PRECIO, PMAYOREOA=OFERTA,PMAYOREOB=ESCALA, PMAYOREOC=MAYORISTA
 
+
+router.post('/buscar_precio',async(req,res)=>{
+
+    const {sucursal, filtro} = req.body;
+    
+
+    let qry = `SELECT TOP (30) 
+    Productos.CODPROD, Productos.DESPROD, Precios.CODMEDIDA, 
+    Precios.EQUIVALE, Precios.COSTO, Precios.PRECIO, 
+    Precios.MAYORISTA, Precios.ESCALA, 
+    Precios.OFERTA, '2023-03-07' AS LASTUPDATE, 
+    Invsaldo.SALDOFINAL AS EXISTENCIA
+            FROM Productos LEFT OUTER JOIN
+                Invsaldo ON Productos.CODPROD = Invsaldo.CODPROD AND Productos.EMP_NIT = Invsaldo.EMP_NIT LEFT OUTER JOIN
+                Precios ON Productos.CODPROD = Precios.CODPROD AND Productos.EMP_NIT = Precios.EMP_NIT AND Productos.EMP_NIT = Precios.EMP_NIT
+                WHERE (Productos.EMP_NIT = '${sucursal}')
+                    AND (Productos.DESPROD LIKE '%${filtro}%')
+                    AND (Invsaldo.INV_ANO = YEAR(GETDATE())) AND (Invsaldo.INV_MES = MONTH(GETDATE()))
+                OR 
+                (Productos.EMP_NIT = '${sucursal}')
+                    AND (Productos.CODPROD='${filtro}')
+                    AND (Invsaldo.INV_ANO = YEAR(GETDATE())) AND (Invsaldo.INV_MES = MONTH(GETDATE()))`;
+
+ 
+    execute.Query(res,qry);
+});
+
+
 // OBTIENE LISTADO DE PRECIOS
 router.post('/listaprecios',async(req,res)=>{
     const {sucursal} = req.body;
-    let qry = `SELECT ME_Productos.CODPROD, ME_Productos.DESPROD, ME_Precios.CODMEDIDA, ME_Precios.EQUIVALE, ME_Precios.COSTO, ME_Precios.PRECIO AS PUBLICO, ME_Precios.MAYORISTA AS MAYOREOC, 
+    let qryx = `SELECT ME_Productos.CODPROD, ME_Productos.DESPROD, ME_Precios.CODMEDIDA, ME_Precios.EQUIVALE, ME_Precios.COSTO, ME_Precios.PRECIO AS PUBLICO, ME_Precios.MAYORISTA AS MAYOREOC, 
                 ME_Precios.ESCALA AS MAYOREOB, ME_Precios.OFERTA AS MAYOREOA, ME_Productos.LASTUPDATE
                 FROM ME_Productos LEFT OUTER JOIN
                 ME_Precios ON ME_Productos.CODPROD = ME_Precios.CODPROD AND ME_Productos.CODSUCURSAL = ME_Precios.CODSUCURSAL AND ME_Productos.EMP_NIT = ME_Precios.EMP_NIT
                 WHERE (ME_Productos.CODSUCURSAL = 'GENERAL')`;
+
+
+    let qry = `SELECT Productos.CODPROD, Productos.DESPROD, Precios.CODMEDIDA, 
+                Precios.EQUIVALE, Precios.COSTO, Precios.PRECIO AS PUBLICO, Precios.MAYORISTA AS MAYOREOC, 
+                Precios.ESCALA AS MAYOREOB, Precios.OFERTA AS MAYOREOA, '2023-03-07' AS Productos.LASTUPDATE
+                FROM Productos LEFT OUTER JOIN
+                Precios ON Productos.CODPROD = Precios.CODPROD AND Productos.EMP_NIT = Precios.EMP_NIT AND Productos.EMP_NIT = Precios.EMP_NIT
+                WHERE (ME_Productos.EMP_NIT = '${sucursal}')`;
 
     execute.Query(res,qry);
 });

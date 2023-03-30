@@ -1,50 +1,105 @@
 function getView(){
-    let view = {
-        encabezado: ()=>{
+    let view ={
+        body:()=>{
             return `
-            <div class="col-12 bg-secondary text-white">
-                <h5>Pedidos tomados por fecha</h5>
+                <div class="col-12 p-0 bg-white">
+                    <div class="tab-content" id="myTabHomeContent">
+                        <div class="tab-pane fade show active" id="dia" role="tabpanel" aria-labelledby="receta-tab">
+                            ${view.vista_dia()}
+                        </div>
+                        <div class="tab-pane fade" id="mes" role="tabpanel" aria-labelledby="home-tab">
+                            ${view.vista_mes()}
+                        </div>    
+                    </div>
+
+                    <ul class="nav nav-tabs hidden" id="myTabHome" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active negrita text-success" id="tab-dia" data-toggle="tab" href="#dia" role="tab" aria-controls="profile" aria-selected="false">
+                                <i class="fal fa-list"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link negrita text-danger" id="tab-mes" data-toggle="tab" href="#mes" role="tab" aria-controls="home" aria-selected="true">
+                                <i class="fal fa-comments"></i></a>
+                        </li>         
+                    </ul>
+
+                </div>
+               
+            `
+        },
+        vista_dia : ()=>{
+            return `
+            <div class="row bg-naranja text-white">
+                <div class="col-12">
+                    <h5>Seleccione la Fecha y el tipo de Reporte</h5>
+                </div>               
             </div>
+
             <div class="row">
-                <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                    <input type="date" class="form-control border-top-0 border-right-0 border-left-0" id="txtFechaPedido">
+                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                    <div class="form-group">
+                        <label>Por Fecha</label>
+                        <input type="date" class="form-control" id="txtFecha">
+                    </div>
                 </div>
-                
-                <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
-                    <h1 class="text-danger" id="lbTotalPedidos">Q 0.00</h1>
+                <div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                    <button class="btn btn-success hand shadow btn-circle btn-xl hidden" id="btnRepDiaDocumentos">
+                        <i class="fal fa-calendar"></i>
+                    </button>
                 </div>
-            
             </div>
-            <div class="row">
-                <div class="col-4">
-                    <button class="btn btn-outline-secondary shadow" id="btnCargarPedidos">
-                        <i class="fal fa-tag"></i>
-                        Pedidos
-                    </button>                
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-outline-success shadow" id="btnCargarProductos">
-                        <i class="fal fa-cube"></i>
-                        Producto
-                    </button>                
-                </div>
-                <div class="col-4">
-                    <button class="btn btn-outline-info shadow" id="btnCargarMarcas">
-                        <i class="fal fa-credit-card-front"></i>    
-                        Marcas
-                    </button>                
+
+            <hr class="solid">
+            <div class="" id="containerTotal"></div>
+                <br>
+            <div class="row card">
+                <div class="table-responsive" id="tblReport">
+                  
                 </div>
             </div>
             `
         },
-        listado: ()=>{
+        vista_mes : ()=>{
             return `
-            <br>
-            <div class="row card">
-                <div class="table-responsive" id="tblListaPedidos">
-                    
+            <div class="row bg-naranja text-white">
+                <div class="col-12">
+                    <h5>Seleccione un Mes y un Reporte</h5>
+                </div>               
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                    <div class="row">
+
+                        <div class="col-6">
+                            <div class="form-group">
+                                <select class="form-control" id="cmbMes"></select>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <select class="form-control" id="cmbAnio"></select>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
+
+            `
+        },
+        listado: ()=>{
+            return `
+                <hr class="solid">
+            <div class="" id="containerTotal"></div>
+                <br>
+            <div class="row card">
+                <div class="table-responsive" id="tblReport">
+                  
+                </div>
+            </div>
+
+
             `
         },
         modalDetallePedido:()=>{
@@ -181,54 +236,122 @@ function getView(){
         }
     };
 
-    root.innerHTML = view.encabezado() + view.listado();
-    rootMenuLateral.innerHTML = view.modalDetallePedido() + view.modalCantidad();
-    lbMenuTitulo.innerText = "Detalle del Pedido"
-
+    root.innerHTML = view.body();
 };
 
 function addListeners(){
 
-    iniciarModalCantidad();
+   
 
-    let btnCargarPedidos = document.getElementById('btnCargarPedidos');
-    let btnCargarProductos = document.getElementById('btnCargarProductos');
-    let btnCargarMarcas = document.getElementById('btnCargarMarcas');
+    document.getElementById('txtFecha').value = funciones.getFecha();
+
+    let f = new Date();
+    let cmbMes = document.getElementById('cmbMes');
+    cmbMes.innerHTML = funciones.ComboMeses();
+    let cmbAnio = document.getElementById('cmbAnio');
+    cmbAnio.innerHTML = funciones.ComboAnio();
+
+    cmbMes.value = f.getMonth()+1;
+    cmbAnio.value = f.getFullYear();
+
+
     
-    let txtFechaPedido = document.getElementById('txtFechaPedido');
-    let lbTotalPedidos = document.getElementById('lbTotalPedidos');
 
-    txtFechaPedido.value = funciones.getFecha();
 
-    btnCargarProductos.addEventListener('click',async ()=>{
-        await apigen.reporteDiaProductos(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFechaPedido'),'tblListaPedidos','lbTotalPedidos');
-    });
-    btnCargarMarcas.addEventListener('click',async ()=>{
-        await apigen.reporteDiaMarcas(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFechaPedido'),'tblListaPedidos','lbTotalPedidos');
-    });
-    btnCargarPedidos.addEventListener('click',async ()=>{
-        await apigen.pedidosVendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFechaPedido'),'tblListaPedidos','lbTotalPedidos');
-    });
-    btnCargarPedidos.click();
+   
 
-    let btnEditarPedido = document.getElementById('btnEditarPedido');
-    btnEditarPedido.addEventListener('click',()=>{
-        
-        cargarPedidoEdicion(GlobalSelectedCoddoc,GlobalSelectedCorrelativo,GlobalSelectedSt);
-        
-    })
+    //REPORTE DE DOCUMENTOS DEL DIA
+    document.getElementById('txtFecha').addEventListener('change',()=>{
+        rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+    });
+    
+    rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+
+
+    let btnRepDiaDocumentos = document.getElementById('btnRepDiaDocumentos');
+    btnRepDiaDocumentos.addEventListener('click',()=>{
+            rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+                    
+    });
+
+
+   return;
+   //CARGA DE LOS REPORTES
+   let cmbReporte = document.getElementById('cmbReporte');
+   cmbReporte.addEventListener('change',()=>{
+       switch (cmbReporte.value.toString()) {
+           case '1':
+               //PEDIDOS POR FECHA
+               apigen.pedidosVendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+               break;
+       
+           case '2':
+               //MARCAS POR FECHA
+               apigen.reporteDiaMarcas(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+               break;
+
+           case '3':
+               //PRODUCTOS POR FECHA
+               apigen.reporteDiaProductos(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+               break;
+           
+           case '4':
+               //VENTAS POR FECHA
+               getRptDinero(cmbMes.value, cmbAnio.value);
+               break;
+           case '5':
+               //PRODUCTOS DEL MES
+               getRptProductos(cmbMes.value, cmbAnio.value);
+               break;
+           
+           case '6':
+               //MARCAS POR MES
+               getRptMarcas(cmbMes.value, cmbAnio.value);
+               break;
+           
+           case '7':
+               //VENTAS NETAS MES
+               getRptDinero2(cmbMes.value, cmbAnio.value);
+               break;
+           default:
+               break;
+       }
+
+   });
+
+   let btnEditarPedido = document.getElementById('btnEditarPedido');
+   btnEditarPedido.addEventListener('click',()=>{
+       cargarPedidoEdicion(GlobalSelectedCoddoc,GlobalSelectedCorrelativo,GlobalSelectedSt);    
+   });
 
 };
 
-function inicializarVistaPedidos(){
+function inicializarVistaLogro(){
     getView();
     addListeners();
-
 };
 
-function deletePedidoVendedor(fecha,coddoc,correlativo,st){
-    console.log("status del documento: " + st)
-    if(st=='O'){
+
+function getRptDinero2(mes,anio){
+    apigen.reporteDinero2(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
+};
+function getRptDinero(mes,anio){
+    apigen.reporteDinero(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
+};
+function getRptProductos(mes,anio){
+    apigen.reporteProductos(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
+};
+function getRptMarcas(mes,anio){
+    apigen.reporteMarcas(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
+};
+
+
+
+//POR DIA
+
+function fcn_delete_pedido(coddoc,correlativo,st){
+    
+    if(st=='I'){
         funciones.Confirmacion('¿Está seguro que desea Eliminar este Pedido?')
         .then((value)=>{
             if(value==true){
@@ -236,14 +359,14 @@ function deletePedidoVendedor(fecha,coddoc,correlativo,st){
                     .then((clave)=>{
                         if(clave==GlobalPassUsuario){
 
-                            apigen.deletePedidoVendedor(GlobalCodSucursal,GlobalCodUsuario,fecha,coddoc,correlativo)
-                            .then(async()=>{
-                                funciones.Aviso('Pedido Eliminado Exitosamente!!')
-                                await apigen.pedidosVendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFechaPedido'),'tblListaPedidos','lbTotalPedidos');
-                            })
-                            .catch(()=>{
-                                funciones.AvisoError('No se pudo eliminar')
-                            })
+                                apigen.delete_pedido(GlobalCodSucursal,coddoc,correlativo)
+                                .then(()=>{
+                                    funciones.Aviso('Pedido Eliminado Exitosamente!!')
+                                    rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+                                })
+                                .catch(()=>{
+                                    funciones.AvisoError('No se pudo eliminar');
+                                })
 
                         }else{
                             funciones.AvisoError('Clave incorrecta')
@@ -260,7 +383,30 @@ function deletePedidoVendedor(fecha,coddoc,correlativo,st){
 
 };
 
-function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st){
+function delete_pedido (sucursal,coddoc,correlativo){
+    return new Promise((resolve,reject)=>{
+        axios.post('/ventas/deletepedidovendedor',{
+           sucursal:sucursal,
+           coddoc:coddoc,
+           correlativo:correlativo
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data);             
+            }else{
+                reject();
+            }                     
+        }, (error) => {
+            reject();
+        });
+    })
+}
+
+
+function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st,
+    tipo_pago,tipo_doc,
+    entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long,domicilio){
 
     GlobalSelectedSt = st;
     GlobalSelectedFecha = fecha;
@@ -269,10 +415,19 @@ function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st){
     GlobalSelectedCodCliente=codclie;
     GlobalSelectedNomCliente=nomclie;
     GlobalSelectedDirCliente=dirclie;
+    Global_tipo_pago = tipo_pago;
+    Global_tipo_doc = tipo_doc;
+    Global_entrega_contacto = entrega_contacto;
+    Global_entrega_telefono = entrega_telefono;
+    Global_entrega_direccion = entrega_direccion;
+    Global_entrega_referencia = entrega_referencia;
+    Global_entrega_lat = entrega_lat;
+    Global_entrega_long = entrega_long;
+    Global_domicilio = domicilio;
 
-    lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
+    //lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
     apigen.digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
-    $("#modalMenu").modal('show');
+    //$("#modalMenu").modal('show');
     
 };
 
@@ -390,7 +545,7 @@ function cargarPedidoEdicion(coddoc,correlativo,st){
                                             funciones.showToast('Pedido anterior eliminado con éxito!!');
                                             
                                             $('#modalWait').modal('hide');
-                                            classNavegar.ventas(GlobalSelectedCodCliente,GlobalSelectedNomCliente,GlobalSelectedDirCliente);
+                                            classNavegar.ventas(GlobalSelectedCodCliente,GlobalSelectedNomCliente,GlobalSelectedDirCliente,'LOAD');
                                         })
                                         .catch(()=>{
                                             $('#modalWait').modal('hide');
@@ -508,3 +663,92 @@ function fcnDeletePedidoCargado(coddoc,correlativo){
     })
     
 };
+
+
+
+function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
+
+    let container = document.getElementById(idContenedor);
+    container.innerHTML = GlobalLoader;
+    
+    let lbTotal = document.getElementById(idLbTotal);
+    lbTotal.innerText = '---';
+
+    let tableheader = `<table class="table table-responsive table-hover table-striped table-bordered">
+                        <thead class="bg-naranja text-white">
+                            <tr>
+                                <td>Documento</td>
+                                <td>Cliente</td>
+                                <td>Importe</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tblListaPedidos">`;
+    let tablefoooter ='</tbody></table>';
+
+    let strdata = '';
+    let totalpedidos = 0;
+    axios.post('/ventas/lista_pedidos', {
+        sucursal: sucursal,
+        coddoc:GlobalCoddoc,
+        fecha:fecha   
+    })
+    .then((response) => {
+        const data = response.data.recordset;
+        let total =0;
+        data.map((rows)=>{
+                total = total + Number(rows.IMPORTE);
+                totalpedidos = totalpedidos + 1;
+                strdata = strdata + `<tr>
+                            <td colspan="2">
+                                    <b class="text-danger">${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
+                                <br>
+                                    ${rows.NEGOCIO} // ${rows.NOMCLIE}
+                                <br>
+                                    <small class="text-secondary">${rows.DIRCLIE + ', ' + rows.DESMUNI}</small>
+                                <br>
+                                    <small class="text-white bg-secondary">${rows.OBS}</small>
+                                <br>
+                                <div class="row">
+                                    <div class="col-3">
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-info btn-sm btn-circle"
+                                            onclick="getDetallePedido('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}',
+                                            '${rows.CORRELATIVO}','${rows.CODCLIE}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.ST}',
+                                            '${rows.TIPO_PAGO}','${rows.TIPO_DOC}','${rows.ENTREGA_CONTACTO}','${rows.ENTREGA_TELEFONO}','${rows.ENTREGA_DIRECCION}',
+                                            '${rows.ENTREGA_REFERENCIA}','${rows.ENTREGA_LAT}','${rows.ENTREGA_LONG}','${rows.DOMICILIO}');">
+                                            <i class="fal fa-edit"></i>
+                                        </button>    
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-danger btn-sm btn-circle"
+                                            onclick="fcn_delete_pedido('${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}');">
+                                            <i class="fal fa-trash"></i>
+                                        </button>    
+                                    </div>
+                                    <div class="col-3">
+                                        <button class="btn btn-outline-success btn-sm btn-circle"
+                                            onclick="funciones.enviarPedidoWhatsapp2('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}','${rows.CORRELATIVO}');">
+                                            w
+                                        </button>    
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
+                            </td>
+                        </tr>`
+        })
+        container.innerHTML = tableheader + strdata + tablefoooter;
+        //lbTotal.innerText = `${funciones.setMoneda(total,'Q ')} - Pedidos: ${totalpedidos} - Promedio:${funciones.setMoneda((Number(total)/Number(totalpedidos)),'Q')}`;
+        lbTotal.innerHTML = `<h3 class="negrita text-naranja">Total Importe: ${funciones.setMoneda(total,'Q ')}</h3>
+                             <h3 class="negrita text-danger">No. Pedidos: ${totalpedidos}</h3>
+                            `;
+    }, (error) => {
+        funciones.AvisoError('Error en la solicitud');
+        strdata = '';
+        container.innerHTML = '';
+        lbTotal.innerHTML = '-- --';
+    });
+       
+}
