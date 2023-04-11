@@ -2,30 +2,29 @@ function getView(){
     let view = {
         body:()=>{
             return `
+                <div class="row">
+                    <div class="col-6">
+                        <h2 id="txtTotalItems" class="negrita">0 items</h2>
+                    </div>
+                    <div class="col-6">
+                        <h1 id="txtTotalVenta" class="text-danger negrita"></h1>
+                    </div>
+                </div>
+            
                 <div class="col-12 p-0 bg-white">
+                    
                     <div class="tab-content" id="myTabHomeContent">
                         <div class="tab-pane fade show active" id="pedido" role="tabpanel" aria-labelledby="receta-tab">
-
-                           ${view.encabezadoClienteDocumento() 
-                            + view.gridTempVenta() 
-                            + view.modalBusquedaCliente() 
-                            + view.modalNuevoCliente() 
-                            }
-
+                           ${view.encabezadoClienteDocumento() + view.gridTempVenta() }
                         </div>
                         <div class="tab-pane fade" id="cliente" role="tabpanel" aria-labelledby="home-tab">
-                           ${view.vista_cliente()}
+                           ${view.vista_cliente() + view.modalBusquedaCliente()}
                         </div>
-
                         <div class="tab-pane fade" id="entrega" role="tabpanel" aria-labelledby="home-tab">
-                            ${view.vista_entrega()}
-                           
-                                   
+                            ${view.vista_entrega()}     
                         </div>
                         <div class="tab-pane fade" id="mapa" role="tabpanel" aria-labelledby="tab-mapa">
-
                            ${view.vista_mapa()}
-
                         </div>
                     
                     </div>
@@ -138,22 +137,6 @@ function getView(){
                         <label class="text-info hidden" id="lbNomClien">Consumidor Final</label>
                         <div id="panel-2" class="panel col-12">
 
-                            <div class="panel-hdr">
-                            
-                                <h2 id="txtTotalItems" class="negrita">0 items</h2>
-                                <div class="panel-toolbar">
-
-                                                                            
-                                    <button class="btn btn-sm btn-outline-secondary hand hidden">
-                                    </button>
-
-                                    <h1 id="txtTotalVenta" class="text-danger negrita"></h1>
-                                    
-                                    <button class="btn btn-outline-warning btn-md shadow hidden" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen" id="btnMaxVenta">
-                                        <i class="fal fa-angle-double-up"></i>
-                                    </button>
-                                </div>
-                            </div>
                             <div class="panel-container show">
                                 <div class="panel-content">
                                     
@@ -255,7 +238,7 @@ function getView(){
                 <div class="modal-dialog modal-lg modal-dialog-left" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <label class="modal-title text-danger h3" id="">Búsqueda de Clientes</label>
+                            <label class="modal-title text-danger h5" id="">Búsqueda de Clientes</label>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true"><i class="fal fa-times"></i></span>
                             </button>
@@ -265,120 +248,30 @@ function getView(){
                             <div class="input-group">
                                     <input id="txtBusquedaCliente" type="text" ref="txtBusquedaCliente" class="form-control" placeholder="Buscar por nombre de cliente..." aria-label="" aria-describedby="button-addon4" />
                                     <div class="input-group-prepend">
-                                        <button class="btn btn-info waves-effect waves-themed" type="button" id="btnBuscarCliente">
+                                        <button class="btn btn-secondary waves-effect waves-themed" type="button" id="btnBuscarCliente">
                                             <i class="fal fa-search"></i>
                                         </button>
                                     </div>
                             </div>
-                        <table class="table table-responsive table-striped table-hover table-bordered">
-                            <thead>
-                                <tr>
-                                    <td>Nombre</td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblResultadoBusquedaCliente">
-                            
+                            <table class="table table-responsive table-striped table-hover table-bordered">
+                                <thead class="bg-secondary text-white">
+                                    <tr>
+                                        <td>Cliente</td>
+                                        <td></td>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblResultadoBusquedaCliente">
+                                
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
                         </div>
 
                     
                     </div>
                 </div>
             </div>
-            `
-        },
-        modalNuevoCliente :()=>{
-            return `
-            <div class="modal fade" id="ModalNuevoCliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <label class="modal-title text-danger h3" id="">Datos del Cliente</label>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true"><i class="fal fa-times"></i></span>
-                            </button>
-                        </div>
             
-                        <div class="modal-body">
-                            <form class="col-12" id="formNuevoCliente">
-                                <div class="form-group col-6">
-                                    <label>Código/NIT:</label>
-                                    <input type="text" class="form-control" id='txtClienteNit' required='true' readonly="true">
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col-6">
-                                        <label>Nombre Cliente:</label>
-                                        <input type="text" class="form-control" id='txtClienteNombre' required='true'>
-                                    </div>                               
-                                    <div class="form-group col-6">
-                                        <label>Nombre para Factura:</label>
-                                        <input type="text" class="form-control" id='txtClienteNombreFac' required='true'>
-                                    </div>                               
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Dirección:</label>
-                                    <input type="text" class="form-control" id='txtClienteDireccion' required='true'>
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col-6">
-                                        <label>Teléfono:</label>
-                                        <div class="row">
-                                            <select class="form-control col-3">
-                                                <option value="502">+502</option>
-                                            </select>
-                                            <input type="number" class="form-control col-9" id='txtClienteTelefono'>    
-                                        </div>
-                                    </div>
-                                    <div class="form-group col-6">
-                                        <label>Email:</label>
-                                        <input type="email" class="form-control" id='txtClienteEmail'>
-                                    </div>                               
-                                </div>
-
-                                <div class="row">
-                                    <div class="form-group col-7">
-                                        <label>Municipio:</label>
-                                        <select class="form-control" id="cmbClienteMunicipio">
-                                            <option value="01">GUATEMALA</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group col-5">
-                                        <label>Departamento:</label>
-                                        <select class="form-control" id="cmbClienteDepartamento">
-                                            <option value="01">GUATEMALA</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="form-group col-6">
-                                    <label>Tipo de Precio:</label>
-                                    <select class="form-control" id="cmbClienteTipoPrecio">
-                                        
-                                    </select>
-                                </div>
-
-                                <div class="form-group table-scale-border-top border-left-0 border-right-0 border-bottom-0 text-right">
-                                    <br>
-                                    <button class="btn btn-warning btn-round btn-lg" data-dismiss="modal" id="btnCancelarCliente">
-                                        CANCELAR
-                                    </button>
-                                    <button class="btn btn-transparent"></button>
-                                    <input type="submit" class="btn btn-primary btn-round btn-lg" value="GUARDAR">
-                                        
-                                </div>
-
-                            </form>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
             `
         },
         modalTerminar :()=>{
@@ -623,16 +516,16 @@ function getView(){
 
                             <div class="form-group">
                                 <label>Dirección entrega</label>
-                                <input type="text" class="form-control" id="txtEntregaDireccion">
+                                <input type="text" maxlength="150" class="form-control" id="txtEntregaDireccion">
                             </div>
 
-                            <div class="form-group hidden">
+                            <div class="form-group">
                                 <label>Referencia entrega</label>
                                 <input type="text" class="form-control" id="txtEntregaReferencia" value="SN">
                             </div>
 
 
-                            <div class="row">
+                            <div class="row hidden">
                                 <div class="col-4">
                                     <span id="lbEntregaLat">0</span>
                                     <span id="lbEntregaLong">0</span>
@@ -674,7 +567,17 @@ function getView(){
                     <h5 class="text-danger negrita">Datos de Facturación</h5>
                 
                     <div class="form-group">
-                        <label>NIT</label>
+                        <label>CÓDIGO CLIENTE:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control border-secondary" id="txtCliCodigo" disabled>
+                            <button class="btn btn-secondary hand shadow" id="btnBuscarClie">
+                                <i class="fal fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>NIT:</label>
                         <input type="text" class="form-control bg-amarillo border-info" id="txtCliNit" value="CF">
                     </div>
 
@@ -740,7 +643,7 @@ function getView(){
 
 };
 
-async function iniciarVistaVentas(nit,nombre,direccion,st){
+async function iniciarVistaVentas(codigo,nit,nombre,direccion,st){
 
     
     //inicializa la vista
@@ -820,54 +723,6 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
 
   
 
-
-
-
-
-    //BUSQUEDA CLIENTES
-    let frmNuevoCliente = document.getElementById('formNuevoCliente');
-    frmNuevoCliente.addEventListener('submit',(e)=>{
-        e.preventDefault();
-        funciones.Confirmacion('¿Está seguro que desea guardar este cliente?')
-        .then((value)=>{
-            if(value==true){
-                fcnGuardarNuevoCliente(frmNuevoCliente);
-            }
-        })
-
-    });
-
-    let btnBusquedaClientes = document.getElementById('btnBusquedaClientes');
-    btnBusquedaClientes.addEventListener('click',()=>{
-        $('#ModalBusquedaCliente').modal('show');
-    });
-    
-    let txtBusquedaCliente = document.getElementById('txtBusquedaCliente');
-    txtBusquedaCliente.addEventListener('keyup',(e)=>{
-        if(e.code=='Enter'){
-            fcnBusquedaCliente('txtBusquedaCliente','tblResultadoBusquedaCliente');
-        }
-        if(e.code=='NumpadEnter'){
-            fcnBusquedaCliente('txtBusquedaCliente','tblResultadoBusquedaCliente');
-        }
-    });
-
-    document.getElementById('btnBuscarCliente').addEventListener('click',()=>{
-        fcnBusquedaCliente('txtBusquedaCliente','tblResultadoBusquedaCliente');
-    });
-    document.getElementById('btnNuevoCliente').addEventListener('click',()=>{
-        //$('#ModalNuevoCliente').modal('show');
-        if(txtNit.value!==''){
-            fcnBuscarCliente('txtNit','txtNombre','txtDireccion');
-        }else{
-            funciones.AvisoError('Escriba el NIT o código de cliente para comprobar');
-        };
-        
-    })
-
-     
-   
-
     // carga el grid
    
     
@@ -877,7 +732,6 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
 
     cmbVendedor.value = GlobalCodUsuario;
 
-    fcnCargarComboTipoPrecio();
   
     // inicializa la calculadora de cantidad
     //iniciarModalCantidad();
@@ -900,31 +754,7 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
     });
 
 
-    let txtCliNit = document.getElementById('txtCliNit');
-    txtCliNit.addEventListener('focusout', ()=>{
-
-        let nit = txtCliNit.value || 'CF';
-        if(nit=='CF'){
-            document.getElementById('txtCliNombre').value = 'CONSUMIDOR FINAL';
-            document.getElementById('txtCliDireccion').value = 'CIUDAD';   
-        }else{
-            document.getElementById('txtCliNombre').value = 'VERIFICANDO, ESPERE POR FAVOR.....';
-            document.getElementById('txtCliDireccion').value = 'VERIFICANDO......';  
-
-            funciones.GetDataNit(txtCliNit.value)
-            .then((json)=>{
-                
-                document.getElementById('txtCliNombre').value = json.toUpperCase();
-                document.getElementById('txtCliDireccion').value = "CIUDAD";    
-            })
-            .catch(()=>{
-                funciones.showToast('Nit no existe o no se pudo verificar');
-                
-            })
-        }
-       
-
-    })
+    
 
 
      //RECOGER EN TIENDA
@@ -968,9 +798,11 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
                 
                 
                 //valores default en entrega a domicilio
-                document.getElementById('txtEntregaContacto').value = document.getElementById('txtCliNombre').value;
-                document.getElementById('txtEntregaDireccion').value = document.getElementById('txtCliDireccion').value;
-
+                if(st=='LOAD'){}else{
+                    document.getElementById('txtEntregaContacto').value = document.getElementById('txtCliNombre').value;
+                    document.getElementById('txtEntregaDireccion').value = document.getElementById('txtCliDireccion').value;    
+                }
+                
 
 
                 document.getElementById('tab-entrega').click();   
@@ -1015,8 +847,66 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
     });
 
 
+    //BUSQUEDA DEL CLIENTE
+    let btnBuscarClie = document.getElementById('btnBuscarClie');
+    btnBuscarClie.addEventListener('click',()=>{
+        $('#ModalBusquedaCliente').modal('show');
+    })
+
+    let txtCliNit = document.getElementById('txtCliNit');
+    txtCliNit.addEventListener('focusout', ()=>{
+
+        let nit = txtCliNit.value || 'CF';
+        if(nit=='CF'){
+            document.getElementById('txtCliNombre').value = 'CONSUMIDOR FINAL';
+            document.getElementById('txtCliDireccion').value = 'CIUDAD';   
+        }else{
+            document.getElementById('txtCliNombre').value = 'VERIFICANDO, ESPERE POR FAVOR.....';
+            document.getElementById('txtCliDireccion').value = 'VERIFICANDO......';  
+
+            funciones.GetDataNit(txtCliNit.value)
+            .then((json)=>{
+                
+                document.getElementById('txtCliNombre').value = json.toUpperCase();
+                document.getElementById('txtCliDireccion').value = "CIUDAD";    
+            })
+            .catch(()=>{
+                funciones.showToast('Nit no existe o no se pudo verificar');
+                
+            })
+        }
+       
+
+    })
+
+    
+    
+    let txtBusquedaCliente = document.getElementById('txtBusquedaCliente');
+    txtBusquedaCliente.addEventListener('keyup',(e)=>{
+        if(e.code=='Enter'){
+            fcnBusquedaCliente('txtBusquedaCliente','tblResultadoBusquedaCliente');
+        }
+        if(e.code=='NumpadEnter'){
+            fcnBusquedaCliente('txtBusquedaCliente','tblResultadoBusquedaCliente');
+        }
+    });
+
+    document.getElementById('btnBuscarCliente').addEventListener('click',()=>{
+        fcnBusquedaCliente('txtBusquedaCliente','tblResultadoBusquedaCliente');
+    });
+
+    //BUSQUEDA DEL CLIENTE
+    console.log('st: ' + st);
 
     if(st=='LOAD'){
+         //carga los datos del cliente
+        document.getElementById('txtCliCodigo').value = codigo; 
+        document.getElementById('txtNit').value = nit;
+        document.getElementById('txtCliNit').value = nit;
+        document.getElementById('txtNombre').value = nombre;
+        document.getElementById('txtCliNombre').value = nombre;
+        document.getElementById('txtDireccion').value = direccion;
+        document.getElementById('txtCliDireccion').value = direccion;
         document.getElementById('cmbEntregaConcre').value = Global_tipo_pago;
         document.getElementById('cmbEntregaTipoDoc').value = Global_tipo_doc;
         document.getElementById('txtEntregaContacto').value = Global_entrega_contacto;
@@ -1025,7 +915,12 @@ async function iniciarVistaVentas(nit,nombre,direccion,st){
         document.getElementById('txtEntregaReferencia').value = Global_entrega_referencia;
         document.getElementById('lbEntregaLat').innerText = Global_entrega_lat;
         document.getElementById('lbEntregaLong').innerText = Global_entrega_long;
+        console.log('paso por aca....')
     };
+
+
+
+  
     
     funciones.slideAnimationTabs();
     
@@ -1137,7 +1032,6 @@ function fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
     get_data_precios(filtro)
     .then((response) => {
         const data = response.recordset;
-        console.log(data);
         //con esta variable determino el tipo de precio a usar            
         let pre = 0;
             
@@ -1211,86 +1105,7 @@ function get_data_precios(filtro){
     })
 }
 
-function BACKUP_fcnBusquedaProducto(idFiltro,idTablaResultado,idTipoPrecio){
-    
-    let cmbTipoPrecio = document.getElementById(idTipoPrecio);
 
-    let filtro = document.getElementById(idFiltro).value;
-    
-    let tabla = document.getElementById(idTablaResultado);
-    tabla.innerHTML = GlobalLoader;
-
-
-    let str = ""; 
-
-    selectProducto(filtro)
-    .then((response) => {
-        const data = response;
-        //con esta variable determino el tipo de precio a usar            
-        let pre = 0;
-            
-            data.map((rows)=>{
-                let exist = Number(rows.EXISTENCIA)/Number(rows.EQUIVALE); let strC = ''; let strCfont = '';
-                if(Number(rows.EXISTENCIA<=0)){strC='bg-danger text-white'; strCfont='text-danger negrita'}else{strC='bg-success text-white'; strCfont='text-info negrita'};
-                let totalexento = 0;
-                if (rows.EXENTO==1){totalexento=Number(rows.PRECIO)}
-                
-                switch (cmbTipoPrecio.value) {
-                    case 'P':
-                        pre = Number(rows.PRECIO)
-                        break;
-                    case 'C':
-                        pre = Number(rows.PRECIOC)
-                        break;
-                    case 'B':
-                        pre = Number(rows.PRECIOB)
-                        break;
-                    case 'A':
-                        pre = Number(rows.PRECIOA)
-                        break;
-                    case 'K':
-                        pre = Number(0.01)
-                        break;
-     
-                }
-
-                str += `<tr id="${rows.CODPROD}" onclick="getDataMedidaProducto('${rows.CODPROD}','${funciones.quitarCaracteres(rows.DESPROD,'"'," plg",true)}','${rows.CODMEDIDA}',1,${rows.EQUIVALE},${rows.EQUIVALE},${rows.COSTO},${pre},${totalexento},${Number(rows.EXISTENCIA)});" class="border-bottom">
-                <td >
-                    ${funciones.quitarCaracteres(rows.DESPROD,'"'," pulg",true)}
-                    <br>
-                    <small class="${strCfont}"><b>${rows.CODPROD}</b></small><small class="text-info">//Escala:${rows.DESPROD3}</small>
-                    <br>
-                    <b class"bg-danger text-white">${rows.CODMEDIDA}</b>
-                    <small>(${rows.EQUIVALE})</small>
-                </td>
-                <td>${funciones.setMoneda(pre || 0,'Q ')}
-                    <br>
-                    <h5 class="${strCfont}">E:${funciones.setMoneda(exist,'')}</h5>
-                </td>
-                
-                <td>
-                    <button class="btn btn-sm btn-success btn-circle text-white" 
-                    onclick="getDataMedidaProducto('${rows.CODPROD}','${funciones.quitarCaracteres(rows.DESPROD,'"'," plg",true)}','${rows.CODMEDIDA}',1,${rows.EQUIVALE},${rows.EQUIVALE},${rows.COSTO},${pre},${totalexento},${Number(rows.EXISTENCIA)});">
-                        +
-                    </button>
-                <td>
-                
-            </tr>`
-            })
-            tabla.innerHTML= str;
-        
-    }, (error) => {
-        console.log(error);
-    })
-    .catch((error)=>{
-        //funciones.AvisoError(error);
-        tabla.innerHTML ='<label>Debe descargar los productos al menos una vez al día.. Descárguelos nuevamente por favor.</label>';
-    })
-
-
-
-
-};
 
 //gestiona la apertura de la cantidad
 function getDataMedidaProducto(codprod,desprod,codmedida,cantidad,equivale,totalunidades,costo,precio,exento,existencia){
@@ -1580,7 +1395,7 @@ async function fcnBusquedaCliente(idFiltro,idTablaResultado){
 
 
     let str = ""; 
-    axios.get('/clientes/buscarcliente?empnit=' + GlobalEmpnit + '&filtro=' + filtro + '&app=' + GlobalSistema)
+    axios.get('/clientes/buscarcliente?empnit=' + GlobalCodSucursal + '&filtro=' + filtro)
     .then((response) => {
         const data = response.data;        
         data.recordset.map((rows)=>{
@@ -1598,7 +1413,7 @@ async function fcnBusquedaCliente(idFiltro,idTablaResultado){
                             onclick="fcnAgregarClienteVenta('${rows.CODCLIE}','${rows.NIT}','${rows.NOMCLIE}','${rows.DIRCLIE}')">
                                 +
                             </button>
-                        <td>
+                        </td>
                     </tr>`
         })
         tabla.innerHTML= str;
@@ -1612,9 +1427,16 @@ async function fcnBusquedaCliente(idFiltro,idTablaResultado){
 async function fcnAgregarClienteVenta(codigo,nit,nombre,direccion){
     GlobalSelectedCodCliente = codigo;
     document.getElementById('tblResultadoBusquedaCliente').innerHTML = '';
+
+    document.getElementById('txtCliCodigo').value = codigo;
     document.getElementById('txtNit').value = codigo; //nit;
+    document.getElementById('txtCliNit').value = nit;
     document.getElementById('txtNombre').value = nombre;
+    document.getElementById('txtCliNombre').value = nombre;
     document.getElementById('txtDireccion').value = direccion;
+    document.getElementById('txtCliDireccion').value = direccion;
+    
+
     $('#ModalBusquedaCliente').modal('hide');  
 };
 
@@ -1685,13 +1507,12 @@ async function fcnGuardarNuevoCliente(form){
 async function fcnFinalizarPedido(){
     
   
-    GlobalSelectedCodCliente = '0';
-    
-    if(GlobalSelectedCodCliente.toString()=='SI'){funciones.AvisoError('Datos del cliente incorrectos, por favor, seleccione cliente nuevamente');return;}
-
       
-    let codcliente = GlobalSelectedCodCliente;
-    let nit = document.getElementById('txtCliNit').value;
+    let codcliente = document.getElementById('txtCliCodigo').value || ''; //GlobalSelectedCodCliente;
+    if(codcliente==''){funciones.AvisoError('Seleccione un cliente');return;}
+
+    let nit = document.getElementById('txtCliNit').value || 'CF';
+    //codcliente = 'CF';
     let ClienteNombre = document.getElementById('txtCliNombre').value;
     GlobalSelectedNomCliente = ClienteNombre;
     
@@ -1777,7 +1598,7 @@ async function fcnFinalizarPedido(){
                                     totalprecio:GlobalTotalDocumento,
                                     nitclie:nit,
                                     dirclie:dirclie,
-                                    obs:obs,
+                                    obs:entrega_referencia,
                                     direntrega:direntrega,
                                     usuario:GlobalUsuario,
                                     codven:cmbVendedor.value,
@@ -1796,8 +1617,9 @@ async function fcnFinalizarPedido(){
                                 })
                                 .then(async(response) => {
                                     const data = response.data;
+                                    console.log(response);
                                     //if (data.rowsAffected[0]==0){
-                                    if (response=='error'){
+                                    if (data=='error'){
                                             funciones.AvisoError('No se pudo guardar este pedido');
                                             document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                                             document.getElementById('btnFinalizarPedido').disabled = false;
@@ -1834,6 +1656,9 @@ async function fcnFinalizarPedido(){
                             
                         
 
+                        }else{
+                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                            document.getElementById('btnFinalizarPedido').disabled = false;
                         }
                     })
 
@@ -1877,7 +1702,7 @@ async function fcnNuevoPedido(){
     
     $('#modalWait').modal('hide');
 
-    classNavegar.ventas('CF','CONSUMIDOR FINAL', 'CIUDAD');
+    classNavegar.ventas('','CF','CONSUMIDOR FINAL', 'CIUDAD');
     
 };
 
@@ -1921,19 +1746,7 @@ async function fcnGetDepartamentos(idContainer){
     });
 };
 
-async function fcnCargarComboTipoPrecio(){
-   let cmbp = document.getElementById('cmbClienteTipoPrecio');
-   if(GlobalSistema=='ISC'){
-    cmbp.innerHTML =`<option value="P">PÚBLICO</option>
-                     <option value="M">MAYORISTA</option>`;
-   }else{
-    cmbp.innerHTML =`<option value="P">PÚBLICO</option>
-                     <option value="C">MAYORISTA C</option>
-                     <option value="B">MAYORISTA B</option>
-                     <option value="A">MAYORISTA A</option>`;
-   }
-   
-};
+
 
 
 function showUbicacion(){

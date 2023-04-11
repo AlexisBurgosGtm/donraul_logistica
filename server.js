@@ -5,17 +5,15 @@ var bodyParser = require('body-parser');
 const axios = require('axios');
 
 const execute = require('./router/connection');
-var routerNoticias = require('./router/routerNoticias');
+
 var routerVentas = require('./router/routerVentas');
-var routerSucursales = require('./router/routerSucursales');
-let routerRepartidor = require('./router/routerRepartidor');
 var routerTipoDocs = require('./router/routerTipoDocs');
 var routerEmpleados = require('./router/routerEmpleados');
 var routerClientes = require('./router/routerClientes');
 var routerProductos = require('./router/routerProductos');
-let routerDigitacion = require('./router/routerDigitacion');
+let routerReportes = require('./router/routerReportes');
 let routerUsuarios = require('./router/routerUsuarios');
-let routerCenso = require('./router/routerCenso');
+
 
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -231,20 +229,10 @@ app.get("/datosdpi", async function(req,res){
 
 }); 
 
-//Router para SUCURSALES
-app.use('/sucursales', routerSucursales);
-
-//Router para app NOTICIAS
-app.use('/noticias', routerNoticias);
-
-//Router para app CENSO
-app.use('/censo', routerCenso);
 
 //Router para app VENTAS
 app.use('/ventas', routerVentas);
 
-//Router para app REPARTIDOR
-app.use('/repartidor', routerRepartidor);
 
 // Router para Tipodocumentos
 app.use('/tipodocumentos', routerTipoDocs);
@@ -259,7 +247,7 @@ app.use('/clientes', routerClientes);
 app.use('/productos', routerProductos);
 
 // Router para digitacion
-app.use('/digitacion', routerDigitacion);
+app.use('/reportes', routerReportes);
 
 // Router para usuarios
 app.use('/usuarios', routerUsuarios);

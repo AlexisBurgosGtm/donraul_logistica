@@ -341,6 +341,8 @@ function deleteItemVenta(id){
     })            
 };
 
+
+
 function selectTempventas(usuario) {
 
     return new Promise(async(resolve,reject)=>{
@@ -428,6 +430,15 @@ function deleteTempVenta(usuario){
             where: {
                 USUARIO: usuario
             }
+        });
+        if(rowsDeleted>0){resolve()}else{resolve()}
+    })            
+};
+
+function db_delete_temp(){
+    return new Promise(async(resolve,reject)=>{
+        var rowsDeleted = await connection.remove({
+            from: "tempventa"
         });
         if(rowsDeleted>0){resolve()}else{resolve()}
     })            

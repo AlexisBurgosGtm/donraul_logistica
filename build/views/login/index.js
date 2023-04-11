@@ -58,7 +58,7 @@ function getView(){
                         <form class="" id="frmLogin" autocomplete="off">
                             <div class="form-group">
                                 <select class="negrita form-control border-naranja border-top-0 border-right-0 border-left-0" id="cmbSucursal">
-                                    
+                                    <option value="101792069">CONSTRUMATERIALES EL CAMPESINO</option>
                                 </select>
                                 
                             </div>
@@ -93,7 +93,7 @@ function getView(){
                             </div>
                             <div class="form-group" align="right">
                                 
-                                <small class="text-secondary">Update: 29.03.2023</small>
+                                <small class="text-secondary">Update: 08.04.2023</small>
                                 <br>
                                 <small>
                                     <a href="https://apigen.whatsapp.com/send?phone=50257255092&text=Ayudame%20con%20la%20app%20de%20don%20Eraul_logistica...%20">
@@ -156,11 +156,11 @@ function addListeners(){
     selectDateDownload() //carga la info inicial
     .then(()=>{
         try {
-            document.getElementById('cmbSucursal').value = GlobalCodSucursal;
-            console.log(GlobalCodSucursal);
+            //document.getElementById('cmbSucursal').value = GlobalCodSucursal;
+            //console.log(GlobalCodSucursal);
         } catch (error) {
-            console.log('error al cargar sucursal')
-            console.log(error)
+            //console.log('error al cargar sucursal')
+            //console.log(error)
         }
     })
    

@@ -7,7 +7,7 @@
 };
 
 
-const config = {
+const config_xx = {
 	user: 'iEx',
 	password: 'iEx',
 	server: 'ELORIGEN\\SQLDEV',
@@ -15,6 +15,14 @@ const config = {
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
 
+
+const config = {
+	user: 'iEx',
+	password: 'iEx',
+	server: '192.168.0.200',
+	database: 'VENTAS',
+	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
+};
 
 
 const sql = require('mssql');

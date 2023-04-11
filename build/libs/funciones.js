@@ -715,36 +715,6 @@ let funciones = {
         text,
       }).show();
     },
-    setReminder: async (msg,minutos)=>{
-
-      
-        if (!('Notification' in window)) {
-          alert('Notification API not supported');
-          return;
-        }
-        if (!('showTrigger' in Notification.prototype)) {
-          alert('Notification Trigger API not supported');
-          return;
-        }
-        
-        await Notification.requestPermission()
-          .then(() => {
-            if (Notification.permission !== 'granted') {
-              throw 'Notification permission is not granted';
-            }
-          })
-          .then(() => navigator.serviceWorker.getRegistration())
-          .then((reg) => {
-            reg.showNotification(msg, {
-                showTrigger: new TimestampTrigger(new Date().getTime() + Number(minutos) * 60000)
-            })
-          })
-          .catch((err) => {
-            alert('Notification Trigger API error: ' + err);
-          });
-      
-    
-    },
     getComboSucursales: ()=>{
       let str = '';
       

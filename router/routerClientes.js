@@ -178,30 +178,32 @@ router.put('/desactivar',async(req,res)=>{
 
 })
 
-//RE-ACTIVA EL CLIENTE CAMBIANDO EL CAMPO CODCLIE DE 1 A 0
-router.put('/reactivar',async(req,res)=>{
-    const {sucursal,nitclie} = req.body;
-    
-    let qry = `UPDATE ME_CLIENTES SET CODCLIE=0 WHERE CODSUCURSAL='${sucursal}' AND NITCLIE='${nitclie}' `;
 
-    execute.Query(res,qry);
-
-})
 
 
 // BUSCA CLIENTE POR NOMBRE
 router.get("/buscarcliente", async(req,res)=>{
-    const {app,empnit,filtro} = req.query;
+    const {empnit,filtro} = req.query;
         
     let qry ='';
 
-            qry = `SELECT ME_Clientes.NITCLIE AS CODCLIE, ME_Clientes.NITFACTURA AS NIT, ME_Clientes.NOMCLIE, ME_Clientes.DIRCLIE, ME_Clientes.CODMUNI AS CODMUNICIPIO, ME_Municipios.DESMUNI AS DESMUNICIPIO, 
-            ME_Clientes.CODDEPTO, ME_Departamentos.DESDEPTO, ME_Clientes.LISTA AS PRECIO, 0 AS SALDO, ISNULL(ME_Clientes.LATITUD, 0) AS LAT, ISNULL(ME_Clientes.LONGITUD, 0) AS LONG
-            FROM ME_Clientes LEFT OUTER JOIN
-            ME_Municipios ON ME_Clientes.CODSUCURSAL = ME_Municipios.CODSUCURSAL AND ME_Clientes.CODMUNI = ME_Municipios.CODMUNI LEFT OUTER JOIN
-            ME_Departamentos ON ME_Clientes.CODSUCURSAL = ME_Departamentos.CODSUCURSAL AND ME_Clientes.CODDEPTO = ME_Departamentos.CODDEPTO
-        WHERE (ME_Clientes.CODSUCURSAL = '${app}') 
-        AND (ME_Clientes.NOMCLIE LIKE '%${filtro}%')
+    qry = `SELECT TOP 50
+            Clientes.NITCLIE AS CODCLIE, 
+            Clientes.NITFACTURA AS NIT, 
+            Clientes.NOMCLIE, Clientes.DIRCLIE, 
+            Clientes.CODMUNI AS CODMUNICIPIO, 
+            Municipios.DESMUNI AS DESMUNICIPIO, 
+            Clientes.CODDEPTO, Departamentos.DESDEPTO, 
+            Clientes.LISTA AS PRECIO, 0 AS SALDO, 
+            ISNULL(Clientes.LATITUD, 0) AS LAT, 
+            ISNULL(Clientes.LONGITUD, 0) AS LONG
+            FROM Clientes LEFT OUTER JOIN
+            Municipios ON Clientes.EMP_NIT = Municipios.EMP_NIT AND 
+            Clientes.CODMUNI = Municipios.CODMUNI LEFT OUTER JOIN
+            Departamentos ON Clientes.EMP_NIT = Departamentos.EMP_NIT AND 
+            Clientes.CODDEPTO = Departamentos.CODDEPTO
+        WHERE (Clientes.EMP_NIT = '${empnit}') 
+        AND (Clientes.NOMCLIE LIKE '%${filtro}%')
         `     
     
     execute.Query(res,qry);

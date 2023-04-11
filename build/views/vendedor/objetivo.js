@@ -7,6 +7,10 @@ function getView(){
                         <div class="tab-pane fade show active" id="dia" role="tabpanel" aria-labelledby="receta-tab">
                             ${view.vista_dia()}
                         </div>
+                        <div class="tab-pane fade" id="detalle" role="tabpanel" aria-labelledby="home-tab">
+                            ${view.detalle_pedido()}
+                            
+                        </div>
                         <div class="tab-pane fade" id="mes" role="tabpanel" aria-labelledby="home-tab">
                             ${view.vista_mes()}
                         </div>    
@@ -17,6 +21,10 @@ function getView(){
                             <a class="nav-link active negrita text-success" id="tab-dia" data-toggle="tab" href="#dia" role="tab" aria-controls="profile" aria-selected="false">
                                 <i class="fal fa-list"></i></a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link negrita text-danger" id="tab-detalle" data-toggle="tab" href="#detalle" role="tab" aria-controls="home" aria-selected="true">
+                                <i class="fal fa-comments"></i></a>
+                        </li>  
                         <li class="nav-item">
                             <a class="nav-link negrita text-danger" id="tab-mes" data-toggle="tab" href="#mes" role="tab" aria-controls="home" aria-selected="true">
                                 <i class="fal fa-comments"></i></a>
@@ -31,33 +39,73 @@ function getView(){
             return `
             <div class="row bg-naranja text-white">
                 <div class="col-12">
-                    <h5>Seleccione la Fecha y el tipo de Reporte</h5>
+                    <h5>Logro del día</h5>
                 </div>               
             </div>
 
             <div class="row">
-                <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                <div class="col-6">
                     <div class="form-group">
                         <label>Por Fecha</label>
                         <input type="date" class="form-control" id="txtFecha">
                     </div>
                 </div>
-                <div class="col-sm-8 col-md-8 col-lg-8 col-xl-8">
-                    <button class="btn btn-success hand shadow btn-circle btn-xl hidden" id="btnRepDiaDocumentos">
-                        <i class="fal fa-calendar"></i>
-                    </button>
+
+                <div class="col-6">
+                    <div class="" id="containerTotal"></div>
                 </div>
+
             </div>
 
             <hr class="solid">
-            <div class="" id="containerTotal"></div>
-                <br>
-            <div class="row card">
+           
+            <div class="row">
                 <div class="table-responsive" id="tblReport">
                   
                 </div>
             </div>
             `
+        },
+        detalle_pedido:()=>{
+            return `
+            <div class="row">
+                <div class="col-6">
+                    <label>Total Pedido : </label>
+                        <h2 class="text-danger" id="lbTotalDetallePedido"></h2>
+                    </div>
+                <div class="col-6">
+                    <button class="btn btn-success shadow hand" id="btnEditarPedido">
+                        <i class="fal fa-edit"></i>
+                        Editar Pedido
+                    </button>
+                </div>
+                
+            </div>
+        <div class="card card-rounded shadow">          
+            <br>
+            <div class="table-responsive">
+                <table class="table table-responsive table-hover table-striped table-bordered">
+                    <thead class="bg-naranja text-white">
+                        <tr>
+                            <td>Producto</td>
+                            <td>Medida</td>
+                            <td>Cant</td>
+                            <td>Precio</td>
+                            <td>Subtotal</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="tblDetallePedido"></tbody>
+                    
+                </table>
+            </div>
+         
+            
+        </div>
+        <button class="btn btn-xl btn-secondary btn-circle hand shadow" id="btnDetalleAtras">
+            <i class="fal fa-arrow-left"></i>
+        </button>
+        `
         },
         vista_mes : ()=>{
             return `
@@ -102,42 +150,7 @@ function getView(){
 
             `
         },
-        modalDetallePedido:()=>{
-            return `
-            <div class="card">          
-            <br>
-            <div class="table-responsive">
-                <table class="table table-responsive table-hover table-striped table-bordered">
-                    <thead class="bg-trans-gradient text-white">
-                        <tr>
-                            <td>Producto</td>
-                            <td>Medida</td>
-                            <td>Cant</td>
-                            <td>Precio</td>
-                            <td>Subtotal</td>
-                        </tr>
-                    </thead>
-                    <tbody id="tblDetallePedido"></tbody>
-                    
-                </table>
-            </div>
-            <br>
-            <div class="">
-                <div class="col-1"></div>
-                <div class="col-5">
-                    <label>Total Pedido : </label>
-                    <h2 class="text-danger" id="lbTotalDetallePedido"></h2>
-                </div>
-            </div>
-            <div class="row">
-                <button class="btn btn-info btn-lg" id="btnEditarPedido">
-                    <i class="fal fa-edit"></i>
-                    Editar Pedido
-                </button>
-            </div>
-        </div>
-        `
-        },
+        
         modalCantidad:()=>{
             return `
             <div class="modal fade" id="ModalCantidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -268,57 +281,16 @@ function addListeners(){
     rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
 
 
-    let btnRepDiaDocumentos = document.getElementById('btnRepDiaDocumentos');
-    btnRepDiaDocumentos.addEventListener('click',()=>{
-            rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
-                    
+    
+
+    let btnDetalleAtras = document.getElementById('btnDetalleAtras');
+    btnDetalleAtras.addEventListener('click',()=>{
+        document.getElementById('tab-dia').click();
     });
 
+    funciones.slideAnimationTabs();
 
-   return;
-   //CARGA DE LOS REPORTES
-   let cmbReporte = document.getElementById('cmbReporte');
-   cmbReporte.addEventListener('change',()=>{
-       switch (cmbReporte.value.toString()) {
-           case '1':
-               //PEDIDOS POR FECHA
-               apigen.pedidosVendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
-               break;
-       
-           case '2':
-               //MARCAS POR FECHA
-               apigen.reporteDiaMarcas(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
-               break;
-
-           case '3':
-               //PRODUCTOS POR FECHA
-               apigen.reporteDiaProductos(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
-               break;
-           
-           case '4':
-               //VENTAS POR FECHA
-               getRptDinero(cmbMes.value, cmbAnio.value);
-               break;
-           case '5':
-               //PRODUCTOS DEL MES
-               getRptProductos(cmbMes.value, cmbAnio.value);
-               break;
-           
-           case '6':
-               //MARCAS POR MES
-               getRptMarcas(cmbMes.value, cmbAnio.value);
-               break;
-           
-           case '7':
-               //VENTAS NETAS MES
-               getRptDinero2(cmbMes.value, cmbAnio.value);
-               break;
-           default:
-               break;
-       }
-
-   });
-
+ 
    let btnEditarPedido = document.getElementById('btnEditarPedido');
    btnEditarPedido.addEventListener('click',()=>{
        cargarPedidoEdicion(GlobalSelectedCoddoc,GlobalSelectedCorrelativo,GlobalSelectedSt);    
@@ -332,42 +304,38 @@ function inicializarVistaLogro(){
 };
 
 
-function getRptDinero2(mes,anio){
-    apigen.reporteDinero2(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
-};
-function getRptDinero(mes,anio){
-    apigen.reporteDinero(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
-};
-function getRptProductos(mes,anio){
-    apigen.reporteProductos(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
-};
-function getRptMarcas(mes,anio){
-    apigen.reporteMarcas(GlobalCodSucursal,GlobalCodUsuario,anio,mes,'tblReport','containerTotal');
-};
 
 
 
 //POR DIA
 
-function fcn_delete_pedido(coddoc,correlativo,st){
-    
-    if(st=='I'){
+function fcn_delete_pedido(coddoc,correlativo,st,idBtn){
+   
+    let btn = document.getElementById(idBtn);
+
         funciones.Confirmacion('¿Está seguro que desea Eliminar este Pedido?')
         .then((value)=>{
             if(value==true){
+
+                
                 funciones.solicitarClave()
                     .then((clave)=>{
                         if(clave==GlobalPassUsuario){
 
-                                apigen.delete_pedido(GlobalCodSucursal,coddoc,correlativo)
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fal fa-trash fa-spin"></i>';
+
+                                delete_pedido(GlobalCodSucursal,coddoc,correlativo)
                                 .then(()=>{
                                     funciones.Aviso('Pedido Eliminado Exitosamente!!')
                                     rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
                                 })
                                 .catch(()=>{
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fal fa-trash"></i> Eliminar';
                                     funciones.AvisoError('No se pudo eliminar');
                                 })
-
+                            
                         }else{
                             funciones.AvisoError('Clave incorrecta')
                         }
@@ -376,11 +344,7 @@ function fcn_delete_pedido(coddoc,correlativo,st){
             }
         });
 
-    }else{
-        funciones.AvisoError('No se puede Eliminar un pedido que ya fué confirmado por Digitación');
-        funciones.hablar('No se puede Eliminar un pedido que ya fué confirmado por Digitación, comuníquese a oficina para solucionarlo');
-    }  
-
+ 
 };
 
 function delete_pedido (sucursal,coddoc,correlativo){
@@ -404,7 +368,7 @@ function delete_pedido (sucursal,coddoc,correlativo){
 }
 
 
-function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st,
+function getDetallePedido(fecha,coddoc,correlativo,codclie,nit,nomclie,dirclie,st,
     tipo_pago,tipo_doc,
     entrega_contacto,entrega_telefono,entrega_direccion,entrega_referencia,entrega_lat,entrega_long,domicilio){
 
@@ -413,6 +377,7 @@ function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st,
     GlobalSelectedCoddoc = coddoc;
     GlobalSelectedCorrelativo = correlativo;
     GlobalSelectedCodCliente=codclie;
+    GlobalSelectedNitClie = nit;
     GlobalSelectedNomCliente=nomclie;
     GlobalSelectedDirCliente=dirclie;
     Global_tipo_pago = tipo_pago;
@@ -425,21 +390,66 @@ function getDetallePedido(fecha,coddoc,correlativo,codclie,nomclie,dirclie,st,
     Global_entrega_long = entrega_long;
     Global_domicilio = domicilio;
 
+    
+    document.getElementById('tab-detalle').click();
+
     //lbMenuTitulo.innerText = `Pedido: ${coddoc}-${correlativo}`;
-    apigen.digitadorDetallePedido(fecha,coddoc,correlativo,'tblDetallePedido','lbTotalDetallePedido')
-    //$("#modalMenu").modal('show');
+    //apigen.get_detalle_pedido(,'tblDetallePedido','lbTotalDetallePedido')
+    apigen.data_get_detalle_pedido(coddoc,correlativo)
+    .then((data)=>{
+
+
+        let container = document.getElementById('tblDetallePedido');
+        container.innerHTML = GlobalLoader;
+        
+        let lbTotal = document.getElementById('lbTotalDetallePedido');
+        lbTotal.innerText = '---';
+        
+        let strdata = '';
+
+        let total =0;
+        let totalentregados = 0;
+        data.map((rows)=>{
+                totalentregados += Number(rows.CANTIDADENVIADA||0);
+                total = total + Number(rows.IMPORTE);
+                strdata = strdata + `
+                        <tr id='${rows.DOC_ITEM}'>
+                            <td colspan="3">${rows.DESPROD}
+                                <br>
+                                <small class="text-danger">${rows.CODPROD}</small>
+                                <br>
+                                <b class="text-info">${rows.CODMEDIDA}</b>-<b>Cant: ${rows.CANTIDAD}</b>
+                            </td>
+                            <td>${funciones.setMoneda(rows.PRECIO,"")}</td>
+                            <td>${funciones.setMoneda(rows.IMPORTE,"")}
+                               
+                            </td>
+                            <td>
+                                    <button class="btn btn-danger btn-md btn-circle"
+                                            onclick="deleteProductoPedido('${rows.DOC_ITEM}','${GlobalSelectedCoddoc}','${GlobalSelectedCorrelativo}',${rows.IMPORTE},${rows.TOTALCOSTO},'${rows.CANTIDADENVIADA}')">
+                                            <i class="fal fa-trash"></i>
+                                    </button>
+                            </td>
+                        </tr>
+                        `
+        })
+        container.innerHTML = strdata;
+        lbTotal.innerText = `${funciones.setMoneda(total,'Q')}`;
+        if(totalentregados==0){document.getElementById('btnEditarPedido').style="visibility:visible"}else{document.getElementById('btnEditarPedido').style="visibility:hidden"}
+    })
+    .catch(()=>{
+        funciones.AvisoError('No se puede cargar');
+        document.getElementById('tab-dia').click();
+    })
+    
     
 };
 
-function getModalCantidad(idRow){
 
-    document.getElementById('lbCalcTotal').innerText='';    
-    $("#ModalCantidad").modal('show');
+function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto,cantidadenviada){
+    
+    if(Number(cantidadenviada)==0){}else{funciones.AvisoError('No puedes quitar este item porque ya fué facturado');return;};
 
-
-};
-
-function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
     funciones.Confirmacion('¿Está seguro que desea Quitar este Producto en este Pedido?')
     .then((value)=>{
         if(value==true){
@@ -465,134 +475,16 @@ function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto){
     })    
 };
 
-function iniciarModalCantidad(){
-    let total = document.getElementById('lbCalcTotal');
-    total.innerText = "";
-    let btnCalcAceptar = document.getElementById('btnCalcAceptar');
-    let btnCalcLimpiar = document.getElementById('btnCalcLimpiar');
-    let btnCalcCancelar = document.getElementById('btnCalcCancelar');
-
-    let b0 = document.getElementById('btnCalc0');
-    let b1 = document.getElementById('btnCalc1');
-    let b2 = document.getElementById('btnCalc2');
-    let b3 = document.getElementById('btnCalc3');
-    let b4 = document.getElementById('btnCalc4');
-    let b5 = document.getElementById('btnCalc5');
-    let b6 = document.getElementById('btnCalc6');
-    let b7 = document.getElementById('btnCalc7');
-    let b8 = document.getElementById('btnCalc8');
-    let b9 = document.getElementById('btnCalc9');
-
-    b0.addEventListener('click',()=>{total.innerText = total.innerText + "0"})
-    b1.addEventListener('click',()=>{total.innerText = total.innerText + "1"})
-    b2.addEventListener('click',()=>{total.innerText = total.innerText + "2"})
-    b3.addEventListener('click',()=>{total.innerText = total.innerText + "3"})
-    b4.addEventListener('click',()=>{total.innerText = total.innerText + "4"})
-    b5.addEventListener('click',()=>{total.innerText = total.innerText + "5"})
-    b6.addEventListener('click',()=>{total.innerText = total.innerText + "6"})
-    b7.addEventListener('click',()=>{total.innerText = total.innerText + "7"})
-    b8.addEventListener('click',()=>{total.innerText = total.innerText + "8"})
-    b9.addEventListener('click',()=>{total.innerText = total.innerText + "9"})
-    btnCalcLimpiar.addEventListener('click',()=>{total.innerText = ""})
-
-    btnCalcAceptar.addEventListener('click',async ()=>{
-        let n = Number(total.innerText);
-        
-        fcnUpdateRowPedido();
-        //fcnUpdateTempRow(GlobalSelectedId,n)
-        //.then(async()=>{
-            
-            //
-        //})
-        total.innerText = "";
-        
-        $("#ModalCantidad").modal('hide');
-    })
-
-    btnCalcCancelar.addEventListener('click',()=>{
-        $("#ModalCantidad").modal('hide');
-    });
-
-};
-
-function cargarPedidoEdicion(coddoc,correlativo,st){
-    if(st=='O'){
-
-        funciones.Confirmacion('¿Está seguro que desea EDITAR este pedido, no se podrá deshacer lo que haga?')
-        .then((value)=>{
-            if(value==true){
-                $("#modalMenu").modal('hide');
-                funciones.solicitarClave()
-                        .then((clave)=>{
-                            if(clave==GlobalPassUsuario){
-                                setLog(`<label>Eliminando datos de algún pedido pendiente...</label>`,'rootWait')
-                                $('#modalWait').modal('show');
-
-                                //document.getElementById('btnEditarPedido').innerHTML = GlobalLoaderMini;
-                                //document.getElementById('btnEditarPedido').disabled = true;
-                                
-                                deleteTempVenta(GlobalUsuario)
-                                .then(()=>{
-                                    setLog(`<label>Descargando datos del pedido a editar...</label>`,'rootWait')
-                                    //descarga el pedido y lo inserta en el indexed
-                                    loadDetallePedido(coddoc,correlativo)
-                                    .then(()=>{
-                                        funciones.showToast('Pedido cargado...');
-
-                                        setLog(`<label>Eliminando pedido anterior...</label>`,'rootWait')
-                                        fcnDeletePedidoCargado(coddoc,correlativo)
-                                        .then(()=>{
-                                            funciones.showToast('Pedido anterior eliminado con éxito!!');
-                                            
-                                            $('#modalWait').modal('hide');
-                                            classNavegar.ventas(GlobalSelectedCodCliente,GlobalSelectedNomCliente,GlobalSelectedDirCliente,'LOAD');
-                                        })
-                                        .catch(()=>{
-                                            $('#modalWait').modal('hide');
-                                            //document.getElementById('btnEditarPedido').innerHTML = `<i class="fal fa-edit"></i>Editar Pedido`;
-                                            //document.getElementById('btnEditarPedido').disabled = false;
-                                            funciones.AvisoError('No se pudo eliminar el pedido anterior');
-                                        })
-        
-                                    })
-                                    .catch((error)=>{
-                                        $('#modalWait').modal('hide');
-                                        //document.getElementById('btnEditarPedido').innerHTML = `<i class="fal fa-edit"></i>Editar Pedido`;
-                                        //document.getElementById('btnEditarPedido').disabled = false;
-                                        funciones.AvisoError('No se pudo cargar el pedido. Error: ' + error);
-                                    })
-                                })
-                                .catch(()=>{
-                                    $('#modalWait').modal('hide');
-
-                                    funciones.AvisoError('No se pudo limpiar el pedido')
-                                })
-
-                                
-    
-                            }
-                        })
-    
-            }
-        })
-
-    }else{
-        funciones.AvisoError('No se puede EDITAR un pedido que ya fue confirmado en digitación');
-    }
-
-    
-    
-};
 
 //SELECCIONA EL DETALLE DEL PEDIDO Y LO CARGA
 function loadDetallePedido(coddoc,correlativo){
     
     return new Promise((resolve,reject)=>{
-        axios.post('/ventas/loadpedido', {
+        axios.post('/ventas/loadpedido_edicion', {
             sucursal:GlobalCodSucursal,
             coddoc: coddoc,
             correlativo: correlativo,
-            usuario: GlobalUsuario
+            usuario:GlobalUsuario
         })
         .then((response) => {
             const data = response.data;
@@ -610,39 +502,10 @@ function loadDetallePedido(coddoc,correlativo){
     
 };
 
-function loadDetallePedido_online(coddoc,correlativo){
-    
-    return new Promise((resolve,reject)=>{
-        axios.post('/ventas/loadpedido', {
-            sucursal:GlobalCodSucursal,
-            coddoc: coddoc,
-            correlativo: correlativo,
-            usuario: GlobalUsuario
-        })
-        .then((response) => {
-            console.log(response);
-            const data = response.data;
-            if (data.rowsAffected[1]==0){
-                //funciones.AvisoError('No se cargó el pedido');
-                reject('No se cargó el pedido');
-            }else{
-                //funciones.Aviso('Pedido Cargado con éxito')
-                resolve();
-            }
-            
-        }, (error) => {
-            //funciones.AvisoError('Error en la solicitud');
-            resolve('Error de solicitud');
-        });
 
-    })
-    
-    
-};
-
-function fcnDeletePedidoCargado(coddoc,correlativo){
+function anular_pedido(coddoc,correlativo){
     return new Promise((resolve,reject)=>{
-        axios.post('/ventas/eliminarpedidocargado', {
+        axios.post('/ventas/anular_pedido', {
             sucursal:GlobalCodSucursal,
             coddoc: coddoc,
             correlativo: correlativo
@@ -663,7 +526,6 @@ function fcnDeletePedidoCargado(coddoc,correlativo){
     })
     
 };
-
 
 
 function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
@@ -687,6 +549,7 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
 
     let strdata = '';
     let totalpedidos = 0;
+    
     axios.post('/ventas/lista_pedidos', {
         sucursal: sucursal,
         coddoc:GlobalCoddoc,
@@ -696,40 +559,33 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
         const data = response.data.recordset;
         let total =0;
         data.map((rows)=>{
+                let idBtn = `btnEliminar${rows.CODDOC + '-' + rows.CORRELATIVO}`;
                 total = total + Number(rows.IMPORTE);
                 totalpedidos = totalpedidos + 1;
                 strdata = strdata + `<tr>
                             <td colspan="2">
                                     <b class="text-danger">${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
                                 <br>
-                                    ${rows.NEGOCIO} // ${rows.NOMCLIE}
+                                    ${rows.NOMCLIE}
                                 <br>
                                     <small class="text-secondary">${rows.DIRCLIE + ', ' + rows.DESMUNI}</small>
                                 <br>
                                     <small class="text-white bg-secondary">${rows.OBS}</small>
                                 <br>
                                 <div class="row">
-                                    <div class="col-3">
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-info btn-sm btn-circle"
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-info btn-sm"
                                             onclick="getDetallePedido('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}',
-                                            '${rows.CORRELATIVO}','${rows.CODCLIE}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.ST}',
+                                            '${rows.CORRELATIVO}','${rows.CODCLIE}','${rows.NIT}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.ST}',
                                             '${rows.TIPO_PAGO}','${rows.TIPO_DOC}','${rows.ENTREGA_CONTACTO}','${rows.ENTREGA_TELEFONO}','${rows.ENTREGA_DIRECCION}',
                                             '${rows.ENTREGA_REFERENCIA}','${rows.ENTREGA_LAT}','${rows.ENTREGA_LONG}','${rows.DOMICILIO}');">
-                                            <i class="fal fa-edit"></i>
+                                            <i class="fal fa-edit"></i> Editar
                                         </button>    
                                     </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-danger btn-sm btn-circle"
-                                            onclick="fcn_delete_pedido('${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}');">
-                                            <i class="fal fa-trash"></i>
-                                        </button>    
-                                    </div>
-                                    <div class="col-3">
-                                        <button class="btn btn-outline-success btn-sm btn-circle"
-                                            onclick="funciones.enviarPedidoWhatsapp2('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}','${rows.CORRELATIVO}');">
-                                            w
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-danger btn-sm" id='${idBtn}'
+                                            onclick="fcn_delete_pedido('${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}','${idBtn}');">
+                                            <i class="fal fa-trash"></i> Eliminar
                                         </button>    
                                     </div>
                                 </div>
@@ -752,3 +608,57 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
     });
        
 }
+
+
+//EDICION DE PEDIDO
+function cargarPedidoEdicion(coddoc,correlativo){
+
+        funciones.Confirmacion('¿Está seguro que desea EDITAR este pedido, no se podrá deshacer lo que haga?')
+        .then((value)=>{
+            if(value==true){
+                funciones.solicitarClave()
+                        .then((clave)=>{
+                            if(clave==GlobalPassUsuario){
+                                
+                                
+                                db_delete_temp()
+                                .then(()=>{
+
+                                    //descarga el pedido y lo inserta en el indexed
+                                    loadDetallePedido(coddoc,correlativo)
+                                    .then(()=>{
+                                        funciones.showToast('Pedido cargado...');
+
+                                        //ACTUALIZO EL DOC_ESTATUS=A PARA QUE YA NO SE PUEDA FACTURAR Y NO LO ELIMINO
+                                        anular_pedido(coddoc,correlativo)
+                                        .then(()=>{
+                                            
+                                            funciones.showToast('Pedido anterior eliminado con éxito!!');
+                                            
+                                            classNavegar.ventas(GlobalSelectedCodCliente,GlobalSelectedNitClie,GlobalSelectedNomCliente,GlobalSelectedDirCliente,'LOAD');
+                                        })
+                                        .catch(()=>{
+                                            funciones.AvisoError('No se pudo eliminar el pedido anterior');
+                                        })
+        
+                                    })
+                                    .catch((error)=>{
+                                        funciones.AvisoError('No se pudo cargar el pedido. Error: ' + error);
+                                    })
+                                })
+                                .catch(()=>{
+                                    funciones.AvisoError('No se pudo limpiar el pedido')
+                                })
+                                
+    
+                            }
+                        })
+    
+            }
+        })
+
+    
+
+    
+    
+};

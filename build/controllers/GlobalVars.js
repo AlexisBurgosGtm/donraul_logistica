@@ -38,6 +38,7 @@ let GlobalSelectedId;
 let GlobalSelectedCodigo;
 let GlobalSelectedFecha;
 let GlobalCoddoc = 'PED01';
+let GlobalCotiz = '';
 let GlobalTotalDocumento = 0;
 let GlobalTotalCostoDocumento = 0;
 
@@ -48,6 +49,7 @@ let GlobalSelectedCodven = 0;
 
 
 let GlobalSelectedCodCliente;
+let GlobalSelectedNitClie;
 let GlobalSelectedNomCliente;
 let GlobalSelectedDirCliente;
 
