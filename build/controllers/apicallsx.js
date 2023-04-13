@@ -722,4 +722,23 @@ let apigen = {
             });
         })
     },
+    clientes_data_historial: (codcliente)=>{
+        return new Promise((resolve,reject)=>{
+            axios.post('/clientes/clientes_historial',{sucursal:GlobalCodSucursal,codigo:codcliente})
+            .then((response) => {
+                let data = response.data;
+                if(data.toString()=='error'){
+                    reject();
+                }else{
+                    if(Number(data.rowsAffected[0])>0){
+                        resolve(data);             
+                    }else{
+                        reject();
+                    }    
+                }
+            }, (error) => {
+                reject();
+            });
+        })
+    },
 }

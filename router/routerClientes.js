@@ -245,6 +245,26 @@ router.post("/clientes_nuevo", async(req,res)=>{
 
 });
 
+router.post("/clientes_historial", async(req,res)=>{
+   
+        const {sucursal,codigo} = req.body;
+    
+          let qry = `
+          SELECT        Documentos.DOC_FECHA AS FECHA, Documentos.DOC_NOMREF AS NOMCLIE, Docproductos.CODPROD, 
+          Docproductos.DESCRIPCION AS DESPROD, 
+          Docproductos.CANTIDADINV AS CANTIDAD, ISNULL(Docproductos.PRECIO,0) AS PRECIO, 
+          ISNULL(Docproductos.TOTALPRECIO,0) AS TOTALPRECIO
+          FROM            Documentos LEFT OUTER JOIN
+                                   Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT LEFT OUTER JOIN
+                                   Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT
+          WHERE        (Documentos.NITCLIE = '${codigo}') AND (Documentos.DOC_ESTATUS <> 'A') AND (Documentos.EMP_NIT = '${sucursal}') AND (Tipodocumentos.TIPODOC = 'FAC')
+          ORDER BY DOCUMENTOS.DOC_FECHA DESC
+            `         
+  
+    execute.Query(res,qry);
+
+});
+
 //LISTADO DE MUNICIPIOS EN EL SISTEMA
 router.get("/municipios", async(req,res)=>{
     const {empnit} = req.query;

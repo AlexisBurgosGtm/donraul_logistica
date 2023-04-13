@@ -125,7 +125,7 @@ function getView(){
 
 function addListeners(){
     
-    console.log('iniciando login... ');
+   
     
     let frmLogin = document.getElementById('frmLogin');
     let btnIniciar = document.getElementById('btnIniciar');

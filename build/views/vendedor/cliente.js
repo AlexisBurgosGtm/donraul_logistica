@@ -1,4 +1,5 @@
 function getView(){
+
     let view = {
         body:()=>{
             return `
@@ -12,7 +13,7 @@ function getView(){
                             
                         </div>
                         <div class="tab-pane fade" id="tres" role="tabpanel" aria-labelledby="home-tab">
-                            
+                            ${view.vista_historial()}
                         </div>    
                     </div>
 
@@ -43,7 +44,7 @@ function getView(){
             </div>
             <br>
             <div class="card card-rounded border-naranja shadow">
-                <div class="card-body p-4">
+                <div class="card-body p-2">
                     <div class="form-group">
                         <label>Buscar Cliente:</label>
                         <div class="input-group">
@@ -55,18 +56,9 @@ function getView(){
                         
                     </div>
                     <br>
-                    <div class="table-responsive col-12">
-                        <table class="table table-responsive table-hover">
-                            <thead class="bg-naranja text-white">
-                                <tr>
-                                    <td>CLIENTE</td>
-                                    <td>SALDO</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblClientes"></tbody>
-                        </table>
+                    <div class="table-responsive col-12" id="tblClientes">
+                        
+                        
                     </div>
                 </div>
             </div>
@@ -149,7 +141,36 @@ function getView(){
             `
         },
         vista_historial:()=>{
+            return `
+            <div class="card card-rounded shadow border-naranja">
+                <div class="card-body p-4">
 
+                    <h3 class="negrita text-naranja">Historial del Cliente</h3>
+                    <br>
+
+                    <div class="row">
+                        <table class="table table-responsive">
+                            <thead class="bg-naranja text-white">
+                                <tr>
+                                    <td>FECHA</td>
+                                    <td>PRODUCTO</td>
+                                    <td>CANTIDAD</td>
+                                    <td>PRECIO</td>
+                                    <td>SUBTOTAL</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tblHistorial"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+            <div class="">
+                    <button class="btn btn-secondary btn-circle btn-xl btn-bottom-left hand shadow" id="btnHistorialAtras">
+                        <i class="fal fa-arrow-left"></i>
+                    </button>
+            </div>
+            `
         }
     }
 
@@ -266,7 +287,7 @@ function addListeners(){
                     funciones.Aviso('Cliente creado exitosamente!!');
                     document.getElementById('txtBuscar').value = nit;
                     document.getElementById('btnBuscar').click();
-                    document.getElementById('tab-uno');
+                    document.getElementById('tab-uno').click();
                 
                 })
                 .catch(()=>{
@@ -280,6 +301,12 @@ function addListeners(){
             }
         })
     });
+
+
+    document.getElementById('btnHistorialAtras').addEventListener('click',()=>{
+        document.getElementById('tab-uno').click();
+    });
+
 
     funciones.slideAnimationTabs();
 
@@ -298,13 +325,31 @@ function buscar_cliente(idFiltro,idTablaResultado){
     let tabla = document.getElementById(idTablaResultado);
     tabla.innerHTML = GlobalLoader;
 
+    let tblhead = `<table class="table table-responsive table-hover">
+                        <thead class="bg-naranja text-white">
+                            <tr>
+                                <td>CLIENTE</td>
+                                <td>SALDO</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+    let tblfooter = `</tbody></table>`;
+
+
+    let tipo_dispositivo = funciones.detectarPc();
+    
+    if(tipo_dispositivo=='pc'){}else{tblhead='';tblfooter='';};
+
 
     let str = ""; 
     axios.get('/clientes/buscarcliente?empnit=' + GlobalCodSucursal + '&filtro=' + filtro)
     .then((response) => {
         const data = response.data;        
         data.recordset.map((rows)=>{
-            str += `<tr id="${rows.CODCLIE}">
+            if(tipo_dispositivo=='pc'){
+                    str += `<tr id="${rows.CODCLIE}">
                         <td>
                             ${rows.NOMCLIE}
                             <br>
@@ -316,7 +361,7 @@ function buscar_cliente(idFiltro,idTablaResultado){
                             Q 0.00
                         </td>
                         <td>
-                            <button class="btn btn-md btn-warning hand"> 
+                            <button class="btn btn-md btn-warning hand" onclick="get_historial_cliente('${rows.CODCLIE}')"> 
                                 <i class="fal fa-list"></i> Historial
                             </button>
                         </td> 
@@ -325,9 +370,38 @@ function buscar_cliente(idFiltro,idTablaResultado){
                                 <i class="fal fa-shopping-cart"></i> Vender
                             </button>
                         </td>
-                    </tr>`
+                    </tr>`;
+            }else{
+                str += `
+                    <div class="card card-rounded col-12 shadow border-naranja hand shadow">
+                        <div class="card-body p-2">
+                            
+                                <h5 class="negrita text-naranja">${rows.NOMCLIE}</h5>
+                                <small class="negrita text-secondary">NIT: ${rows.NIT}</small>
+                                <br>
+                                <small>${rows.DIRCLIE},${rows.DESMUNICIPIO}</small>
+                                <br>
+                            
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-md btn-warning hand" onclick="get_historial_cliente('${rows.CODCLIE}')"> 
+                                            <i class="fal fa-list"></i> Historial
+                                        </button>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <button class="btn btn-md btn-info hand" onclick="classNavegar.ventas('${rows.CODCLIE}','${rows.NIT}','${rows.NOMCLIE}', '${rows.DIRCLIE}');"> 
+                                            <i class="fal fa-shopping-cart"></i> Vender
+                                        </button>
+                                    </div>
+
+                                </div>
+                        </div>
+                    </div>`;
+            }
+            
         })
-        tabla.innerHTML= str;
+        tabla.innerHTML= tblhead + str + tblfooter;
         
     }, (error) => {
         console.log(error);
@@ -384,5 +458,37 @@ function get_departamentos(idContainer){
 };
 
 
+function get_historial_cliente(codclie){
+
+    document.getElementById('tab-tres').click();
+
+    let container = document.getElementById('tblHistorial');
+    container.innerHTML = GlobalLoader;
+    let str = '';
+
+    apigen.clientes_data_historial(codclie)
+    .then((data)=>{
+        data.recordset.map((r)=>{
+            str += `
+            <tr>
+            <td>${funciones.convertDateNormal(r.FECHA)}</td>
+                <td>${r.DESPROD}
+                    <br>
+                    <small class="negrita">${r.CODPROD}</small>
+                </td>
+                <td>${r.CANTIDAD}</td>
+                <td>${r.PRECIO}</td>
+                <td>${r.TOTALPRECIO}</td>
+            </tr>
+            `
+        })
+        container.innerHTML = str;
+    })
+    .catch(()=>{
+        container.innerHTML = 'No hay datos para mostrar...';
+    })
+
+
+};
 
 
