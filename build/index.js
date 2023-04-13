@@ -8,6 +8,15 @@ btnMenu.addEventListener('click',()=>{
 
 });
 
+document.getElementById('btnLogOut').addEventListener('click',()=>{
+    funciones.Confirmacion('¿Está seguro que desea SALIR?')
+    .then((value)=>{
+      if(value==true){
+          classNavegar.login();
+      }
+    })
+});
+
 
 //inicializa la instalacion de la app
 funciones.instalationHandlers('btnInstalarApp');

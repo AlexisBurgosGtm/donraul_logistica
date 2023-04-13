@@ -75,6 +75,25 @@ router.post("/vendedores_dia", async(req,res)=>{
 });
 
 
+router.post("/productos_dia", async(req,res)=>{
+
+    const {sucursal,fecha}  = req.body;
+    
+    let qry = '';
+    qry = `
+        SELECT Docproductos.CODPROD, Docproductos.DESCRIPCION AS DESPROD, SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, SUM(Docproductos.TOTALCOSTO) AS COSTO, SUM(Docproductos.TOTALPRECIO) AS IMPORTE
+        FROM  Documentos LEFT OUTER JOIN
+            Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
+            Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+        WHERE (Documentos.EMP_NIT = '${sucursal}') AND (Documentos.DOC_FECHA = '${fecha}') 
+            AND (Documentos.DOC_ESTATUS <> 'A') AND (Tipodocumentos.TIPODOC = 'FAC')
+        GROUP BY Docproductos.DESCRIPCION, Docproductos.CODPROD
+    `
+    
+    execute.Query(res,qry);
+
+});
+
 
 
 module.exports = router;

@@ -2,14 +2,15 @@ function getView(){
     let view = {
         body:()=>{
             return `
-                <div class="col-12 p-0 bg-white">
+                ${view.parametros()}
+                <br>
+                <div class="col-12 p-0">
                     <div class="tab-content" id="myTabHomeContent">
                         <div class="tab-pane fade show active" id="uno" role="tabpanel" aria-labelledby="receta-tab">
                             ${view.rpt_vendedores_dia()}
                         </div>
                         <div class="tab-pane fade" id="dos" role="tabpanel" aria-labelledby="home-tab">
-                           
-                            
+                            ${view.rpt_productos_dia()}
                         </div>
                         <div class="tab-pane fade" id="tres" role="tabpanel" aria-labelledby="home-tab">
                             
@@ -31,39 +32,62 @@ function getView(){
                         </li>         
                     </ul>
                 </div>
+                <button class="btn btn-bottom-ml btn-xl btn-circle btn-info hand shadow" id="btnRptVendedores">
+                    <i class="fal fa-list"></i>
+                </button>
+
+                <button class="btn btn-bottom-r btn-xl btn-circle btn-secondary hand shadow" id="btnRptProductos">
+                    <i class="fal fa-box"></i>
+                </button>
                
             `
         },
-        rpt_vendedores_dia:()=>{
+        parametros:()=>{
             return `
-            <div class="card card-rounded shadow">
-                <div class="card-body p-2">
-                    <h5 class="text-center negrita text-naranja">Pedidos por Vendedor</h5>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Seleccione la Fecha</label>
-                                <input type="date" class="form-control" id="txtFecha">
+                <div class="card card-rounded shadow">
+                    <div class="card-body p-2">
+                        <h5 class="text-center negrita text-naranja">Ventas del Día</h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group">
+                                    <label>Seleccione la Fecha</label>
+                                    <input type="date" class="form-control" id="txtFecha">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-6">
-                            <div class="form-group">
-                                <label>Total Importe:</label>
-                                <h1 class="negrita text-naranja" id="lbTotalImporte">---</h1>
+                        <div class="row">
+                            <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Total Costo:</label>
+                                        <h2 class="negrita text-secondary" id="lbTotalCosto">---</h2>
+                                    </div>
+                            </div>
+                            <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Total Importe:</label>
+                                        <h2 class="negrita text-info" id="lbTotalImporte">---</h2>
+                                    </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Utilidad Bruta:</label>
+                                    <h2 class="negrita text-naranja" id="lbUtilidad">---</h2>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <br>
-
+            `
+        },
+        rpt_vendedores_dia:()=>{
+            return `
+            
             <div class="card card-rounded shadow">
                 <div class="card-body p-2">
                     
                     <div class="table-responsive col-12">
                         <table class="table table-responsive table-hover col-12">
-                            <thead class="bg-naranja text-white">
+                            <thead class="bg-info text-white">
                                 <tr>
                                     <td>VENDEDOR</td>
                                     <td>PEDIDOS</td>
@@ -83,11 +107,30 @@ function getView(){
             </div>
             `
         },
-        rpt_listado_documentos:()=>{
-            
-        },
-        rpt_listado_productos:()=>{
-
+        rpt_productos_dia:()=>{
+            return `
+            <div class="card card-rounded shadow">
+                <div class="card-body p-2">
+                    
+                    <div class="table-responsive col-12">
+                        <table class="table table-responsive table-hover col-12">
+                            <thead class="bg-secondary text-white">
+                                <tr>
+                                    <td>PRODUCTO</td>
+                                    <td>CANTIDAD</td>
+                                    <td>COSTO</td>
+                                    <td>IMPORTE</td>
+                                    <td>UTILIDAD</td>
+                                    <td>MARGEN</td>
+                                </tr>
+                            </thead>
+                            <tbody id="tblProductos">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            `
         }
     }
 
@@ -103,7 +146,20 @@ function addListeners(){
         rtp_vendedores_dia();
     });
 
+    let btnRptVendedores = document.getElementById('btnRptVendedores');
+    btnRptVendedores.addEventListener('click',()=>{
+        document.getElementById('tab-uno').click();
+        rtp_vendedores_dia();
+    });
 
+
+    let btnRptProductos = document.getElementById('btnRptProductos');
+    btnRptProductos.addEventListener('click',()=>{
+        document.getElementById('tab-dos').click();
+        rtp_productos_dia();
+    });
+    
+    
     rtp_vendedores_dia();
 
 
@@ -144,14 +200,19 @@ function rtp_vendedores_dia(){
 
     let lbTotal = document.getElementById('lbTotalImporte');
     lbTotal.innerText = '---';
+    let lbTotalCosto = document.getElementById('lbTotalCosto');
+    lbTotalCosto.innerText = '---';
+    let lbUtilidad = document.getElementById('lbUtilidad');
+    lbUtilidad.innerText = '---';
 
     let fecha = funciones.devuelveFecha('txtFecha');
-    let str = ''; let total = 0;
+    let str = ''; let total = 0; let totalcosto = 0;
 
     data_rpt_vendedores_dia(fecha)
     .then((data)=>{
         data.map((r)=>{
             total += Number(r.IMPORTE);
+            totalcosto += Number(r.COSTO);
             str += `
             <tr>
                 <td>${r.NOMVEN}</td>
@@ -175,10 +236,88 @@ function rtp_vendedores_dia(){
         })
         container.innerHTML = str;
         lbTotal.innerText = funciones.setMoneda(total,'Q');
+        lbTotalCosto.innerText = funciones.setMoneda(totalcosto,'Q');
+        lbUtilidad.innerText = `${funciones.setMoneda((total-totalcosto),'Q')} (${(((total-totalcosto)/total)*100).toFixed(2)} %)`; 
     })
     .catch(()=>{
         container.innerHTML = 'No hay datos....';
         lbTotal.innerText = '---';
+        lbTotalCosto.innerText= '---';
+        lbUtilidad.innerText = '---';
     })
 
 };
+
+
+function data_rpt_productos_dia(fecha){
+    return new Promise((resolve,reject)=>{
+        axios.post('/reportes/productos_dia', {
+            sucursal: GlobalCodSucursal,
+            fecha:fecha
+        })
+        .then((response) => {
+                const data = response.data.recordset;
+                if(response.data.toString()=='error'){
+                    reject();
+                }else{
+                    resolve(data);
+                }
+            }, (error) => {
+                reject();
+        });
+    })
+    
+};
+
+function rtp_productos_dia(){
+    let container = document.getElementById('tblProductos');
+    container.innerHTML = GlobalLoader;
+
+
+    let lbTotal = document.getElementById('lbTotalImporte');
+    lbTotal.innerText = '---';
+    let lbTotalCosto = document.getElementById('lbTotalCosto');
+    lbTotalCosto.innerText = '---';
+    let lbUtilidad = document.getElementById('lbUtilidad');
+    lbUtilidad.innerText = '---';
+    
+
+    let fecha = funciones.devuelveFecha('txtFecha');
+    let str = ''; let total = 0;
+
+    let totalcosto = 0; let totalimporte = 0;
+
+    data_rpt_productos_dia(fecha)
+    .then((data)=>{
+        data.map((r)=>{
+            total += Number(r.IMPORTE);
+            totalcosto += Number(r.COSTO);
+
+            str += `
+            <tr>
+                <td>${r.DESPROD}
+                    <br>
+                    <small>Código: ${r.CODPROD}</small>
+                </td>
+                <td>${r.TOTALUNIDADES}</td>
+                <td>${funciones.setMoneda(r.COSTO,'Q')}</td>
+                <td>${funciones.setMoneda(r.IMPORTE,'Q')}</td>
+                <td>${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</td>
+                <td class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %
+            </tr>
+            `
+        })
+        container.innerHTML = str;
+        lbTotal.innerText = funciones.setMoneda(total,'Q');
+        lbTotalCosto.innerText = funciones.setMoneda(totalcosto,'Q');
+        lbUtilidad.innerText = `${funciones.setMoneda((total-totalcosto),'Q')} (${(((total-totalcosto)/total)*100).toFixed(2)} %)`;
+    })
+    .catch(()=>{
+        container.innerHTML = 'No hay datos....';
+        lbTotal.innerText = '---';
+        lbTotalCosto.innerText= '---';
+        lbUtilidad.innerText = '---';
+    })
+
+};
+
