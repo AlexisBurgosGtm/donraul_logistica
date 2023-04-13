@@ -161,19 +161,26 @@ let funciones = {
         let alias = 'RAGARO';
         let llave = 'D64AC98049FA8487D86828B73A709D67';
 
-        let url = `/datosnit?nit=${nit}&fel_alias=${alias}&fel_llave=${llave}`;
+        let url = 'hola mundo'; 
         
+        if(Number(nit.length)>12){
+          url= `/datosdpi?dpi=${nit}&fel_alias=${alias}&fel_llave=${llave}`;
+        }else{
+          url= `/datosnit?nit=${nit}&fel_alias=${alias}&fel_llave=${llave}`;
+        }
+
+
         axios.get(url)
         .then((response) => {
             let json = response.data;
             json = json.replace(","," ");
             json = json.replace(",,"," ");
             json = json.replace(","," ");
-            console.log(response.data);
+            //console.log(response.data);
 
             resolve(json);
         }, (error) => {
-            console.log(error);
+            //console.log(error);
             reject();
         });
   

@@ -16,17 +16,6 @@ router.post("/solicitud_cambios_cliente", async(req,res)=>{
     
      execute.Query(res,qry);
      
-
-     /*
-
-       const{sucursal,codven,fecha,codclie,nitclie,tiponegocio,negocio,nomclie,dirclie,codmun,coddepto,referencia,obs,telefono,visita,lat,long,sector} = req.body;
-
-    let qry = `INSERT INTO ME_CENSO_SOLICITUDES (
-            CODSUCURSAL,   CODVEN,     FECHA, CODCLIE,NITCLIE,TIPONEGOCIO,NEGOCIO,NOMCLIE,DIRCLIE,REFERENCIA,CODMUN,CODDEPTO,OBS,VISITA,LAT,LONG,TELEFONO, STATUS, SECTOR)
-    VALUES ('${sucursal}',${codven},'${fecha}',${codclie},'${nitclie}','${tiponegocio}','${negocio}','${nomclie}','${dirclie}','${referencia}','${codmun}','${coddepto}','${obs}','${visita}',${lat},${long},'${telefono}','PENDIENTE','${sector}');`
-    
-
-      */
 });
 
 
@@ -204,6 +193,9 @@ router.get("/buscarcliente", async(req,res)=>{
             Clientes.CODDEPTO = Departamentos.CODDEPTO
         WHERE (Clientes.EMP_NIT = '${empnit}') 
         AND (Clientes.NOMCLIE LIKE '%${filtro}%')
+            OR
+            (Clientes.EMP_NIT = '${empnit}') 
+        AND (Clientes.NITFACTURA LIKE '%${filtro}%')
         `     
     
     execute.Query(res,qry);
@@ -211,33 +203,43 @@ router.get("/buscarcliente", async(req,res)=>{
 });
 
 // AGREGA UN NUEVO CLIENTE
-router.post("/clientenuevo", async(req,res)=>{
-    const {app,fecha,codven,empnit,codclie,nitclie,nomclie,nomfac,dirclie,coddepto,codmunicipio,codpais,telclie,emailclie,codbodega,tipoprecio,lat,long} = req.body;
+router.post("/clientes_nuevo", async(req,res)=>{
+    const {fecha,codven,empnit,nitclie,nomclie,dirclie,coddepto,codmunicipio,telclie,emailclie,lat,long} = req.body;
     
-    let qry ='';
-
-    
-            qry = `INSERT INTO ME_CLIENTES (
-                EMP_NIT, NITCLIE, CODCLIE, NOMCLIE, DIRCLIE,
-                CODDEPTO, CODMUNI, TELCLIE, EMAILCLIE, TIPOCLIE,
-                ACEPTACHEQUE, FECHAINGRESO, NITFACTURA, CODVEN, LIMITECREDITO,
-                DIASCREDITO, CODPAIS, NOMFAC, CODBODEGA, DESCUENTO,
-                CODTIPOCLIE, COMISION, IMPUESTO1, TEMPORADACREDITO, TEMPORADADIAS,
-                VENTADOLARES, VENTAEXPORTA, MONTOIVARET, PORIVARET, CODTIPOFP,
-                UTILIZAPUNTOS, TIPOPUNTOS, NCUOTAS, VARIASLISTAS, DIASPRIMERCUOTA,
-                DIASCUOTAS, CALCULOCUOTAS, CLIE_CARGOAUT, TIPO_CARGOAUT, LATITUDCLIE, LONGITUDCLIE,
-                LATITUD, LONGITUD
-            )VALUES(
-                '${empnit}','${codclie}',0,'${nomclie}','${dirclie}',
-                '${coddepto}','${codmunicipio}','${telclie}','${emailclie}','${tipoprecio}',
-                0,'${fecha}','${nitclie}','${codven}',0,
-                30,'${codpais}','${nomfac}','${codbodega}',0,
-                'A',0,0,0,0,
-                0,0,0,0,0,
-                0,'NUNCA',0,0,0,
-                0,0,0,0,0,0,
-                '${lat}','${long}'
-            )`         
+          let qry = `
+            INSERT INTO CLIENTES (
+                EMP_NIT, NITCLIE, CODCLIE, NOMCLIE, DIRCLIE, CODDEPTO,
+                CODMUNI, TELCLIE, EMAILCLIE, TIPOCLIE, ACEPTACHEQUE, FECHAINGRESO,
+                NITFACTURA, CODVEN, LIMITECREDITO, DIASCREDITO, CODPAIS, NOMFAC, CODBODEGA, DESCUENTO, CODTIPOCLIE, COMISION, IMPUESTO1, TEMPORADACREDITO, TEMPORADADIAS,
+                VENTADOLARES, VENTAEXPORTA, MONTOIVARET, PORIVARET, CODTIPOFP, UTILIZAPUNTOS,
+                TIPOPUNTOS, CODPOSTAL, NCUOTAS, VARIASLISTAS, DIASPRIMERCUOTA, DIASCUOTAS,
+                CALCULOCUOTAS, CLIE_CARGOAUT, TIPO_CARGOAUT, LATITUDCLIE, LONGITUDCLIE,
+                LATITUD, LONGITUD, CLIE_BONIPROD, CLIE_CALCULOBONIPROD, MEMBRESIA, CLIE_INTERCONSUMO
+                ) 
+                SELECT '${empnit}' AS EMP_NIT, '${nitclie}' AS NITCLIE, 
+                '${nitclie}' AS CODCLIE, 
+                '${nomclie}' AS NOMCLIE, '${dirclie}' AS DIRCLIE, 
+                ${coddepto} AS CODDEPTO,
+                ${codmunicipio} AS CODMUNI, 
+                '${telclie}' AS TELCLIE, 
+                '' AS EMAILCLIE, 'P' AS TIPOCLIE, 0 AS ACEPTACHEQUE, 
+                '${fecha}' AS FECHAINGRESO,
+                '${nitclie}' AS NITFACTURA, ${codven} AS CODVEN, 1 AS LIMITECREDITO, 
+                0 AS DIASCREDITO, 'GT' AS CODPAIS, 
+                '${nomclie}' AS NOMFAC, 'B001' AS CODBODEGA,
+                0 AS DESCUENTO, 'A' AS CODTIPOCLIE, 0 AS COMISION, 0 AS IMPUESTO1, 
+                0 AS TEMPORADACREDITO, 0 AS TEMPORADADIAS,
+                0 AS VENTADOLARES, 0 AS VENTAEXPORTA, 0 AS MONTOIVARET, 0 AS PORIVARET, 
+                0 AS CODTIPOFP, 0 AS UTILIZAPUNTOS,
+                'NUNCA' AS TIPOPUNTOS, '1001' AS CODPOSTAL, 0 AS NCUOTAS, 0 AS VARIASLISTAS, 
+                0 AS DIASPRIMERCUOTA, 0 AS DIASCUOTAS,
+                0 AS CALCULOCUOTAS, 0 AS CLIE_CARGOAUT, 0 AS TIPO_CARGOAUT, 
+                ${lat} AS LATITUDCLI, ${long} AS LONGITUDCLIE,
+                '${lat}' AS LATITUD, '${long}' AS LONGITUD,
+                0 AS CLIE_BONIPROD, 'D' AS CLIE_CALCULOBONIPROD, 0 AS MEMBRESIA, 
+                0 AS CLIE_INTERCONSUMO                
+            `         
+    console.log(qry);
     
     execute.Query(res,qry);
 
@@ -245,20 +247,25 @@ router.post("/clientenuevo", async(req,res)=>{
 
 //LISTADO DE MUNICIPIOS EN EL SISTEMA
 router.get("/municipios", async(req,res)=>{
-    const {app,empnit} = req.query;
+    const {empnit} = req.query;
     let qry ='';
 
-    qry = `SELECT CODMUNI AS CODMUNICIPIO, DESMUNI AS DESMUNICIPIO FROM ME_MUNICIPIOS WHERE CODSUCURSAL='${app}' ORDER BY PRIMERO DESC`         
+    qry = `SELECT CODMUNI AS CODMUNICIPIO, DESMUNI AS DESMUNICIPIO 
+    FROM MUNICIPIOS WHERE EMP_NIT='${empnit}' 
+    ORDER BY DESMUNI`         
 
     execute.Query(res,qry);
 });
 
 //LISTADO DE MUNICIPIOS EN EL SISTEMA
 router.get("/departamentos", async(req,res)=>{
-    const {app,empnit} = req.query;
+    const {empnit} = req.query;
     let qry ='';
 
-    qry = `SELECT CODDEPTO, DESDEPTO FROM ME_DEPARTAMENTOS WHERE CODSUCURSAL='${app}' ORDER BY PRIMERO DESC`         
+    qry = `SELECT CODDEPTO, DESDEPTO 
+        FROM DEPARTAMENTOS 
+        WHERE EMP_NIT='${empnit}' 
+        ORDER BY DESDEPTO DESC`         
 
     execute.Query(res,qry);
     

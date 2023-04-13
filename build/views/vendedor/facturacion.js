@@ -855,7 +855,7 @@ async function iniciarVistaVentas(codigo,nit,nombre,direccion,st){
 
     let txtCliNit = document.getElementById('txtCliNit');
     txtCliNit.addEventListener('focusout', ()=>{
-
+        return;
         let nit = txtCliNit.value || 'CF';
         if(nit=='CF'){
             document.getElementById('txtCliNombre').value = 'CONSUMIDOR FINAL';
@@ -1708,47 +1708,6 @@ async function fcnNuevoPedido(){
 
 
 
-async function fcnGetMunicipios(idContainer){
-    let container = document.getElementById(idContainer);
-    container.innerHTML = GlobalLoader;
-
-    let str = ""; 
-    axios.get('/clientes/municipios?empnit=' + GlobalEmpnit + '&app=' + GlobalSistema)
-    .then((response) => {
-        const data = response.data;        
-        data.recordset.map((rows)=>{
-            str += `<option value='${rows.CODMUNICIPIO}'>${rows.DESMUNICIPIO}</option>`
-        })
-        container.innerHTML= str;
-        
-    }, (error) => {
-        console.log(error);
-        container.innerHTML = '';
-    });
-};
-
-async function fcnGetDepartamentos(idContainer){
-    let container = document.getElementById(idContainer);
-    container.innerHTML = GlobalLoader;
-
-    let str = ""; 
-    axios.get('/clientes/departamentos?empnit=' + GlobalEmpnit + '&app=' + GlobalSistema)
-    .then((response) => {
-        const data = response.data;        
-        data.recordset.map((rows)=>{
-            str += `<option value='${rows.CODDEPTO}'>${rows.DESDEPTO}</option>`
-        })
-        container.innerHTML= str;
-        
-    }, (error) => {
-        console.log(error);
-        container.innerHTML = '';
-    });
-};
-
-
-
-
 function showUbicacion(){
     return new Promise((resolve,reject)=>{
         try {
@@ -1806,3 +1765,5 @@ function Lmap(lat,long){
           });        
       return map;
 };
+
+

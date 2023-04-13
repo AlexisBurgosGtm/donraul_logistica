@@ -53,7 +53,7 @@ let classNavegar = {
                     <div class="row">
                         <div class="col-12 card card-rounded hand shadow border-naranja" id="btnCliente">
                             <div class="card-body p-4 negrita text-naranja" style="font-size:180%">
-                                <i class="fal fa-list"></i> Nuevo Cliente
+                                <i class="fal fa-user"></i> Clientes
                             </div>
                         </div>
                     </div>

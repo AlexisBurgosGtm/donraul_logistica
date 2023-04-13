@@ -379,35 +379,6 @@ let apigen = {
         
         
     },
-    clientesSetReminder: async (codclie,nit,nombre, direccion,recordatorio,hora,minuto,fecha)=>{
-
-        return new Promise((resolve,reject)=>{
-            axios.post('/clientes/setreminder',{
-                sucursal:GlobalCodSucursal,
-                codclie:codclie,
-                nit:nit,
-                nombre:nombre,
-                direccion:direccion,
-                fecha:fecha,
-                minuto:minuto,
-                hora:hora,
-                recordatorio:recordatorio,
-                codven:GlobalCodUsuario
-            })
-            .then((response) => {
-                let data = response.data;
-                if(Number(data.rowsAffected[0])>0){
-                    resolve();             
-                }else{
-                    reject();
-                }     
-            }, (error) => {
-                reject();
-            });
-
-        })
-
-    },
     vendedorHistorialCliente: async(codcliente,idContenedor)=>{
     
         let container = document.getElementById(idContenedor);
@@ -731,5 +702,24 @@ let apigen = {
                 reject();
             });
         });
-    }
+    },
+    clientes_data_nuevo: (datos)=>{
+        return new Promise((resolve,reject)=>{
+            axios.post('/clientes/clientes_nuevo',datos)
+            .then((response) => {
+                let data = response.data;
+                if(data.toString()=='error'){
+                    reject();
+                }else{
+                    if(Number(data.rowsAffected[0])>0){
+                        resolve(data);             
+                    }else{
+                        reject();
+                    }    
+                }
+            }, (error) => {
+                reject();
+            });
+        })
+    },
 }
