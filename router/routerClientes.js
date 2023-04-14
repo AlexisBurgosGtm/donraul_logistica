@@ -216,8 +216,9 @@ router.post("/clientes_nuevo", async(req,res)=>{
                 CALCULOCUOTAS, CLIE_CARGOAUT, TIPO_CARGOAUT, LATITUDCLIE, LONGITUDCLIE,
                 LATITUD, LONGITUD, CLIE_BONIPROD, CLIE_CALCULOBONIPROD, MEMBRESIA, CLIE_INTERCONSUMO
                 ) 
-                SELECT '${empnit}' AS EMP_NIT, '${nitclie}' AS NITCLIE, 
-                '${nitclie}' AS CODCLIE, 
+                SELECT '${empnit}' AS EMP_NIT, 
+                '${nitclie}' AS NITCLIE, 
+                0 AS CODCLIE, 
                 '${nomclie}' AS NOMCLIE, '${dirclie}' AS DIRCLIE, 
                 ${coddepto} AS CODDEPTO,
                 ${codmunicipio} AS CODMUNI, 
@@ -239,8 +240,7 @@ router.post("/clientes_nuevo", async(req,res)=>{
                 0 AS CLIE_BONIPROD, 'D' AS CLIE_CALCULOBONIPROD, 0 AS MEMBRESIA, 
                 0 AS CLIE_INTERCONSUMO                
             `         
-    console.log(qry);
-    
+  
     execute.Query(res,qry);
 
 });

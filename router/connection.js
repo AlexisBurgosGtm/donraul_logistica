@@ -7,7 +7,7 @@
 };
 
 
-const config_xx = {
+const config = {
 	user: 'iEx',
 	password: 'iEx',
 	server: 'ELORIGEN\\SQLDEV',
@@ -16,7 +16,7 @@ const config_xx = {
 };
 
 
-const config = {
+const configXX = {
 	user: 'iEx',
 	password: 'iEx',
 	server: '192.168.0.200',
