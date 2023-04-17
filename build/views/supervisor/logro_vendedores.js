@@ -48,7 +48,7 @@ function getView(){
                     <div class="card-body p-2">
                         <h5 class="text-center negrita text-naranja">Ventas del Día</h5>
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
                                 <div class="form-group">
                                     <label>Seleccione la Fecha</label>
                                     <div class="input-group">
@@ -66,19 +66,19 @@ function getView(){
                             <div class="col-4">
                                     <div class="form-group">
                                         <label>Total Costo:</label>
-                                        <h2 class="negrita text-secondary" id="lbTotalCosto">---</h2>
+                                        <h5 class="negrita text-secondary" id="lbTotalCosto">---</h5>
                                     </div>
                             </div>
                             <div class="col-4">
                                     <div class="form-group">
                                         <label>Total Importe:</label>
-                                        <h2 class="negrita text-info" id="lbTotalImporte">---</h2>
+                                        <h4 class="negrita text-info" id="lbTotalImporte">---</h4>
                                     </div>
                             </div>
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Utilidad Bruta:</label>
-                                    <h2 class="negrita text-naranja" id="lbUtilidad">---</h2>
+                                    <h5 class="negrita text-naranja" style="" id="lbUtilidad">---</h5>
                                 </div>
                             </div>
                         </div>
@@ -186,15 +186,10 @@ function getView(){
 
                     <div class="modal-body">
                         <div class="table-responsive col-12">
-                            <table class="table table-responsive table-hover">
+                            <table class="table table-responsive table-hover table-striped table-bordered">
                                 <thead class="bg-secondary text-white">
                                     <tr>
                                         <td>PRODUCTO</td>
-                                        <td>CANTIDAD</td>
-                                        <td>COSTO</td>
-                                        <td>VENTA</td>
-                                        <td>UTILIDAD</td>
-                                        <td>MARGEN</td>
                                     </tr>
                                 </thead>
                                 <tbody id="tblProductosVendedor"></tbody>
@@ -503,16 +498,43 @@ function rtp_productos_vendedor_dia(codven){
             totalcosto += Number(r.COSTO);
 
             str += `
-            <tr>
+            <tr class="col-12">
                 <td>${r.DESPROD}
                     <br>
-                    <small>Código: ${r.CODPROD}</small>
+                    <small class="negrita text-naranja">Código: ${r.CODPROD}</small>
+                    <br>
+                    <div class="row">
+                        <div class="col-3">
+                            <small>Cantidad</small>
+                        </div>
+                        <div class="col-3">
+                            <small>Costo</small>
+                        </div>
+                        <div class="col-3">
+                            <small>Venta</small>
+                        </div>
+                        <div class="col-3">
+                            <small class="negrita">${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-3">
+                            <small class="negrita">${r.TOTALUNIDADES}</small>
+                        </div>
+                        <div class="col-3">
+                            <small class="text-danger">${funciones.setMoneda(r.COSTO,'Q')}</small>
+                        </div>
+                        <div class="col-3">
+                            <small class="negrita">${funciones.setMoneda(r.IMPORTE,'Q')}</small>
+                        </div>
+                        <div class="col-3">
+                            <small class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')}%
+                            </small>
+                        </div>
+                    </div>
+                 
                 </td>
-                <td>${r.TOTALUNIDADES}</td>
-                <td>${funciones.setMoneda(r.COSTO,'Q')}</td>
-                <td>${funciones.setMoneda(r.IMPORTE,'Q')}</td>
-                <td>${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</td>
-                <td class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %
             </tr>
             `
         })

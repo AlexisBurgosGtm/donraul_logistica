@@ -210,13 +210,11 @@ let classNavegar = {
             //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
         })
     },
-    supervisor_dashboard:()=>{
-        funciones.loadScript('./views/supervisor/dashboard.js','root')
-        .then(()=>{
-            GlobalSelectedForm ='SUPERVISORMAPA';
-            initView();
-            //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
-        })
+    supervisor_dashboard:()=>{   
+            funciones.loadScript('./views/supervisor/dashboard.js','root')
+            .then(()=>{
+                initView();
+            })        
     },
     config:()=>{
         funciones.loadScript('./views/config.js','root')

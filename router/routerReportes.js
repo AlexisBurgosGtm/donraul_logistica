@@ -58,7 +58,10 @@ router.post("/vendedores_dia", async(req,res)=>{
     
     let qry = '';
     qry = `
-    SELECT Documentos.CODVEN,Vendedores.NOMVEN, COUNT(Documentos.DOC_NUMERO) AS PEDIDOS, SUM(Documentos.DOC_TOTALCOSTO) AS COSTO, SUM(Documentos.DOC_TOTALVENTA) AS IMPORTE
+    SELECT Documentos.CODVEN,Vendedores.NOMVEN, 
+            COUNT(Documentos.DOC_NUMERO) AS PEDIDOS, 
+            SUM(Documentos.DOC_TOTALCOSTO*1.12) AS COSTO, 
+            SUM(Documentos.DOC_TOTALVENTA) AS IMPORTE
         FROM Documentos LEFT OUTER JOIN
             Vendedores ON Documentos.CODVEN = Vendedores.CODVEN AND Documentos.EMP_NIT = Vendedores.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
@@ -82,7 +85,7 @@ router.post("/vendedores_dia_documentos", async(req,res)=>{
     let qry = '';
     qry = `
     SELECT Documentos.CODDOC,Documentos.DOC_NUMERO, 
-        Documentos.DOC_TOTALCOSTO AS COSTO, 
+        (Documentos.DOC_TOTALCOSTO*1.12) AS COSTO, 
         Documentos.DOC_TOTALVENTA AS IMPORTE
         FROM Documentos LEFT OUTER JOIN
             Vendedores ON Documentos.CODVEN = Vendedores.CODVEN AND Documentos.EMP_NIT = Vendedores.EMP_NIT LEFT OUTER JOIN
@@ -105,7 +108,10 @@ router.post("/productos_dia", async(req,res)=>{
     
     let qry = '';
     qry = `
-        SELECT Docproductos.CODPROD, Docproductos.DESCRIPCION AS DESPROD, SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, SUM(Docproductos.TOTALCOSTO) AS COSTO, SUM(Docproductos.TOTALPRECIO) AS IMPORTE
+        SELECT Docproductos.CODPROD, 
+        Docproductos.DESCRIPCION AS DESPROD, 
+        SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, 
+        SUM(Docproductos.TOTALCOSTO*1.12) AS COSTO, SUM(Docproductos.TOTALPRECIO) AS IMPORTE
         FROM  Documentos LEFT OUTER JOIN
             Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
@@ -124,7 +130,11 @@ router.post("/productos_vendedor_dia", async(req,res)=>{
     
     let qry = '';
     qry = `
-        SELECT Docproductos.CODPROD, Docproductos.DESCRIPCION AS DESPROD, SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, SUM(Docproductos.TOTALCOSTO) AS COSTO, SUM(Docproductos.TOTALPRECIO) AS IMPORTE
+        SELECT Docproductos.CODPROD, 
+        Docproductos.DESCRIPCION AS DESPROD, 
+        SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, 
+        SUM(Docproductos.TOTALCOSTO*1.12) AS COSTO, 
+        SUM(Docproductos.TOTALPRECIO) AS IMPORTE
         FROM  Documentos LEFT OUTER JOIN
             Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
