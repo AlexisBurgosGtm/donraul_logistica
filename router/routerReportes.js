@@ -2,6 +2,13 @@ const execute = require('./connection');
 const express = require('express');
 const router = express.Router();
 
+
+
+
+
+
+
+
 router.post("/usuarios", async(req,res)=>{
 
     const {sucursal}  = req.body;
@@ -116,7 +123,9 @@ router.post("/productos_dia", async(req,res)=>{
             Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
         WHERE (Documentos.EMP_NIT = '${sucursal}') AND (Documentos.DOC_FECHA = '${fecha}') 
-            AND (Documentos.DOC_ESTATUS <> 'A') AND (Tipodocumentos.TIPODOC = '${tipodoc}')
+            AND (Documentos.DOC_ESTATUS <> 'A') 
+            AND (Tipodocumentos.TIPODOC = '${tipodoc}')
+            AND (Docproductos.CODPROD IS NOT NULL)
         GROUP BY Docproductos.DESCRIPCION, Docproductos.CODPROD
     `
     
@@ -141,7 +150,9 @@ router.post("/productos_vendedor_dia", async(req,res)=>{
         WHERE (Documentos.EMP_NIT = '${sucursal}') 
         AND (Documentos.DOC_FECHA = '${fecha}')
         AND (Documentos.CODVEN = ${codven}) 
-            AND (Documentos.DOC_ESTATUS <> 'A') AND (Tipodocumentos.TIPODOC = '${tipodoc}')
+        AND (Documentos.DOC_ESTATUS <> 'A') 
+        AND (Tipodocumentos.TIPODOC = '${tipodoc}')
+        AND (Docproductos.CODPROD IS NOT NULL)
         GROUP BY Docproductos.DESCRIPCION, Docproductos.CODPROD
     `
     

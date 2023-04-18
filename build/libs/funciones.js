@@ -732,7 +732,7 @@ let funciones = {
       let str = '';
       
       dataEmpresas.map((rows)=>{
-        str = str + `<option value='${rows.codsucursal}' selected='${rows.default}'>${rows.nomsucursal}</option>`;
+        str = str + `<option value='${rows.codsucursal}'>${rows.nomsucursal}</option>`;
       });
 
       return str;
