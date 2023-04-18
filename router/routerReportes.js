@@ -2,8 +2,123 @@ const execute = require('./connection');
 const express = require('express');
 const router = express.Router();
 
+router.post("/rpt_documentos_dia", async(req,res)=>{
 
+    const {sucursal,fecha}  = req.body;
+    
+    let qry = '';
+    qry = `
+            SELECT  Documentos.CODDOC, 
+                    Documentos.DOC_NUMERO AS CORRELATIVO, 
+                    Documentos.DOC_NOMREF AS CLIENTE, 
+                    Documentos.DOC_DIRENTREGA AS DIRECCION,
+                    (Documentos.DOC_TOTALCOSTO * 1.12) AS COSTO, 
+                    Documentos.DOC_TOTALVENTA AS IMPORTE, 
+                    DOCUMENTOS.FIRMAELECTRONICA AS FELUDDI
+            FROM Documentos LEFT OUTER JOIN
+                Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+            WHERE  (Documentos.EMP_NIT = '${sucursal}') 
+            AND (Tipodocumentos.TIPODOC = 'FAC')  
+            AND (Documentos.DOC_ESTATUS <> 'A') 
+            AND (Documentos.DOC_FECHA = '${fecha}')
+    `
 
+    console.log(qry);
+    
+    execute.Query(res,qry);
+
+});
+
+router.post("/rpt_productos_dia", async(req,res)=>{
+
+    const {sucursal,fecha}  = req.body;
+    
+    let qry = '';
+    qry = `
+            SELECT Docproductos.CODPROD, 
+                    Docproductos.DESCRIPCION AS DESPROD, 
+                    Docproductos.CANTIDADINV AS TOTALUNIDADES, 
+                    (Docproductos.TOTALCOSTO * 1.12) AS COSTO, 
+                    Docproductos.TOTALPRECIO AS IMPORTE
+                FROM  Documentos LEFT OUTER JOIN
+                             Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
+                             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+                WHERE (Documentos.EMP_NIT = '${sucursal}') 
+                        AND (Documentos.DOC_ESTATUS <> 'A') 
+                        AND (Tipodocumentos.TIPODOC = 'FAC') 
+                        AND (Documentos.DOC_FECHA = '${fecha}')
+                ORDER BY Docproductos.DESCRIPCION
+                    `
+
+    console.log(qry);
+    
+    execute.Query(res,qry);
+
+});
+
+router.post("/rpt_ventas_dia", async(req,res)=>{
+
+    const {sucursal,mes,anio}  = req.body;
+    
+    let qry = '';
+    qry = `
+        SELECT Documentos.EMP_NIT,Documentos.DOC_FECHA AS FECHA, 
+        SUM(Documentos.DOC_TOTALCOSTO * 1.12) AS TOTALCOSTO, 
+        SUM(Documentos.DOC_TOTALVENTA) AS TOTALVENTA
+        FROM  Documentos LEFT OUTER JOIN Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+        WHERE (Documentos.EMP_NIT = '${sucursal}') 
+        AND (Tipodocumentos.TIPODOC = 'FAC') 
+        AND (Documentos.DOC_ANO = ${anio}) 
+        AND (Documentos.DOC_MES = ${mes}) 
+        AND (Documentos.DOC_ESTATUS <> 'A')
+        GROUP BY Documentos.EMP_NIT,Documentos.DOC_FECHA
+    `
+    
+    execute.Query(res,qry);
+
+});
+
+router.post("/rpt_total_ventas", async(req,res)=>{
+
+    const {sucursal,mes,anio}  = req.body;
+    
+    let qry = '';
+    qry = `
+    SELECT  SUM(Documentos.DOC_TOTALCOSTO*1.12) AS TOTALCOSTO, 
+            SUM(Documentos.DOC_TOTALVENTA) AS TOTALVENTA
+    FROM Documentos LEFT OUTER JOIN
+            Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+    WHERE (Documentos.EMP_NIT = '${sucursal}') 
+    AND (Tipodocumentos.TIPODOC = 'FAC') 
+    AND (Documentos.DOC_ANO = ${anio})
+    AND (Documentos.DOC_MES = ${mes}) 
+    AND (Documentos.DOC_ESTATUS <> 'A')
+    `
+    
+    execute.Query(res,qry);
+
+});
+
+router.post("/rpt_total_compras", async(req,res)=>{
+
+    const {sucursal,mes,anio}  = req.body;
+    
+    let qry = '';
+    qry = `
+    SELECT  SUM(Documentos.DOC_TOTALCOSTO*1.12) AS TOTALCOSTO, 
+            SUM(Documentos.DOC_TOTALVENTA) AS TOTALVENTA
+    FROM Documentos LEFT OUTER JOIN
+            Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+    WHERE (Documentos.EMP_NIT = '${sucursal}') 
+    AND (Tipodocumentos.TIPODOC = 'COM') 
+    AND (Documentos.DOC_ANO = ${anio})
+    AND (Documentos.DOC_MES = ${mes}) 
+    AND (Documentos.DOC_ESTATUS <> 'A')
+    `
+    
+    execute.Query(res,qry);
+
+});
 
 
 
