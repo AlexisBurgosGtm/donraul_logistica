@@ -301,11 +301,6 @@ function getView(){
                                   <thead class="bg-trans-gradient text-white">
                                     <tr>
                                       <td>Producto</td>
-                                      <td>Unidades</td>
-                                      <td>TotalCosto</td>
-                                      <td>TotalPrecio</td>
-                                      <td>Utilidad</td>
-                                      <td>Márgen</td>
                                     </tr>
                                   </thead>
                                   <tbody id="tblVentasDiaProductos">
@@ -779,15 +774,33 @@ function getDataProductos(empnit,dia){
             const data = response.data;        
             data.recordset.map((rows)=>{
                 str += `<tr>
-                            <td>${rows.DESPROD}
+                            <td>${rows.DESPROD} (Cód:${rows.CODPROD})
                                 <br>
-                                <small>${rows.CODPROD}</small>
-                            </td>
-                            <td>${rows.TOTALUNIDADES}</td>                     
-                            <td>${funciones.setMoneda(rows.COSTO,'Q')}</td>
-                            <td>${funciones.setMoneda(rows.IMPORTE,'Q')}</td>
-                            <td>${funciones.setMoneda((Number(rows.IMPORTE)-Number(rows.COSTO)),'Q')}
-                            <td class="text-success">${(((Number(rows.IMPORTE)-Number(rows.COSTO))/Number(rows.IMPORTE))*100).toFixed(2)}%</td>                        
+                                <small class="negrita">Cantidad: ${rows.TOTALUNIDADES}</small>
+                                <br>
+                                <div class="row">
+                                      <div class="col-4">
+                                          <small>Costo:</small>
+                                      </div>
+                                      <div class="col-4">
+                                          <small>Venta:</small>
+                                      </div>
+                                      <div class="col-4">
+                                          <small class="negrita text-naranja">${funciones.setMoneda((Number(rows.IMPORTE)-Number(rows.COSTO)),'Q')}</small>
+                                      </div>
+                                </div>
+                                <div class="row">
+                                      <div class="col-4">
+                                          <small class="negrita">${funciones.setMoneda(rows.COSTO,'Q')}</small>
+                                      </div>
+                                      <div class="col-4">
+                                          <small class="negrita text-info">${funciones.setMoneda(rows.IMPORTE,'Q')}</small>
+                                      </div>
+                                      <div class="col-4">
+                                          <small class="negrita text-danger">${(((Number(rows.IMPORTE)-Number(rows.COSTO))/Number(rows.IMPORTE))*100).toFixed(2)}%</small>
+                                      </div>
+                                </div>
+                            </td>                        
                         </tr>`;
             })
             container.innerHTML = str;

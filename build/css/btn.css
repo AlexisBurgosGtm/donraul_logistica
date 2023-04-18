@@ -29,6 +29,14 @@
   bottom: 35px;
 }
 
+.btn-bottom-r2 { 
+  position: fixed;
+  z-index: 1088;
+  left: 50%;
+  right: 50%;
+  bottom: 35px;
+}
+
 .btn-bottom-r { 
   position: fixed;
   z-index: 888;

@@ -36,7 +36,7 @@ function getView(){
                     <i class="fal fa-list"></i>
                 </button>
 
-                <button class="btn btn-bottom-r btn-xl btn-circle btn-secondary hand shadow" id="btnRptProductos">
+                <button class="btn btn-bottom-r2 btn-xl btn-circle btn-secondary hand shadow" id="btnRptProductos">
                     <i class="fal fa-box"></i>
                 </button>
                
@@ -120,15 +120,10 @@ function getView(){
                 <div class="card-body p-2">
                     
                     <div class="table-responsive col-12">
-                        <table class="table table-responsive table-hover col-12">
+                        <table class="table table-responsive table-bordered table-hover col-12">
                             <thead class="bg-secondary text-white">
                                 <tr>
                                     <td>PRODUCTO</td>
-                                    <td>CANTIDAD</td>
-                                    <td>COSTO</td>
-                                    <td>IMPORTE</td>
-                                    <td>UTILIDAD</td>
-                                    <td>MARGEN</td>
                                 </tr>
                             </thead>
                             <tbody id="tblProductos">
@@ -377,15 +372,33 @@ function rtp_productos_dia(){
 
             str += `
             <tr>
-                <td>${r.DESPROD}
+                <td>${r.DESPROD} (Cód:${r.CODPROD})
                     <br>
-                    <small>Código: ${r.CODPROD}</small>
+                    <small>Cantidad: ${r.TOTALUNIDADES}</small>
+                    <br>
+                    <div class="row">
+                        <div class="col-4">
+                            <small>Costo:</small>
+                        </div>
+                        <div class="col-4">
+                            <small>Venta:</small>
+                        </div>
+                        <div class="col-4">
+                            <small class="negrita text-naranja">${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <small class="negrita">${funciones.setMoneda(r.COSTO,'Q')}</small>
+                        </div>
+                        <div class="col-4">
+                            <small class="negrita text-info">${funciones.setMoneda(r.IMPORTE,'Q')}</small>
+                        </div>
+                        <div class="col-4">
+                            <small class="negrita text-danger">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %</small>
+                        </div>
+                    </div>
                 </td>
-                <td>${r.TOTALUNIDADES}</td>
-                <td>${funciones.setMoneda(r.COSTO,'Q')}</td>
-                <td>${funciones.setMoneda(r.IMPORTE,'Q')}</td>
-                <td>${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</td>
-                <td class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %
             </tr>
             `
         })
