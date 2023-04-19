@@ -176,10 +176,28 @@ router.post("/usuarios_delete", async(req,res)=>{
 
 router.post("/vendedores_dia", async(req,res)=>{
 
-    const {sucursal,fecha,tipodoc}  = req.body;
+    const {sucursal,fecha,fechaf,tipodoc}  = req.body;
     
     let qry = '';
     qry = `
+    SELECT Documentos.CODVEN,
+            ISNULL(WEB_USUARIOS.USUARIO,'SN') AS NOMVEN, 
+            COUNT(Documentos.DOC_NUMERO) AS PEDIDOS, 
+            SUM(Documentos.DOC_TOTALCOSTO*1.12) AS COSTO, 
+            SUM(Documentos.DOC_TOTALVENTA) AS IMPORTE
+        FROM Documentos LEFT OUTER JOIN
+            WEB_USUARIOS ON Documentos.CODVEN = WEB_USUARIOS.CODVEN AND Documentos.EMP_NIT = WEB_USUARIOS.EMP_NIT LEFT OUTER JOIN
+            Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+    WHERE (Documentos.EMP_NIT = '${sucursal}') 
+            AND (Documentos.DOC_FECHA BETWEEN '${fecha}' AND '${fechaf}') 
+            AND (Tipodocumentos.TIPODOC IN('${tipodoc}'))
+            AND (Documentos.DOC_ESTATUS<>'A')
+            AND (WEB_USUARIOS.USUARIO<>'')
+    GROUP BY Documentos.CODVEN,WEB_USUARIOS.USUARIO
+    ORDER BY WEB_USUARIOS.USUARIO
+    `
+
+    let qryx = `
     SELECT Documentos.CODVEN,Vendedores.NOMVEN, 
             COUNT(Documentos.DOC_NUMERO) AS PEDIDOS, 
             SUM(Documentos.DOC_TOTALCOSTO*1.12) AS COSTO, 
@@ -188,7 +206,7 @@ router.post("/vendedores_dia", async(req,res)=>{
             Vendedores ON Documentos.CODVEN = Vendedores.CODVEN AND Documentos.EMP_NIT = Vendedores.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
     WHERE (Documentos.EMP_NIT = '${sucursal}') 
-            AND (Documentos.DOC_FECHA = '${fecha}') 
+            AND (Documentos.DOC_FECHA BETWEEN '${fecha}' AND '${fechaf}') 
             AND (Tipodocumentos.TIPODOC IN('${tipodoc}'))
             AND (Documentos.DOC_ESTATUS<>'A')
     GROUP BY Documentos.CODVEN,Vendedores.NOMVEN
@@ -202,7 +220,7 @@ router.post("/vendedores_dia", async(req,res)=>{
 
 router.post("/vendedores_dia_documentos", async(req,res)=>{
 
-    const {sucursal,codven,fecha,tipodoc}  = req.body;
+    const {sucursal,codven,fecha,fechaf,tipodoc}  = req.body;
     
     let qry = '';
     qry = `
@@ -213,7 +231,7 @@ router.post("/vendedores_dia_documentos", async(req,res)=>{
             Vendedores ON Documentos.CODVEN = Vendedores.CODVEN AND Documentos.EMP_NIT = Vendedores.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
     WHERE (Documentos.EMP_NIT = '${sucursal}') 
-            AND (Documentos.DOC_FECHA = '${fecha}') 
+            AND (Documentos.DOC_FECHA  BETWEEN '${fecha}' AND '${fechaf}') 
             AND (Tipodocumentos.TIPODOC IN('${tipodoc}'))
             AND (Documentos.CODVEN=${codven})
             AND (Documentos.DOC_ESTATUS<>'A')
@@ -226,10 +244,24 @@ router.post("/vendedores_dia_documentos", async(req,res)=>{
 
 router.post("/productos_dia", async(req,res)=>{
 
-    const {sucursal,fecha,tipodoc}  = req.body;
+    const {sucursal,fecha,fechaf,tipodoc}  = req.body;
     
-    let qry = '';
-    qry = `
+    let qry = `
+    SELECT        Docproductos.CODPROD, Docproductos.DESCRIPCION AS DESPROD, SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, SUM(Docproductos.TOTALCOSTO * 1.12) AS COSTO, SUM(Docproductos.TOTALPRECIO) 
+                         AS IMPORTE
+FROM            Documentos LEFT OUTER JOIN
+                         WEB_USUARIOS ON Documentos.CODVEN = WEB_USUARIOS.CODVEN AND Documentos.EMP_NIT = WEB_USUARIOS.EMP_NIT LEFT OUTER JOIN
+                         Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
+                         Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
+WHERE        (Documentos.EMP_NIT = '${sucursal}') AND (Documentos.DOC_FECHA BETWEEN '${fecha}' AND '${fechaf}') AND (Documentos.DOC_ESTATUS <> 'A') AND (Tipodocumentos.TIPODOC = '${tipodoc}') AND 
+                         (Docproductos.CODPROD IS NOT NULL) AND (WEB_USUARIOS.USUARIO <> '')
+GROUP BY Docproductos.DESCRIPCION, Docproductos.CODPROD
+ORDER BY Docproductos.DESCRIPCION
+    `;
+
+
+
+    let qryx = `
         SELECT Docproductos.CODPROD, 
         Docproductos.DESCRIPCION AS DESPROD, 
         SUM(Docproductos.CANTIDADINV) AS TOTALUNIDADES, 
@@ -237,7 +269,8 @@ router.post("/productos_dia", async(req,res)=>{
         FROM  Documentos LEFT OUTER JOIN
             Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
-        WHERE (Documentos.EMP_NIT = '${sucursal}') AND (Documentos.DOC_FECHA = '${fecha}') 
+        WHERE (Documentos.EMP_NIT = '${sucursal}') 
+            AND (Documentos.DOC_FECHA  BETWEEN '${fecha}' AND '${fechaf}') 
             AND (Documentos.DOC_ESTATUS <> 'A') 
             AND (Tipodocumentos.TIPODOC = '${tipodoc}')
             AND (Docproductos.CODPROD IS NOT NULL)
@@ -250,7 +283,7 @@ router.post("/productos_dia", async(req,res)=>{
 
 router.post("/productos_vendedor_dia", async(req,res)=>{
 
-    const {sucursal,codven,fecha,tipodoc}  = req.body;
+    const {sucursal,codven,fecha,fechaf,tipodoc}  = req.body;
     
     let qry = '';
     qry = `
@@ -263,12 +296,13 @@ router.post("/productos_vendedor_dia", async(req,res)=>{
             Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
             Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
         WHERE (Documentos.EMP_NIT = '${sucursal}') 
-        AND (Documentos.DOC_FECHA = '${fecha}')
+        AND (Documentos.DOC_FECHA  BETWEEN '${fecha}' AND '${fechaf}')
         AND (Documentos.CODVEN = ${codven}) 
         AND (Documentos.DOC_ESTATUS <> 'A') 
         AND (Tipodocumentos.TIPODOC = '${tipodoc}')
         AND (Docproductos.CODPROD IS NOT NULL)
         GROUP BY Docproductos.DESCRIPCION, Docproductos.CODPROD
+        ORDER BY Docproductos.DESCRIPCION
     `
     
     execute.Query(res,qry);

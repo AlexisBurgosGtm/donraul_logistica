@@ -2,7 +2,7 @@ function getView(){
     let view = {
         body:()=>{
             return `
-                ${view.parametros()}
+                ${view.encabezado()}
                 <br>
                 <div class="col-12 p-0">
                     <div class="tab-content" id="myTabHomeContent">
@@ -32,36 +32,29 @@ function getView(){
                         </li>         
                     </ul>
                 </div>
-                <button class="btn btn-bottom-ml btn-xl btn-circle btn-info hand shadow" id="btnRptVendedores">
+
+                <button class="btn btn-bottom-l2 btn-xl btn-circle btn-info hand shadow" id="btnRptVendedores">
                     <i class="fal fa-list"></i>
                 </button>
 
-                <button class="btn btn-bottom-r2 btn-xl btn-circle btn-secondary hand shadow" id="btnRptProductos">
+                <button class="btn btn-bottom-ml btn-xl btn-circle btn-secondary hand shadow" id="btnRptProductos">
                     <i class="fal fa-box"></i>
                 </button>
-               
+
+                <button class="btn btn-bottom-r btn-xl btn-circle btn-outline-secondary hand shadow" id="btnFiltro">
+                    <i class="fal fa-filter"></i>
+                </button>
+
+                ${view.modal_parametros()}
             `
         },
-        parametros:()=>{
+        encabezado:()=>{
             return `
                 <div class="card card-rounded shadow">
                     <div class="card-body p-2">
-                        <h5 class="text-center negrita text-naranja">Ventas del Día</h5>
-                        <div class="row">
-                            <div class="col-sm-12 col-md-8 col-lg-6 col-xl-6">
-                                <div class="form-group">
-                                    <label>Seleccione la Fecha</label>
-                                    <div class="input-group">
-                                        <input type="date" class="form-control" id="txtFecha">
-                                        <select class="form-control negrita text-naranja" id="cmbTipoDocumentos">
-                                            <option value="FAC">FACTURAS</option>
-                                            <option value="PED">PEDIDOS</option>
-                                        </select>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </div>
+
+                        <h5 class="text-center negrita text-naranja">Análisis de Vendedores Ruteros</h5>
+                            
                         <div class="row">
                             <div class="col-4">
                                     <div class="form-group">
@@ -90,25 +83,10 @@ function getView(){
             return `
             
             <div class="card card-rounded shadow">
-                <div class="card-body p-2">
+                <div class="card-body p-0">
                     
-                    <div class="table-responsive col-12">
-                        <table class="table table-responsive table-hover col-12">
-                            <thead class="bg-info text-white">
-                                <tr>
-                                    <td>VENDEDOR</td>
-                                    <td>PEDIDOS</td>
-                                    <td>COSTO</td>
-                                    <td>IMPORTE</td>
-                                    <td>UTILIDAD</td>
-                                    <td>MARGEN</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblVendedores">
-                            </tbody>
-                        </table>
+                    <div class="table-responsive col-12" id="tblVendedores">
+                        
                     </div>
                 </div>
             </div>
@@ -198,7 +176,66 @@ function getView(){
             </div>
         </div>
             `
-        }
+        },
+        modal_parametros:()=>{
+            return `
+            <div class="modal fade" id="modal_parametros" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-md modal-dialog-bottom" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <label class="modal-title text-naranja h3" id="">Parámetros</label>
+                        </div>
+
+                        <div class="modal-body p-4">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Fecha Inicial</label>
+                                            <input type="date" class="form-control" id="txtFecha">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Fecha Final</label>
+                                            <input type="date" class="form-control" id="txtFechaF">
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label>Tipo de Documento</label>
+                                        <select class="form-control negrita text-naranja" id="cmbTipoDocumentos">
+                                            <option value="FAC">FACTURAS</option>
+                                            <option value="PED">PEDIDOS</option>
+                                            <option value="COT">COTIZACIONES</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            <br>    
+                            <div class="row">
+                                <div class="col-6">
+                                        <button class="btn btn-secondary btn-circle btn-xl hand shadow" data-dismiss="modal">
+                                            <i class="fal fa-arrow-left"></i>
+                                        </button>
+                                </div>
+                                <div class="col-6">
+                                        <button class="btn btn-naranja btn-circle btn-xl hand shadow" data-dismiss="modal" id="btnAceptarFiltro">
+                                            <i class="fal fa-check"></i>
+                                        </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                       
+                    </div>
+                </div>
+            </div>
+            
+            `
+        },
     }
 
     root.innerHTML = view.body();
@@ -207,17 +244,22 @@ function getView(){
 
 function addListeners(){
 
+    document.getElementById('btnFiltro').addEventListener('click',()=>{
+        $("#modal_parametros").modal('show');
+    });
+
+
+
     document.getElementById('txtFecha').value = funciones.getFecha();
+    document.getElementById('txtFechaF').value = funciones.getFecha();
 
-    document.getElementById('txtFecha').addEventListener('change',()=>{
+
+    document.getElementById('btnAceptarFiltro').addEventListener('click',()=>{
         rtp_vendedores_dia();
         rtp_productos_dia();
     });
 
-    document.getElementById('cmbTipoDocumentos').addEventListener('change',()=>{
-        rtp_vendedores_dia();
-        rtp_productos_dia();
-    });
+  
 
     let btnRptVendedores = document.getElementById('btnRptVendedores');
     btnRptVendedores.addEventListener('click',()=>{
@@ -246,11 +288,12 @@ function initView(){
 };
 
 
-function data_rpt_vendedores_dia(fecha){
+function data_rpt_vendedores_dia(fecha,fechaf){
     return new Promise((resolve,reject)=>{
         axios.post('/reportes/vendedores_dia', {
             sucursal: GlobalCodSucursal,
             fecha:fecha,
+            fechaf:fechaf,
             tipodoc:document.getElementById('cmbTipoDocumentos').value
         })
         .then((response) => {
@@ -280,37 +323,115 @@ function rtp_vendedores_dia(){
     lbUtilidad.innerText = '---';
 
     let fecha = funciones.devuelveFecha('txtFecha');
+    let fechaf = funciones.devuelveFecha('txtFechaF');
+    
     let str = ''; let total = 0; let totalcosto = 0;
+    let tblHead = `
+                        <table class="table table-responsive table-hover col-12">
+                            <thead class="bg-info text-white">
+                                <tr>
+                                    <td>VENDEDOR</td>
+                                    <td>PEDIDOS</td>
+                                    <td>COSTO</td>
+                                    <td>IMPORTE</td>
+                                    <td>UTILIDAD</td>
+                                    <td>MARGEN</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </thead>
+                            <tbody id="tblVendedores"> `;
+    let tblFoot = '</tbody></table>';
 
-    data_rpt_vendedores_dia(fecha)
+    data_rpt_vendedores_dia(fecha,fechaf)
     .then((data)=>{
+        let tipodispositivo = funciones.detectarPc();
         data.map((r)=>{
             total += Number(r.IMPORTE);
             totalcosto += Number(r.COSTO);
-            str += `
-            <tr>
-                <td>${r.NOMVEN}</td>
-                <td>${r.PEDIDOS}</td>
-                <td>${funciones.setMoneda(r.COSTO,'Q')}</td>
-                <td>${funciones.setMoneda(r.IMPORTE,'Q')}</td>
-                <td>${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</td>
-                <td class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %
-                <td>
-                    <button class="btn btn-circle btn-lg btn-info hand shadow"
-                    onclick="rpt_documentos_vendedor('${r.CODVEN}')">
-                        <i class="fal fa-list"></i>
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-circle btn-lg btn-secondary hand shadow"
-                    onclick="rtp_productos_vendedor_dia('${r.CODVEN}')">
-                        <i class="fal fa-box"></i>
-                    </button>
-                </td>
-            </tr>
-            `
+            if(tipodispositivo=='pc'){
+                str += `
+                <tr>
+                    <td>${r.NOMVEN}</td>
+                    <td>${r.PEDIDOS}</td>
+                    <td>${funciones.setMoneda(r.COSTO,'Q')}</td>
+                    <td>${funciones.setMoneda(r.IMPORTE,'Q')}</td>
+                    <td>${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</td>
+                    <td class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %
+                    <td>
+                        <button class="btn btn-circle btn-lg btn-info hand shadow"
+                        onclick="rpt_documentos_vendedor('${r.CODVEN}')">
+                            <i class="fal fa-list"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-circle btn-lg btn-secondary hand shadow"
+                        onclick="rtp_productos_vendedor_dia('${r.CODVEN}')">
+                            <i class="fal fa-box"></i>
+                        </button>
+                    </td>
+                </tr>
+                `
+            }else{
+                tblHead=''; tblFoot='';
+                str += `
+                <div class="card card-rounded shadow border-naranja col-12">
+                    <div class="card-body p-2">
+                        <div class="row">
+                            <div class="col-3 p-0">
+                                <img src="./favicon.png" class="imgresp">
+                            </div>
+                            <div class="col-9">
+                                <h5 class="text-naranja">${r.NOMVEN}</h5>
+                                <table class="">
+                                    <tbody>
+                                        <tr>
+                                            <td>Pedidos:</td>
+                                            <td>${r.PEDIDOS}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Costo:</td>
+                                            <td>${funciones.setMoneda(r.COSTO,'Q')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Venta:</td>
+                                            <td>${funciones.setMoneda(r.IMPORTE,'Q')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Utilidad:</td>
+                                            <td>${funciones.setMoneda((Number(r.IMPORTE)-Number(r.COSTO)),'Q')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Margen:</td>
+                                            <td class="negrita">${funciones.setMoneda(((Number(r.IMPORTE)-Number(r.COSTO))/Number(r.IMPORTE))*100,'')} %<td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6">
+                                <button class="btn btn-md btn-info hand shadow"
+                                onclick="rpt_documentos_vendedor('${r.CODVEN}')">
+                                    <i class="fal fa-list"></i>Documentos
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-md btn-secondary hand shadow"
+                                onclick="rtp_productos_vendedor_dia('${r.CODVEN}')">
+                                    <i class="fal fa-box"></i> Productos
+                                </button>
+                            </div>
+                        </div>    
+                    </div>
+                </div>
+                <br>
+                `
+            }
+            
         })
-        container.innerHTML = str;
+        container.innerHTML = tblHead + str + tblFoot;
         lbTotal.innerText = funciones.setMoneda(total,'Q');
         lbTotalCosto.innerText = funciones.setMoneda(totalcosto,'Q');
         lbUtilidad.innerText = `${funciones.setMoneda((total-totalcosto),'Q')} (${(((total-totalcosto)/total)*100).toFixed(2)} %)`; 
@@ -325,11 +446,12 @@ function rtp_vendedores_dia(){
 };
 
 
-function data_rpt_productos_dia(fecha){
+function data_rpt_productos_dia(fecha,fechaf){
     return new Promise((resolve,reject)=>{
         axios.post('/reportes/productos_dia', {
             sucursal: GlobalCodSucursal,
             fecha:fecha,
+            fechaf:fechaf,
             tipodoc:document.getElementById('cmbTipoDocumentos').value
         })
         .then((response) => {
@@ -360,11 +482,13 @@ function rtp_productos_dia(){
     
 
     let fecha = funciones.devuelveFecha('txtFecha');
+    let fechaf = funciones.devuelveFecha('txtFechaF');
+
     let str = ''; let total = 0;
 
     let totalcosto = 0; let totalimporte = 0;
 
-    data_rpt_productos_dia(fecha)
+    data_rpt_productos_dia(fecha,fechaf)
     .then((data)=>{
         data.map((r)=>{
             total += Number(r.IMPORTE);
@@ -417,12 +541,13 @@ function rtp_productos_dia(){
 };
 
 
-function data_rpt_documentos_vendedor(codven,fecha){
+function data_rpt_documentos_vendedor(codven,fecha,fechaf){
     return new Promise((resolve,reject)=>{
         axios.post('/reportes/vendedores_dia_documentos', {
             sucursal: GlobalCodSucursal,
             codven:codven,
             fecha:fecha,
+            fechaf:fechaf,
             tipodoc:document.getElementById('cmbTipoDocumentos').value
         })
         .then((response) => {
@@ -448,7 +573,9 @@ function rpt_documentos_vendedor(codven){
 
 
     let fecha =  funciones.devuelveFecha('txtFecha')
-    data_rpt_documentos_vendedor(codven,fecha)
+    let fechaf =  funciones.devuelveFecha('txtFechaF')
+    
+    data_rpt_documentos_vendedor(codven,fecha,fechaf)
     .then((data)=>{
         let str = '';
         data.map((r)=>{
@@ -471,12 +598,13 @@ function rpt_documentos_vendedor(codven){
 };
 
 
-function data_rpt_productos_vendedor_dia(codven,fecha){
+function data_rpt_productos_vendedor_dia(codven,fecha,fechaf){
     return new Promise((resolve,reject)=>{
         axios.post('/reportes/productos_vendedor_dia', {
             sucursal: GlobalCodSucursal,
             codven:codven,
             fecha:fecha,
+            fechaf:fechaf,
             tipodoc:document.getElementById('cmbTipoDocumentos').value
         })
         .then((response) => {
@@ -500,11 +628,13 @@ function rtp_productos_vendedor_dia(codven){
     $("#modal_productos").modal('show');
 
     let fecha = funciones.devuelveFecha('txtFecha');
+    let fechaf = funciones.devuelveFecha('txtFechaF');
+
     let str = ''; let total = 0;
 
     let totalcosto = 0; let totalimporte = 0;
 
-    data_rpt_productos_vendedor_dia(codven,fecha)
+    data_rpt_productos_vendedor_dia(codven,fecha,fechaf)
     .then((data)=>{
         data.map((r)=>{
             total += Number(r.IMPORTE);
