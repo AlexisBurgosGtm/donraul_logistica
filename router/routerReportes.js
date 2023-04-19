@@ -192,7 +192,7 @@ router.post("/vendedores_dia", async(req,res)=>{
             AND (Documentos.DOC_FECHA BETWEEN '${fecha}' AND '${fechaf}') 
             AND (Tipodocumentos.TIPODOC IN('${tipodoc}'))
             AND (Documentos.DOC_ESTATUS<>'A')
-            AND (WEB_USUARIOS.USUARIO<>'')
+            AND (WEB_USUARIOS.TIPO='VEN')
     GROUP BY Documentos.CODVEN,WEB_USUARIOS.USUARIO
     ORDER BY WEB_USUARIOS.USUARIO
     `
@@ -254,7 +254,8 @@ FROM            Documentos LEFT OUTER JOIN
                          Docproductos ON Documentos.DOC_NUMERO = Docproductos.DOC_NUMERO AND Documentos.CODDOC = Docproductos.CODDOC AND Documentos.EMP_NIT = Docproductos.EMP_NIT LEFT OUTER JOIN
                          Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT
 WHERE        (Documentos.EMP_NIT = '${sucursal}') AND (Documentos.DOC_FECHA BETWEEN '${fecha}' AND '${fechaf}') AND (Documentos.DOC_ESTATUS <> 'A') AND (Tipodocumentos.TIPODOC = '${tipodoc}') AND 
-                         (Docproductos.CODPROD IS NOT NULL) AND (WEB_USUARIOS.USUARIO <> '')
+                         (Docproductos.CODPROD IS NOT NULL) 
+                         AND (WEB_USUARIOS.TIPO='VEN')
 GROUP BY Docproductos.DESCRIPCION, Docproductos.CODPROD
 ORDER BY Docproductos.DESCRIPCION
     `;
@@ -308,6 +309,7 @@ router.post("/productos_vendedor_dia", async(req,res)=>{
     execute.Query(res,qry);
 
 });
+
 
 
 module.exports = router;

@@ -59,7 +59,7 @@ let classNavegar = {
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-12 card card-rounded hand shadow border-naranja">
+                        <div class="col-12 card card-rounded hand shadow border-naranja" id="btnCotizaciones">
                             <div class="card-body p-4 negrita text-naranja" style="font-size:180%">
                                 <i class="fal fa-dollar-sign"></i> Crear Cotización
                             </div>
@@ -81,6 +81,12 @@ let classNavegar = {
             hideMenuLateral();
             classNavegar.cliente()
         });
+
+        document.getElementById('btnCotizaciones').addEventListener('click',()=>{
+            hideMenuLateral();
+            classNavegar.vendedor_cotizaciones('','CF','CONSUMIDOR FINAL', 'CIUDAD');
+        });
+
 
         btnMenu.style = "visibility:visible";
 
@@ -166,6 +172,16 @@ let classNavegar = {
                 window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
             })
           
+    },
+    vendedor_cotizaciones: async(codigo,nit,nombre,direccion,st)=>{
+        
+        funciones.loadScript('./views/vendedor/cotizaciones.js','root')
+        .then(()=>{
+            GlobalSelectedForm ='COTIZACIONES';
+            iniciarVistaVentas(codigo,nit,nombre,direccion,st);
+            window.history.pushState({"page":2}, "cotizaciones", GlobalUrl + '/cotizaciones')
+        })
+      
     },
     cliente: async()=>{
         funciones.loadScript('./views/vendedor/cliente.js','root')

@@ -1,636 +1,648 @@
 function getView(){
     let view = {
-        body:()=>{
-            return `
-                <div class="row">
-                    <div class="col-6">
-                        <h2 id="txtTotalItems" class="negrita">0 items</h2>
+            body:()=>{
+                return `
+                    <div class="row">
+                        <div class="col-6">
+                            <h2 id="txtTotalItems" class="negrita">0 items</h2>
+                        </div>
+                        <div class="col-6">
+                            <h1 id="txtTotalVenta" class="text-danger negrita"></h1>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <h1 id="txtTotalVenta" class="text-danger negrita"></h1>
+                
+                    <div class="col-12 p-0 bg-white">
+                        
+                        <div class="tab-content" id="myTabHomeContent">
+                            <div class="tab-pane fade show active" id="pedido" role="tabpanel" aria-labelledby="receta-tab">
+                            ${view.encabezadoClienteDocumento() + view.gridTempVenta() }
+                            </div>
+                            <div class="tab-pane fade" id="cliente" role="tabpanel" aria-labelledby="home-tab">
+                            ${view.vista_cliente() + view.modalBusquedaCliente()}
+                            </div>
+                            <div class="tab-pane fade" id="entrega" role="tabpanel" aria-labelledby="home-tab">
+                                ${view.vista_entrega()}     
+                            </div>
+                            <div class="tab-pane fade" id="mapa" role="tabpanel" aria-labelledby="tab-mapa">
+                            ${view.vista_mapa()}
+                            </div>
+                        
+                        </div>
+
+                        <ul class="nav nav-tabs hidden" id="myTabHome" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active negrita text-success" id="tab-pedido" data-toggle="tab" href="#pedido" role="tab" aria-controls="profile" aria-selected="false">
+                                    <i class="fal fa-list"></i>pedido</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link negrita text-danger" id="tab-cliente" data-toggle="tab" href="#cliente" role="tab" aria-controls="home" aria-selected="true">
+                                    <i class="fal fa-comments"></i>cliente</a>
+                            </li> 
+                            <li class="nav-item">
+                                <a class="nav-link negrita text-info" id="tab-entrega" data-toggle="tab" href="#entrega" role="tab" aria-controls="home" aria-selected="true">
+                                    <i class="fal fa-edit"></i>entrega</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link negrita text-warning" id="tab-mapa" data-toggle="tab" href="#mapa" role="tab" aria-controls="profile" aria-selected="false">
+                                    <i class="fal fa-chart-pie"></i>mapa</a>
+                            </li> 
+                                    
+                        </ul>
+
+                    </div>
+                
+                `
+            },
+            encabezadoClienteDocumento :()=>{
+                return `
+            <div class="row">
+                
+                <div class="hidden-md-down col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div id="panel-2" class="panel col-12">
+                        <div class="panel-hdr">
+                            <h2>Datos del Cliente</h2>
+                            <div class="panel-toolbar">
+                                <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                                <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                            </div>
+                        </div>
+                        <div class="panel-container collapse">
+                            <div class="panel-content">
+                                <div class="">
+                                    <div class="input-group">
+                                        <input id="txtNit" type="text" ref="txtNit" class="form-control" placeholder="Código del cliente.." aria-label="" aria-describedby="button-addon4" />
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-info waves-effect waves-themed" type="button" id="btnBusquedaClientes">
+                                                <i class="fal fa-search"></i>
+                                            </button>
+                                            <div class="card"></div>
+                                            <button class="btn btn-success waves-effect waves-themed" id="btnNuevoCliente">
+                                                +
+                                            </button>
+                                        </div>
+                                        
+                                    </div>
+                                    <input class="form-control" id="txtNombre" placeholder="Nombre de cliente..">
+                                    <input class="form-control" id="txtDireccion" placeholder="Dirección cliente">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            
-                <div class="col-12 p-0 bg-white">
-                    
-                    <div class="tab-content" id="myTabHomeContent">
-                        <div class="tab-pane fade show active" id="pedido" role="tabpanel" aria-labelledby="receta-tab">
-                           ${view.encabezadoClienteDocumento() + view.gridTempVenta() }
+                
+                <div class="hidden-md-down col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                    <div id="panel-3" class="panel col-12">
+                        <div class="panel-hdr">
+                            <h2>Datos del Documento</h2>
+                            <div class="panel-toolbar">
+                                <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                                <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
+                            </div>
                         </div>
-                        <div class="tab-pane fade" id="cliente" role="tabpanel" aria-labelledby="home-tab">
-                           ${view.vista_cliente() + view.modalBusquedaCliente()}
-                        </div>
-                        <div class="tab-pane fade" id="entrega" role="tabpanel" aria-labelledby="home-tab">
-                            ${view.vista_entrega()}     
-                        </div>
-                        <div class="tab-pane fade" id="mapa" role="tabpanel" aria-labelledby="tab-mapa">
-                           ${view.vista_mapa()}
-                        </div>
-                    
-                    </div>
-
-                    <ul class="nav nav-tabs hidden" id="myTabHome" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active negrita text-success" id="tab-pedido" data-toggle="tab" href="#pedido" role="tab" aria-controls="profile" aria-selected="false">
-                                <i class="fal fa-list"></i>pedido</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link negrita text-danger" id="tab-cliente" data-toggle="tab" href="#cliente" role="tab" aria-controls="home" aria-selected="true">
-                                <i class="fal fa-comments"></i>cliente</a>
-                        </li> 
-                        <li class="nav-item">
-                            <a class="nav-link negrita text-info" id="tab-entrega" data-toggle="tab" href="#entrega" role="tab" aria-controls="home" aria-selected="true">
-                                <i class="fal fa-edit"></i>entrega</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link negrita text-warning" id="tab-mapa" data-toggle="tab" href="#mapa" role="tab" aria-controls="profile" aria-selected="false">
-                                <i class="fal fa-chart-pie"></i>mapa</a>
-                        </li> 
+                        <div class="panel-container collapse"> 
+                        <!--show-->
+                            <div class="panel-content">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="text" class="form-control input-sm" id="cmbCoddoc">
+                                        
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text" class="form-control" value="0" id="txtCorrelativo" readonly="true">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        Fecha: <input type="date" class="form-control bg-subtlelight pl-4 text-sm" id="txtFecha">
+                                    </div>
+                                    <div class="col-6">
+                                        Vendedor:
+                                        <input type="text" class="form-control" id="cmbVendedor">
+                                    </div>
+                                </div>
                                 
-                    </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                </div>
-               
-            `
-        },
-        encabezadoClienteDocumento :()=>{
-            return `
-        <div class="row">
-            
-            <div class="hidden-md-down col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                <div id="panel-2" class="panel col-12">
-                    <div class="panel-hdr">
-                        <h2>Datos del Cliente</h2>
-                        <div class="panel-toolbar">
-                            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
-                            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
-                        </div>
-                    </div>
-                    <div class="panel-container collapse">
-                        <div class="panel-content">
-                            <div class="">
-                                <div class="input-group">
-                                    <input id="txtNit" type="text" ref="txtNit" class="form-control" placeholder="Código del cliente.." aria-label="" aria-describedby="button-addon4" />
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-info waves-effect waves-themed" type="button" id="btnBusquedaClientes">
-                                            <i class="fal fa-search"></i>
-                                        </button>
-                                        <div class="card"></div>
-                                        <button class="btn btn-success waves-effect waves-themed" id="btnNuevoCliente">
-                                            +
-                                        </button>
-                                    </div>
-                                    
-                                </div>
-                                <input class="form-control" id="txtNombre" placeholder="Nombre de cliente..">
-                                <input class="form-control" id="txtDireccion" placeholder="Dirección cliente">
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
-            
-            <div class="hidden-md-down col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                <div id="panel-3" class="panel col-12">
-                    <div class="panel-hdr">
-                        <h2>Datos del Documento</h2>
-                        <div class="panel-toolbar">
-                            <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
-                            <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>
-                        </div>
-                    </div>
-                    <div class="panel-container collapse"> 
-                    <!--show-->
-                        <div class="panel-content">
-                            <div class="row">
-                                <div class="col-6">
-                                    <input type="text" class="form-control input-sm" id="cmbCoddoc">
-                                    
-                                </div>
-                                <div class="col-6">
-                                    <input type="text" class="form-control" value="0" id="txtCorrelativo" readonly="true">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    Fecha: <input type="date" class="form-control bg-subtlelight pl-4 text-sm" id="txtFecha">
-                                </div>
-                                <div class="col-6">
-                                    Vendedor:
-                                    <input type="text" class="form-control" id="cmbVendedor">
-                                </div>
-                            </div>
+                `
+                //<select class="form-control input-sm" id="cmbCoddoc"></select>
+                //<select class="form-control" id="cmbVendedor"></select>
+            },
+            gridTempVenta :()=>{
+                return `
+                    <div class="row">
+                            <label class="text-info hidden" id="lbNomClien">Consumidor Final</label>
+                            <div id="panel-2" class="panel col-12">
+
+                                <div class="panel-container show">
+                                    <div class="panel-content">
+                                        
+                                        <div class="table-responsive border-top-rounded border-bottom-rounded shadow">
+                                            <table class="table table-hover table-striped"><!--mt-5-->
+                                                <thead class="bg-secondary text-white">
+                                                    <tr>
+                                                        <th class="">Producto</th>
+                                                        <th class="">Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tblGridTempVentas"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                <div>
+
                             
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                <button class="btn btn-xl btn-warning shadow btn-bottom-l hand" id="">
+                                    <i class=""></i>Cotización
+                                </button>
 
-        </div>
-            `
-            //<select class="form-control input-sm" id="cmbCoddoc"></select>
-            //<select class="form-control" id="cmbVendedor"></select>
-        },
-        gridTempVenta :()=>{
-            return `
-                <div class="row">
-                        <label class="text-info hidden" id="lbNomClien">Consumidor Final</label>
-                        <div id="panel-2" class="panel col-12">
+                                <button class="btn btn-circle btn-xl btn-success shadow btn-bottom-mr hand" id="btnAgregarProd">
+                                    <i class="fal fa-search"></i>
+                                </button>
 
-                            <div class="panel-container show">
-                                <div class="panel-content">
-                                    
-                                    <div class="table-responsive border-top-rounded border-bottom-rounded shadow">
-                                        <table class="table table-hover table-striped"><!--mt-5-->
-                                            <thead class="bg-secondary text-white">
-                                                <tr>
-                                                    <th class="">Producto</th>
-                                                    <th class="">Subtotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tblGridTempVentas"></tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            <div>
+                                <button class="btn btn-xl btn-secondary btn-bottom-r3 btn-circle hand shadow" id="btnCambiarCliente">
+                                    <i class="fal fa-user"></i>
+                                </button>
 
-                           
-
-                            <button class="btn btn-circle btn-xl btn-success shadow btn-bottom-mr hand" id="btnAgregarProd">
-                                <i class="fal fa-search"></i>
-                            </button>
-
-                            <button class="btn btn-xl btn-secondary btn-bottom-r3 btn-circle hand shadow" id="btnCambiarCliente">
-                                <i class="fal fa-user"></i>
-                            </button>
-
-                        </div>
-                    </div>
-                    
-                <div id="containerModalesVentas"></div>
-
-            </div>
-        </div>  
-            `
-        },
-        btnCobrar :()=>{
-            return `
-            <div id="btn-bottom-r">
-                <button class="btn btn-outline-danger btn-lg waves-themed waves-effect shadow" id="btnCobrar">
-                    <i class="fal fa-search"></i>
-                    COBRAR
-                </button>
-            </div>
-            `
-        },
-        modalBusquedaProductos :()=>{
-            return `
-            <div class="modal fade  modal-with-scroll" id="ModalBusqueda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-right" role="document">
-                    <div class="modal-content">
-
-                        <div class="modal-body">
-                            <label class="modal-title text-danger h5" id="">Búsqueda de Productos</label>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true"><i class="fal fa-times"></i></span>
-                            </button>
-                            <br>
-                                <div class="input-group p-2">
-                                 
-                                    <input id="txtBusqueda" type="text" ref="txtBusqueda" class=" border-naranja bg-amarillo form-control col-12 shadow" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-naranja waves-effect waves-themed shadow hand" id="btnBuscarProducto">
-                                            <i class="fal fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                       
-                        <table class="table table-responsive table-striped table-hover">
-                            <thead class="bg-naranja text-white">
-                                <tr>
-                                    <td>Producto</td>
-                                    <td>Precio</td>                         
-                                    <td></td>
-                                </tr>
-                            </thead>
-                            <tbody id="tblResultadoBusqueda">
-                            
-
-                            </tbody>
-                        </table>
+                            </div>
                         </div>
                         
-                    
-                    </div>
+                    <div id="containerModalesVentas"></div>
+
                 </div>
-                <div class="shortcut-menu align-left">
-                    <button class="btn btn-danger btn-md" data-dismiss="modal">
-                        <i class="fal fa-angle-double-left"></i>Atrás
+            </div>  
+                `
+            },
+            btnCobrar :()=>{
+                return `
+                <div id="btn-bottom-r">
+                    <button class="btn btn-outline-danger btn-lg waves-themed waves-effect shadow" id="btnCobrar">
+                        <i class="fal fa-search"></i>
+                        COBRAR
                     </button>
                 </div>
-            </div>
-            
-            `
-        },
-        modalBusquedaCliente :()=>{
-            return `
-            <div class="modal fade  modal-with-scroll" id="ModalBusquedaCliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-left" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <label class="modal-title text-danger h5" id="">Búsqueda de Clientes</label>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true"><i class="fal fa-times"></i></span>
-                            </button>
-                        </div>
+                `
+            },
+            modalBusquedaProductos :()=>{
+                return `
+                <div class="modal fade  modal-with-scroll" id="ModalBusqueda" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-right" role="document">
+                        <div class="modal-content">
 
-                        <div class="modal-body">
-                            <div class="input-group">
-                                    <input id="txtBusquedaCliente" type="text" ref="txtBusquedaCliente" class="form-control" placeholder="Buscar por nombre de cliente..." aria-label="" aria-describedby="button-addon4" />
-                                    <div class="input-group-prepend">
-                                        <button class="btn btn-secondary waves-effect waves-themed" type="button" id="btnBuscarCliente">
-                                            <i class="fal fa-search"></i>
-                                        </button>
+                            <div class="modal-body">
+                                <label class="modal-title text-danger h5" id="">Búsqueda de Productos</label>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                </button>
+                                <br>
+                                    <div class="input-group p-2">
+                                    
+                                        <input id="txtBusqueda" type="text" ref="txtBusqueda" class=" border-naranja bg-amarillo form-control col-12 shadow" placeholder="Buscar código o descripción..." aria-label="" aria-describedby="button-addon4" />
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-naranja waves-effect waves-themed shadow hand" id="btnBuscarProducto">
+                                                <i class="fal fa-search"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                            </div>
-                            <table class="table table-responsive table-striped table-hover table-bordered">
-                                <thead class="bg-secondary text-white">
+                        
+                            <table class="table table-responsive table-striped table-hover">
+                                <thead class="bg-naranja text-white">
                                     <tr>
-                                        <td>Cliente</td>
+                                        <td>Producto</td>
+                                        <td>Precio</td>                         
                                         <td></td>
                                     </tr>
                                 </thead>
-                                <tbody id="tblResultadoBusquedaCliente">
+                                <tbody id="tblResultadoBusqueda">
                                 
 
                                 </tbody>
                             </table>
+                            </div>
+                            
+                        
                         </div>
-
-                    
+                    </div>
+                    <div class="shortcut-menu align-left">
+                        <button class="btn btn-danger btn-md" data-dismiss="modal">
+                            <i class="fal fa-angle-double-left"></i>Atrás
+                        </button>
                     </div>
                 </div>
-            </div>
-            
-            `
-        },
-        modalTerminar :()=>{
-            return `
-                <div class="modal fade" id="ModalFinalizarPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-lg" role="document">
+                
+                `
+            },
+            modalBusquedaCliente :()=>{
+                return `
+                <div class="modal fade  modal-with-scroll" id="ModalBusquedaCliente" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-left" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <label class="modal-title text-danger h3" id="">Finalización del Pedido</label>
+                                <label class="modal-title text-danger h5" id="">Búsqueda de Clientes</label>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true"><i class="fal fa-times"></i></span>
                                 </button>
                             </div>
-                
-                            <div class="modal-body shadow">
-                                    <div class="">            
-                                        
 
-                                        <div class="form-group">
-                                            <label>Forma de Pago:</label>
-                                            <select id="cmbEntregaConcre" class="form-control">
-                                                <option value="CON">CONTADO</option>
-                                                <option value="CRE">CREDITO</option>
-                                                
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Observaciones</label>
-                                            <textarea rows="4" cols="80" class="form-control" id="txtEntregaObs" placeholder="Escriba aqui sus observaciones..."></textarea>
-                                        </div>                                                              
-                                            
-                                    </div>
-
-                                    <div class="row">
-                                        <label class="text-white" id="lbDocLat">0</label>
-                                        <label class="text-white" id="lbDocLong">0</label class="text-white">
-                                    </div>
-                                    
-                                    <br>
-            
-                                    <div class="row">
-                                        <div class="col-5">
-                                            <button class="btn btn-outline-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="btnEntregaCancelar">
-                                                <i class="fal fa-ban mr-1"></i>
-                                                Cancelar
-                                            </button>                                
-                                        </div>
-            
-                                        <div class="col-1"></div>
-            
-                                        <div class="col-5">
-                                            <button class="btn btn-outline-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnFinalizarPedido">
-                                                <i class="fal fa-paper-plane mr-1"></i>Enviar
+                            <div class="modal-body">
+                                <div class="input-group">
+                                        <input id="txtBusquedaCliente" type="text" ref="txtBusquedaCliente" class="form-control" placeholder="Buscar por nombre de cliente..." aria-label="" aria-describedby="button-addon4" />
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-secondary waves-effect waves-themed" type="button" id="btnBuscarCliente">
+                                                <i class="fal fa-search"></i>
                                             </button>
                                         </div>
-                                        
-                                        
-                                    </div>
-                            
+                                </div>
+                                <table class="table table-responsive table-striped table-hover table-bordered">
+                                    <thead class="bg-secondary text-white">
+                                        <tr>
+                                            <td>Cliente</td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblResultadoBusquedaCliente">
+                                    
+
+                                    </tbody>
+                                </table>
                             </div>
+
                         
                         </div>
                     </div>
-                </div>`
-        },
-        modalCantidadProducto:()=>{
-            return `
-            <div class="modal fade" id="ModalCantidadProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-right" role="document">
-                    <div class="modal-content">
-                        <br><br><br><br><br>
-                        <div class="modal-header">
-                            <label class="modal-title" id="txtDesProducto">Azucar don Justo Cabal Kilo</label>
-                        </div>
-                        <div class="modal-body" align="right">
-                            <div class="col-8">
-                                <div class="row">
-                                    <b id="txtCodMedida">UNIDAD</b>
+                </div>
+                
+                `
+            },
+            modalTerminar :()=>{
+                return `
+                    <div class="modal fade" id="ModalFinalizarPedido" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <label class="modal-title text-danger h3" id="">Finalización del Pedido</label>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                    </button>
                                 </div>
-                                
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="input-group">
-                                
-                                            <div class="input-group-prepend">
-                                                <button class="btn btn-md btn-icon btn-round btn-info" id="btnCantidadDown">
-                                                    -
+                    
+                                <div class="modal-body shadow">
+                                        <div class="">            
+                                            
+
+                                            <div class="form-group">
+                                                <label>Forma de Pago:</label>
+                                                <select id="cmbEntregaConcre" class="form-control">
+                                                    <option value="CON">CONTADO</option>
+                                                    <option value="CRE">CREDITO</option>
+                                                    
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Observaciones</label>
+                                                <textarea rows="4" cols="80" class="form-control" id="txtEntregaObs" placeholder="Escriba aqui sus observaciones..."></textarea>
+                                            </div>                                                              
+                                                
+                                        </div>
+
+                                        <div class="row">
+                                            <label class="text-white" id="lbDocLat">0</label>
+                                            <label class="text-white" id="lbDocLong">0</label class="text-white">
+                                        </div>
+                                        
+                                        <br>
+                
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <button class="btn btn-outline-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="btnEntregaCancelar">
+                                                    <i class="fal fa-ban mr-1"></i>
+                                                    Cancelar
+                                                </button>                                
+                                            </div>
+                
+                                            <div class="col-1"></div>
+                
+                                            <div class="col-5">
+                                                <button class="btn btn-outline-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnFinalizarPedido2">
+                                                    <i class="fal fa-paper-plane mr-1"></i>Enviar
                                                 </button>
                                             </div>
-                                
-                                            <input type="number" class="text-center form-control" id="txtCantidad" value="1">    
-                                
-                                            <div class="input-group-append">
-                                                <button class="btn btn-md btn-icon btn-round btn-info" id="btnCantidadUp">
-                                                    +
-                                                </button>    
-                                            </div>
-                                        </div>                            
-                                    </div>                              
-                                </div>
-
-                                <div class="col-12">
-                                    <label>Precio: </label>
-                                    <label class="text-success" id="txtPrecioProducto">Q500</label>
-                                    <br>
-                                    <label>Subtotal:</label>
-                                    <label class="text-danger" id="txtSubTotal">Q500</label>
-                                </div>
-                                <br>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-outline-secondary btn-round" data-dismiss="modal" id="btnCancelarModalProducto">
-                                            <i class="fal fa-ban"></i>Cancelar
-                                        </button>
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-primary btn-round" id="btnAgregarProducto">
-                                            <i class="fal fa-check"></i>Agregar
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            `
-        },
-        modalCambiarCantidadProducto :()=>{
-            return `
-                <div class="modal fade" id="modalCambiarCantidadProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-md" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <label class="modal-title text-info h3" id="">Cambiar cantidad de producto</label>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true"><i class="fal fa-times"></i></span>
-                                </button>
-                            </div>
-                
-                            <div class="modal-body shadow">
-                                    <div class="">            
-                                        
-                                        <div class="form-group">
-                                            <label>Nueva cantidad:</label>
-                                            <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevaCant">
-                                        </div>                                                             
                                             
-                                        <div class="form-group">
-                                            <label>Nuevo Precio:</label>
-                                            <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevoPrecio">
-                                        </div> 
-
-                                        <div class="form-group">
-                                            <label>Subtotal</label>
-                                            <br>
-                                            <h3 id="lbCantNuevoSubtotal">0</h3>
-                                        </div> 
-
-                                    </div>
-                                    
-                                    <br>
-            
-                                    <div class="row">
-                                        <div class="col-5">
-                                            <button class="btn btn-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="">
-                                                <i class="fal fa-times mr-1"></i>
-                                                Cancelar
-                                            </button>                                
+                                            
                                         </div>
-            
-                                        <div class="col-1"></div>
-            
-                                        <div class="col-5">
-                                            <button class="btn btn-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnCantGuardar">
-                                                <i class="fal fa-check mr-1"></i>Aceptar
-                                            </button>
-                                        </div>
-                                        
-                                        
-                                    </div>
+                                
+                                </div>
                             
                             </div>
-                        
                         </div>
-                    </div>
-                </div>`
-        },
-        vista_entrega :()=>{
-            return `
-              
-                    <div class="card card-rounded shadow">
-                            <div class="card-body">
-                                    <div class="">            
-                                        
-                                        <h5 class="text-danger negrita">Detalle de la Entrega</h5>
-
-                                        <div class="form-group">
-                                            <label>Forma de Pago:</label>
-                                            <select id="cmbEntregaConcre" class="form-control">
-                                                <option value="CON">CONTADO</option>
-                                                <option value="CRE">CREDITO</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label>Tipo de Documento:</label>
-                                            <select id="cmbEntregaTipoDoc" class="form-control">
-                                                <option value="FACTURA">FACTURA CONTABLE</option>
-                                                <option value="ENVIO">ENVIO (COMPROBANTE)</option>
-                                            </select>
-                                        </div>
-
-                                       
-                                    </div>
-
+                    </div>`
+            },
+            modalCantidadProducto:()=>{
+                return `
+                <div class="modal fade" id="ModalCantidadProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-right" role="document">
+                        <div class="modal-content">
+                            <br><br><br><br><br>
+                            <div class="modal-header">
+                                <label class="modal-title" id="txtDesProducto">Azucar don Justo Cabal Kilo</label>
+                            </div>
+                            <div class="modal-body" align="right">
+                                <div class="col-8">
                                     <div class="row">
-
-                                        <label class="text-white" id="lbDocLat">0</label>
-                                        <label class="text-white" id="lbDocLong">0</label>
-
-                                                                            
+                                        <b id="txtCodMedida">UNIDAD</b>
                                     </div>
                                     
-                            </div>
-                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="input-group">
+                                    
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-md btn-icon btn-round btn-info" id="btnCantidadDown">
+                                                        -
+                                                    </button>
+                                                </div>
+                                    
+                                                <input type="number" class="text-center form-control" id="txtCantidad" value="1">    
+                                    
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-md btn-icon btn-round btn-info" id="btnCantidadUp">
+                                                        +
+                                                    </button>    
+                                                </div>
+                                            </div>                            
+                                        </div>                              
+                                    </div>
 
-                    <br>
-
-                    <div class="card card-rounded shadow p-2" id="divDatosEntrega">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label>Contacto</label>
-                                <input type="text" class="form-control" id="txtEntregaContacto">
-                            </div>
-                            <div class="form-group">
-                                <label>Teléfonos</label>
-                                <input type="text" class="form-control" id="txtEntregaTelefono">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Dirección entrega</label>
-                                <input type="text" maxlength="150" class="form-control" id="txtEntregaDireccion">
-                            </div>
-
-                            <div class="form-group">
-                                <label>Referencia entrega</label>
-                                <input type="text" class="form-control" id="txtEntregaReferencia" value="SN">
-                            </div>
-
-
-                            <div class="row hidden">
-                                <div class="col-4">
-                                    <span id="lbEntregaLat">0</span>
-                                    <span id="lbEntregaLong">0</span>
+                                    <div class="col-12">
+                                        <label>Precio: </label>
+                                        <label class="text-success" id="txtPrecioProducto">Q500</label>
+                                        <br>
+                                        <label>Subtotal:</label>
+                                        <label class="text-danger" id="txtSubTotal">Q500</label>
+                                    </div>
+                                    <br>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-outline-secondary btn-round" data-dismiss="modal" id="btnCancelarModalProducto">
+                                                <i class="fal fa-ban"></i>Cancelar
+                                            </button>
+                                        </div>
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-primary btn-round" id="btnAgregarProducto">
+                                                <i class="fal fa-check"></i>Agregar
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-4">
-                                    <button class="btn btn-danger btn-circle btn-lg hand shadow" id="btnObtenerUbicacion">
-                                        <i class="fal fa-map"></i>
-                                    </button>
-                                </div>
-                                <div class="col-4">
-                                    <button class="btn btn-warning btn-circle btn-lg hand shadow" id="btnLimpiarUbicacion">
-                                        <i class="fal fa-sync"></i>
-                                    </button>
-                                </div>
                             </div>
 
-                                                
                         </div>
                     </div>
-
-                    <br> 
-            
-                    <div class="row">
-                        <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="btnEntregaCancelar">
-                            <i class="fal fa-arrow-left"></i>
-                        </button>                                                                       
-                        <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="btnFinalizarPedido">
-                            <i class="fal fa-paper-plane mr-1"></i>
-                        </button>                
-                    </div>
-                           
-                `
-        },
-        vista_cliente:()=>{
-            return `
-            <div class="card card-rounded shadow col-12 p-4">
-                <div class="card-body">
-
-                    <h5 class="text-danger negrita">Datos de Facturación</h5>
-                
-                    <div class="form-group">
-                        <label>CÓDIGO CLIENTE:</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control border-secondary" id="txtCliCodigo" disabled>
-                            <button class="btn btn-secondary hand shadow" id="btnBuscarClie">
-                                <i class="fal fa-search"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>NIT:</label>
-                        <input type="text" class="form-control bg-amarillo border-info" id="txtCliNit" value="CF">
-                    </div>
-
-                    <div class="form-group">
-                        <label>NOMBRE</label>
-                        <input type="text" class="form-control" id="txtCliNombre" value="CONSUMIDOR FINAL">
-                    </div>
-
-                    <div class="form-group">
-                        <label>DIRECCIÓN</label>
-                        <input type="text" class="form-control" id="txtCliDireccion" value="CIUDAD">
-                    </div>
-
-                    <div class="row">
-                        
-                        <div class="col-4">
-                        
-                        </div>
-                        <div class="col-4">
-                                <button class="btn btn-info btn-md shadow hand" id="btnCobrar2">
-                                    <i class="fal fa-truck"></i> Entregar en Domicilio
-                                </button>
-                        </div>
-                        <div class="col-4">
-                                <button class="btn btn-danger btn-md shadow hand" id="btnCobrar">
-                                    <i class="fal fa-warehouse"></i> Recoge en Tienda
-                                </button>
-                        </div>
-
-                    </div>
-
                 </div>
-            </div>
-                              
-            <br>
+                `
+            },
+            modalCambiarCantidadProducto :()=>{
+                return `
+                    <div class="modal fade" id="modalCambiarCantidadProducto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <label class="modal-title text-info h3" id="">Cambiar cantidad de producto</label>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true"><i class="fal fa-times"></i></span>
+                                    </button>
+                                </div>
+                    
+                                <div class="modal-body shadow">
+                                        <div class="">            
+                                            
+                                            <div class="form-group">
+                                                <label>Nueva cantidad:</label>
+                                                <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevaCant">
+                                            </div>                                                             
+                                                
+                                            <div class="form-group">
+                                                <label>Nuevo Precio:</label>
+                                                <input type="number" class="form-control border-info shadow col-10" id="txtCantNuevoPrecio">
+                                            </div> 
 
-            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnPedido">
-                    <i class="fal fa-arrow-left"></i>
-            </button>
-            `
-        },
-        vista_mapa :()=>{
-            return `
-            <div id="mapcontainer" class="mapcontainer4">
+                                            <div class="form-group">
+                                                <label>Subtotal</label>
+                                                <br>
+                                                <h3 id="lbCantNuevoSubtotal">0</h3>
+                                            </div> 
+
+                                        </div>
+                                        
+                                        <br>
+                
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <button class="btn btn-secondary btn-lg  btn-pills btn-block waves-effect waves-themed" data-dismiss="modal" id="">
+                                                    <i class="fal fa-times mr-1"></i>
+                                                    Cancelar
+                                                </button>                                
+                                            </div>
+                
+                                            <div class="col-1"></div>
+                
+                                            <div class="col-5">
+                                                <button class="btn btn-success btn-lg btn-pills btn-block waves-effect waves-themed" id="btnCantGuardar">
+                                                    <i class="fal fa-check mr-1"></i>Aceptar
+                                                </button>
+                                            </div>
+                                            
+                                            
+                                        </div>
+                                
+                                </div>
+                            
+                            </div>
+                        </div>
+                    </div>`
+            },
+            vista_entrega :()=>{
+                return `
+                
+                        <div class="card card-rounded shadow">
+                                <div class="card-body">
+                                        <div class="">            
+                                            
+                                            <h5 class="text-danger negrita">Detalle de la Entrega</h5>
+
+                                            <div class="form-group">
+                                                <label>Forma de Pago:</label>
+                                                <select id="cmbEntregaConcre" class="form-control">
+                                                    <option value="CON">CONTADO</option>
+                                                    <option value="CRE">CREDITO</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>Tipo de Documento:</label>
+                                                <select id="cmbEntregaTipoDoc" class="form-control">
+                                                    <option value="FACTURA">FACTURA CONTABLE</option>
+                                                    <option value="ENVIO">ENVIO (COMPROBANTE)</option>
+                                                </select>
+                                            </div>
+
+                                        
+                                        </div>
+
+                                        <div class="row">
+
+                                            <label class="text-white" id="lbDocLat">0</label>
+                                            <label class="text-white" id="lbDocLong">0</label>
+
+                                                                                
+                                        </div>
+                                        
+                                </div>
+                        </div>
+
+                        <br>
+
+                        <div class="card card-rounded shadow p-2" id="divDatosEntrega">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label>Contacto</label>
+                                    <input type="text" class="form-control" id="txtEntregaContacto">
+                                </div>
+                                <div class="form-group">
+                                    <label>Teléfonos</label>
+                                    <input type="text" class="form-control" id="txtEntregaTelefono">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Dirección entrega</label>
+                                    <input type="text" maxlength="150" class="form-control" id="txtEntregaDireccion">
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Referencia entrega</label>
+                                    <input type="text" class="form-control" id="txtEntregaReferencia" value="SN">
+                                </div>
+
+
+                                <div class="row hidden">
+                                    <div class="col-4">
+                                        <span id="lbEntregaLat">0</span>
+                                        <span id="lbEntregaLong">0</span>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-danger btn-circle btn-lg hand shadow" id="btnObtenerUbicacion">
+                                            <i class="fal fa-map"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-4">
+                                        <button class="btn btn-warning btn-circle btn-lg hand shadow" id="btnLimpiarUbicacion">
+                                            <i class="fal fa-sync"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                                    
+                            </div>
+                        </div>
+
+                        <br> 
+                
+                        <div class="row">
+                            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow" id="btnEntregaCancelar">
+                                <i class="fal fa-arrow-left"></i>
+                            </button>                                                                       
+                            <button class="btn btn-success btn-xl btn-circle btn-bottom-r shadow" id="btnFinalizarPedido">
+                                <i class="fal fa-paper-plane mr-1"></i>
+                            </button>                
+                        </div>
+                            
+                    `
+            },
+            vista_cliente:()=>{
+                return `
+                <div class="card card-rounded shadow col-12 p-4">
+                    <div class="card-body">
+
+                        <h5 class="text-danger negrita">Datos de Facturación</h5>
+                    
+                        <div class="form-group">
+                            <label>CÓDIGO CLIENTE:</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control border-secondary" id="txtCliCodigo" disabled>
+                                <button class="btn btn-secondary hand shadow" id="btnBuscarClie">
+                                    <i class="fal fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>NIT:</label>
+                            <input type="text" class="form-control bg-amarillo border-info" id="txtCliNit" value="CF">
+                        </div>
+
+                        <div class="form-group">
+                            <label>NOMBRE</label>
+                            <input type="text" class="form-control" id="txtCliNombre" value="CONSUMIDOR FINAL">
+                        </div>
+
+                        <div class="form-group">
+                            <label>DIRECCIÓN</label>
+                            <input type="text" class="form-control" id="txtCliDireccion" value="CIUDAD">
+                        </div>
+
+
+                        <br>
+
+                        <button class="btn btn-outline-info btn-lg btn-pills btn-block waves-effect waves-themed" id="btnFinalizarPedido">
+                            <i class="fal fa-paper-plane mr-1"></i>Enviar
+                        </button>
+
+                        <div class="row">
+                            
+                            <div class="col-4">
+                            
+                            </div>
+                            <div class="col-4">
+                                    <button class="btn btn-info btn-md shadow hand hidden" id="btnCobrar2">
+                                        <i class="fal fa-truck"></i> Entregar en Domicilio
+                                    </button>
+                            </div>
+                            <div class="col-4">
+                                    <button class="btn btn-danger btn-md shadow hand hidden" id="btnCobrar">
+                                        <i class="fal fa-warehouse"></i> Recoge en Tienda
+                                    </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                                
+                <br>
+
+                <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnPedido">
+                        <i class="fal fa-arrow-left"></i>
+                </button>
+
+                
+                `
+            },
+            vista_mapa :()=>{
+                return `
+                <div id="mapcontainer" class="mapcontainer4">
+                
+                </div>
+                <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnMapaAtras">
+                        <i class="fal fa-arrow-left"></i>
+                </button>
             
-            </div>
-            <button class="btn btn-secondary btn-xl btn-circle btn-bottom-ml shadow hand" id="btnMapaAtras">
-                    <i class="fal fa-arrow-left"></i>
-            </button>
-           
-            `
-        }
-    }
+                `
+            }
+    };
 
    
     root.innerHTML = view.body(); 
@@ -644,16 +656,12 @@ function getView(){
 };
 
 async function iniciarVistaVentas(codigo,nit,nombre,direccion,st){
-
     
-    //inicializa la vista
+    //COTIZACIONES
     getView();
-
 
     let lbNomClien = document.getElementById('lbNomClien');
     lbNomClien.innerText = `${nombre} // ${direccion}`;
-    
-
     
 
     document.getElementById('btnPedido').addEventListener('click',()=>{
@@ -703,10 +711,10 @@ async function iniciarVistaVentas(codigo,nit,nombre,direccion,st){
 
     let cmbCoddoc = document.getElementById('cmbCoddoc');
     //classTipoDocumentos.comboboxTipodoc('PED','cmbCoddoc');
-    cmbCoddoc.value = GlobalCoddoc;
+    cmbCoddoc.value = GlobalCotiz;
 
     cmbCoddoc.addEventListener('change',async ()=>{
-       await classTipoDocumentos.fcnCorrelativoDocumento('PED',cmbCoddoc.value,'txtCorrelativo');
+       await classTipoDocumentos.fcnCorrelativoDocumento('COT',cmbCoddoc.value,'txtCorrelativo');
     });
 
     let cmbVendedor = document.getElementById('cmbVendedor');
@@ -1563,14 +1571,14 @@ async function fcnFinalizarPedido(){
         document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1 fa-spin"></i>';
         document.getElementById('btnFinalizarPedido').disabled = true;
 
-            classTipoDocumentos.getCorrelativoDocumento('PED',GlobalCoddoc)
+            classTipoDocumentos.getCorrelativoDocumento('COT',coddoc)
                 .then((correlativo)=>{
                     correlativoDoc = correlativo;
                     
                     //document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                     //document.getElementById('btnFinalizarPedido').disabled = false;
 
-                    funciones.Confirmacion('¿Está seguro que desea Finalizar este Pedido')
+                    funciones.Confirmacion('¿Está seguro que desea Finalizar esta Cotización?')
                     .then((value)=>{
                         if(value==true){
                          
@@ -1620,7 +1628,7 @@ async function fcnFinalizarPedido(){
                                     console.log(response);
                                     //if (data.rowsAffected[0]==0){
                                     if (data=='error'){
-                                            funciones.AvisoError('No se pudo guardar este pedido');
+                                            funciones.AvisoError('No se pudo guardar esta Cotización');
                                             document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                                             document.getElementById('btnFinalizarPedido').disabled = false;
                                     }else{
@@ -1628,7 +1636,7 @@ async function fcnFinalizarPedido(){
                                         document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                                         document.getElementById('btnFinalizarPedido').disabled = false;
 
-                                        funciones.Aviso('Pedido Generado Exitosamente !!!')
+                                        funciones.Aviso('COTIZACIÓN Generada Exitosamente !!!')
                                     
                                         document.getElementById('btnEntregaCancelar').click();
                                                             
@@ -1641,14 +1649,14 @@ async function fcnFinalizarPedido(){
                                     }
                                 }, (error) => {
                                     console.log(error);
-                                    funciones.AvisoError('No se pudo guardar este pedido');
+                                    funciones.AvisoError('No se pudo guardar esta Cotización');
                                     document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                                     document.getElementById('btnFinalizarPedido').disabled = false;
                                 });        
 
                             })
                             .catch((error)=>{
-                                    funciones.AvisoError('No se pudo guardar este pedido');
+                                    funciones.AvisoError('No se pudo guardar esta Cotización');
                                     document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
                                     document.getElementById('btnFinalizarPedido').disabled = false;
                             })
@@ -1702,7 +1710,7 @@ async function fcnNuevoPedido(){
     
     $('#modalWait').modal('hide');
 
-    classNavegar.ventas('','CF','CONSUMIDOR FINAL', 'CIUDAD');
+    classNavegar.vendedor_cotizaciones('','CF','CONSUMIDOR FINAL', 'CIUDAD');
     
 };
 

@@ -51,6 +51,13 @@
   bottom: 15px;
   }
 
+  .btn-bottom-r3 { 
+    position: fixed;
+    z-index: 888;
+    right: 21px;
+    bottom: 35px;
+    }
+
 
 .negrita-subrayado {
     text-decoration: underline;
