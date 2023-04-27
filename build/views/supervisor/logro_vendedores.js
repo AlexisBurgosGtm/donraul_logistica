@@ -208,7 +208,7 @@ function getView(){
                                     <div class="form-group">
                                         <label>Tipo de Documento</label>
                                         <select class="form-control negrita text-naranja" id="cmbTipoDocumentos">
-                                            <option value="FAC">FACTURAS</option>
+                                            <option value="FAC">FACTURAS / ENVIOS</option>
                                             <option value="PED">PEDIDOS</option>
                                             <option value="COT">COTIZACIONES</option>
                                         </select>

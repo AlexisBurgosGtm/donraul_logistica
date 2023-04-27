@@ -95,6 +95,15 @@ let classNavegar = {
          
              
     },
+    inicio_pos:async()=>{
+        rootMenuLateral.innerHTML = `
+            `;
+
+        btnMenu.style = "visibility:hidden";
+
+        classNavegar.pos_inicio();
+        
+    },
     inicio_caja:async()=>{
         rootMenuLateral.innerHTML = `
             `;
@@ -236,6 +245,14 @@ let classNavegar = {
         funciones.loadScript('./views/config.js','root')
         .then(()=>{
             GlobalSelectedForm ='CONFIG';
+            initView();
+            //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
+        })
+    },
+    pos_inicio:()=>{
+        funciones.loadScript('./views/pos/pos.js','root')
+        .then(()=>{
+            GlobalSelectedForm ='POS';
             initView();
             //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
         })

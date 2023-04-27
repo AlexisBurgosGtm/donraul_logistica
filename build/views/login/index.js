@@ -93,7 +93,7 @@ function getView(){
                             </div>
                             <div class="form-group" align="right">
                                 
-                                <small class="text-secondary">Update: 18.04.2023</small>
+                                <small class="text-secondary">Update: 27.04.2023</small>
                                 <br>
                                 <small>
                                     <a href="https://apigen.whatsapp.com/send?phone=50257255092&text=Ayudame%20con%20la%20app%20de%20don%20Eraul_logistica...%20">

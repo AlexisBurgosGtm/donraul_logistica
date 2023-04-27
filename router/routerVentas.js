@@ -1,4 +1,4 @@
-const execute = require('./connection');
+const execute = require('../connection');
 const express = require('express');
 const router = express.Router();
 
@@ -37,20 +37,6 @@ router.post("/detalle_pedido", async(req,res)=>{
     execute.Query(res,qry);
 });
 
-//REPORTE DE VENTAS Y DEVOLUCIONES
-router.post('/rptventas_vendedor',async(req,res)=>{
-
-    const{sucursal, codven, mes, anio} = req.body;
-
-    let qry = `SELECT DISTINCT       NOMVEN,FECHA, TIPO, SUM(TOTALPRECIO)  AS TOTALPRECIO, LASTUPDATE
-    FROM            ME_RPT_VENTAS
-    GROUP BY NOMVEN,FECHA, TIPO, LASTUPDATE, CODSUCURSAL, ANIO, MES, CODVEN
-    HAVING        (ANIO = ${anio}) AND (MES = ${mes}) AND (CODSUCURSAL = '${sucursal}') AND (CODVEN=${codven})
-    ORDER BY FECHA
-    `;
-
-    execute.Query(res,qry);
-});
 
 
 
@@ -116,92 +102,6 @@ router.post('/eliminarpedidocargado',async(req,res)=>{
 })
 
 
-// VENTANA DE VENTAS
-///////////////////////////////////////
-
-// VENTAS BUSCAR PRODUCTO POR DESCRIPCION
-router.get("/buscarproducto", async(req,res)=>{
-    
-    const {empnit,filtro,app,tipoprecio} = req.query;
-    // app= sucusal
-    // K= CAMBIO DE PRODUCTO
-
-    let qry ='';
-
-    let campoprecio = '';
-    let equ = '<>0'; //equivalente diferente a cero para que jale todos
-    switch (tipoprecio) {
-        case 'P':
-            campoprecio = 'ME_PRECIOS.PRECIO';        
-            break;
-        case 'C':
-            campoprecio = 'ME_PRECIOS.MAYORISTA';
-            break;
-        case 'B':
-            campoprecio = 'ME_PRECIOS.ESCALA';
-            break;
-        case 'A':
-            campoprecio = 'ME_PRECIOS.OFERTA';
-            break;
-        case 'K':
-            campoprecio = '0.01';
-            equ = '=1'; //equivalente =1 para que solo me jale las unidades
-
-            break;
-        default:
-            campoprecio = 'ME_PRECIOS.PRECIO';
-            break;
-    }
-    
-    
-    qry = `SELECT TOP 20 ME_Productos.CODPROD, ME_Productos.DESPROD, ME_Precios.CODMEDIDA, 
-                ME_Precios.EQUIVALE, ME_Precios.COSTO, ${campoprecio} AS PRECIO, 
-                ME_Marcas.DESMARCA, 0 AS EXENTO, ISNULL(ME_PRODUCTOS.EXISTENCIA,0) AS EXISTENCIA,
-                ME_Productos.DESPROD3
-            FROM ME_Productos LEFT OUTER JOIN
-                ME_Marcas ON ME_Productos.CODSUCURSAL = ME_Marcas.CODSUCURSAL AND ME_Productos.CODMARCA = ME_Marcas.CODMARCA LEFT OUTER JOIN
-                ME_Precios ON ME_Productos.CODSUCURSAL = ME_Precios.CODSUCURSAL AND ME_Productos.CODPROD = ME_Precios.CODPROD
-            WHERE (ME_Productos.DESPROD LIKE '%${filtro}%') AND (ME_Productos.CODSUCURSAL = '${app}') AND (ME_Precios.EQUIVALE ${equ}) 
-                OR (ME_Productos.CODPROD = '${filtro}') AND (ME_Productos.CODSUCURSAL = '${app}') AND (ME_Precios.EQUIVALE ${equ})
-            ORDER BY ME_Precios.CODPROD, ME_Precios.CODMEDIDA` 
-    
-        
-    execute.Query(res,qry);
-
-})
-
-
-// VENTAS BUSCAR PRODUCTO POR DESCRIPCION
-router.post("/buscarproductotodos", async(req,res)=>{
-    
-    const {sucursal} = req.body;
-    // app= sucusal
-    // K= CAMBIO DE PRODUCTO
-
-    let qry ='';
-
-     
-    qry = `SELECT ME_Productos.CODSUCURSAL, ME_Productos.CODPROD, ME_Productos.DESPROD, ME_Precios.CODMEDIDA, 
-                ME_Precios.EQUIVALE, 
-                ME_Precios.COSTO, 
-                ME_PRECIOS.PRECIO AS PRECIO,
-                ME_PRECIOS.OFERTA AS PRECIOA,
-                ME_PRECIOS.ESCALA AS PRECIOB,
-                ME_PRECIOS.MAYORISTA AS PRECIOC,
-                0.01 AS CAMBIO, 
-                ME_Marcas.DESMARCA, 
-                0 AS EXENTO, 
-                ISNULL(ME_PRODUCTOS.EXISTENCIA,0) AS EXISTENCIA,
-                ME_Productos.DESPROD3
-            FROM ME_Productos LEFT OUTER JOIN
-                ME_Marcas ON ME_Productos.CODSUCURSAL = ME_Marcas.CODSUCURSAL AND ME_Productos.CODMARCA = ME_Marcas.CODMARCA LEFT OUTER JOIN
-                ME_Precios ON ME_Productos.CODSUCURSAL = ME_Precios.CODSUCURSAL AND ME_Productos.CODPROD = ME_Precios.CODPROD
-            WHERE (ME_Productos.CODSUCURSAL = '${sucursal}') 
-            ORDER BY ME_Precios.CODPROD, ME_Precios.CODMEDIDA` 
-            
-    execute.Query(res,qry);
-
-})
 
 
 
@@ -211,25 +111,9 @@ router.post("/buscarproductotodos", async(req,res)=>{
 
 
 
-//******************************* */
-// REPORTES DE VENDEDORES
-//******************************* */
 
-router.post('/historialcliente',async (req,res)=>{
-    const {sucursal,codcliente} = req.body;
-    let qry = `
-    SELECT ME_Documentos.CODDOC, ME_Documentos.DOC_NUMERO AS CORRELATIVO, ME_Documentos.DOC_FECHA AS FECHA, ME_Documentos.NITCLIE, ME_Docproductos.CODPROD, ME_Docproductos.DESCRIPCION AS DESPROD,
-                          ME_Docproductos.CODMEDIDA, ME_Docproductos.CANTIDAD, ME_Docproductos.PRECIO, ME_Docproductos.TOTALPRECIO
-    FROM ME_Documentos LEFT OUTER JOIN
-                         ME_Docproductos ON ME_Documentos.DOC_NUMERO = ME_Docproductos.DOC_NUMERO AND ME_Documentos.CODDOC = ME_Docproductos.CODDOC AND 
-                         ME_Documentos.CODSUCURSAL = ME_Docproductos.CODSUCURSAL AND ME_Documentos.EMP_NIT = ME_Docproductos.EMP_NIT LEFT OUTER JOIN
-                         ME_Tipodocumentos ON ME_Documentos.CODSUCURSAL = ME_Tipodocumentos.CODSUCURSAL AND ME_Documentos.CODDOC = ME_Tipodocumentos.CODDOC AND 
-                         ME_Documentos.EMP_NIT = ME_Tipodocumentos.EMP_NIT
-    WHERE (ME_Tipodocumentos.TIPODOC = 'PED') AND (ME_Documentos.CODSUCURSAL = '${sucursal}') AND (ME_Documentos.NITCLIE = '${codcliente}') ORDER BY ME_Documentos.DOC_FECHA DESC
-    `;
 
-    execute.Query(res,qry);
-})
+
 
 // UNA FECHA (DIA)
 

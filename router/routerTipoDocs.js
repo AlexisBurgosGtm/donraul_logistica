@@ -1,4 +1,4 @@
-const execute = require('./connection');
+const execute = require('../connection');
 const express = require('express');
 const router = express.Router();
 
@@ -11,6 +11,32 @@ router.post("/series", async(req,res)=>{
     qry =  `
         SELECT CODDOC,CORRELATIVO,TIPODOC FROM TIPODOCUMENTOS 
         WHERE EMP_NIT='${sucursal}' AND TIPODOC IN('PED','COT')`      
+    
+    execute.Query(res,qry);
+
+});
+
+router.post("/series_doc", async(req,res)=>{
+    const {sucursal,tipo} = req.body;
+        
+    let qry ='';
+
+    qry =  `
+        SELECT CODDOC,CORRELATIVO,TIPODOC FROM TIPODOCUMENTOS 
+        WHERE EMP_NIT='${sucursal}' AND TIPODOC='${tipo}';`      
+    
+    execute.Query(res,qry);
+
+});
+
+router.post("/correlativo_doc", async(req,res)=>{
+    const {sucursal,coddoc} = req.body;
+        
+    let qry ='';
+
+    qry =  `SELECT CODDOC,CORRELATIVO 
+            FROM TIPODOCUMENTOS 
+            WHERE EMP_NIT='${sucursal}' AND CODDOC='${coddoc}'`      
     
     execute.Query(res,qry);
 

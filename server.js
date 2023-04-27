@@ -4,7 +4,7 @@ var router = express.Router();
 var bodyParser = require('body-parser');
 const axios = require('axios');
 
-const execute = require('./router/connection');
+const execute = require('./connection');
 
 var routerVentas = require('./router/routerVentas');
 var routerTipoDocs = require('./router/routerTipoDocs');
@@ -12,6 +12,7 @@ var routerEmpleados = require('./router/routerEmpleados');
 var routerClientes = require('./router/routerClientes');
 var routerProductos = require('./router/routerProductos');
 let routerReportes = require('./router/routerReportes');
+let routerPos = require('./router/router_POS');
 let routerUsuarios = require('./router/routerUsuarios');
 
 
@@ -19,6 +20,15 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 const PORT = process.env.PORT || 4600;
+
+
+
+const cors = require('cors');
+app.use(cors({
+    origin: '*'
+}));
+
+
 
 app.use(bodyParser.json());
 
@@ -230,30 +240,16 @@ app.get("/datosdpi", async function(req,res){
 }); 
 
 
-//Router para app VENTAS
 app.use('/ventas', routerVentas);
-
-
-// Router para Tipodocumentos
 app.use('/tipodocumentos', routerTipoDocs);
-
-// Router para empleados o vendedores
 app.use('/empleados', routerEmpleados);
-
-// Router para clientes
 app.use('/clientes', routerClientes);
-
-// Router para productos
 app.use('/productos', routerProductos);
-
-// Router para digitacion
 app.use('/reportes', routerReportes);
-
-// Router para usuarios
+app.use('/pos', routerPos);
 app.use('/usuarios', routerUsuarios);
-
-
 app.use("/",router);
+
 
 app.use("*",function(req,res){
   res.redirect('/');
