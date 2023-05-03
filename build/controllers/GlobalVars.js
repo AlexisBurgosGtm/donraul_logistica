@@ -46,6 +46,7 @@ let GlobalTipoCobro = 'TERMINAR';
 
 let GlobalSelectedCodven = 0;
 
+let Selected_codprod, Selected_desprod, Selected_codmedida, Selected_equivale, Selected_costo, Selected_precio;
 
 
 let GlobalSelectedCodCliente;

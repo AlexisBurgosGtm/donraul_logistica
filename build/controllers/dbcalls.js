@@ -811,14 +811,9 @@ function insertTempVentasPOS(datos){
     return new Promise((resolve,reject)=>{
         connection.insert({
             into: "temp_pos",
-            values: [datos], //you can insert multiple values at a time
+            values: [datos] //you can insert multiple values at a time
         })
-        .then(()=>{
-            resolve();
-        })
-        .catch(()=>{
-            reject();
-        })
+        resolve();    
     }) 
 
 };

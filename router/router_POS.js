@@ -45,24 +45,20 @@ router.post("/productos_filtro", async(req,res)=>{
     const { sucursal, filtro } = req.body;
 
     let qry = `
-        SELECT TOP 50 Productos.CODPROD, Productos.DESPROD, Productos.CODMARCA, Marcas.DESMARCA, 
-                Precios.CODMEDIDA, Precios.EQUIVALE, Precios.COSTO, Precios.PRECIO
-        FROM Productos LEFT OUTER JOIN
+    SELECT        TOP (70) Productos.CODPROD, Productos.DESPROD, Productos.CODMARCA, Marcas.DESMARCA, Precios.CODMEDIDA, Precios.EQUIVALE, 
+    Precios.COSTO, Precios.PRECIO, Invsaldo.SALDOFINAL AS EXISTENCIA, Invsaldo.ENTRADAS, 
+                             Invsaldo.SALIDAS
+    FROM            Productos LEFT OUTER JOIN
+                             Invsaldo ON Productos.CODPROD = Invsaldo.CODPROD AND Productos.EMP_NIT = Invsaldo.EMP_NIT LEFT OUTER JOIN
                              Marcas ON Productos.CODMARCA = Marcas.CODMARCA AND Productos.EMP_NIT = Marcas.EMP_NIT LEFT OUTER JOIN
                              Precios ON Productos.CODPROD = Precios.CODPROD AND Productos.EMP_NIT = Precios.EMP_NIT
-        WHERE 
-            (Productos.EMP_NIT = '${sucursal}') 
-            AND (Productos.DESPROD LIKE '%${filtro}%') 
-            AND (Precios.CODMEDIDA IS NOT NULL)
-            AND (Productos.NOHABILITADO=0)
-        OR
-            (Productos.EMP_NIT = '${sucursal}') 
-            AND (Productos.CODPROD='${filtro}') 
-            AND (Precios.CODMEDIDA IS NOT NULL)
+    WHERE        (Productos.EMP_NIT = '${sucursal}') AND (Productos.DESPROD LIKE '%${filtro}%') AND (Precios.CODMEDIDA IS NOT NULL) 
+                 AND (Productos.NOHABILITADO = 0) AND (Invsaldo.INV_ANO = year(getdate())) AND (Invsaldo.INV_MES = month(getdate())) 
+                    OR
+                  (Productos.EMP_NIT = '${sucursal}') AND (Precios.CODMEDIDA IS NOT NULL) AND (Productos.CODPROD = '${filtro}')
+                  AND (Productos.NOHABILITADO = 0) AND (Invsaldo.INV_ANO = year(getdate())) AND (Invsaldo.INV_MES = month(getdate()))
             `
     
-    
-    console.log(qry);
 
     execute.Query(res,qry);
      
