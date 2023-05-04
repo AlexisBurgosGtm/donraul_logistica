@@ -261,30 +261,12 @@ app.use("*",function(req,res){
 // SOCKET HANDLER
 io.on('connection', function(socket){
   
-  socket.on('avisos', (tipo,mensaje)=>{
-    io.emit('avisos', tipo, mensaje);
+  
+  socket.on('nuevo_pedido', (tipo,msn)=>{
+    io.emit('nuevo_pedido', tipo, msn);
   });
 
-  socket.on('noticias nueva', (msg,usuario)=>{
-    io.emit('noticias nueva', msg,usuario);
-  });
 
-  socket.on('productos precio', function(msg,usuario){
-	  io.emit('productos precio', msg, usuario);
-  });
-
-  socket.on('productos bloqueado', function(msg,usuario){
-	  io.emit('productos bloqueado', msg, usuario);
-  });
-
-  socket.on('ventas nueva', (msg,usuario)=>{
-    io.emit('ventas nueva', msg,usuario);
-  })
-
-  // sucede cuando el repartidor marca un pedido y notifica a su respectivo vendedor
-  socket.on('reparto pedidomarcado', (msg,status,vendedor)=>{
-    io.emit('reparto pedidomarcado', msg,status,vendedor);
-  })
 
   
 });

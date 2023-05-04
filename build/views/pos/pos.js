@@ -20,14 +20,14 @@ function getView(){
                 <div class="col-12 p-0">
                     <div class="tab-content" id="myTabHomeContent">
                         <div class="tab-pane fade show active" id="pedido" role="tabpanel" aria-labelledby="dias-tab">
-                            ${view.pedido() + view.modal_cantidad()}
+                            ${view.pedido() + view.modal_cantidad() + view.modal_editar_cantidad()}
                         </div>
                         <div class="tab-pane fade" id="precios" role="tabpanel" aria-labelledby="clientes-tab">
                           
                         </div>
 
                         <div class="tab-pane fade" id="documento" role="tabpanel" aria-labelledby="home-tab">
-                            ${view.documento()}
+                            ${view.documento() + view.modal_lista_clientes()}
                         </div>
                     </div>
 
@@ -57,7 +57,7 @@ function getView(){
                     <input type="search" autocomplete="off" class="form-control border-naranja negrita" placeholder='Escriba para buscar...' id="txtPosCodprod">
                     
                     <div class="table-responsive col-12 p-2">
-                        <table class="table table-responsive table-hover table-border col-12" id="tblProductosBuscar">
+                        <table style="height: 500px;overflow-y: scroll;" class="table table-responsive table-hover table-border col-12" id="tblProductosBuscar">
                             <thead class="bg-naranja text-white">
                                 <tr>
                                     <td>Producto</td>
@@ -88,7 +88,9 @@ function getView(){
                                         <tr>
                                             <td>PRODUCTO</td>
                                             <td>CANTIDAD</td>
+                                            <td>PRECIO</td>
                                             <td>SUBTOTAL</td>
+                                            <td></td>
                                             <td></td>
                                         </tr>
                                     </thead>
@@ -166,33 +168,42 @@ function getView(){
                 </div>
             </div>`
         },
-        modal_pedido_editar_cantidad:()=>{
+        modal_editar_cantidad:()=>{
             return `
-            <div class="modal fade" id="modal_cambiar_cantidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-md" role="document">
+            <div class="modal" id="modal_editar_cantidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
-                        <div class="modal-header">
-                            <label class="modal-title text-naranja h3" id="">Cambiar cantidad de producto</label>
+
+                        <div class="modal-header bg-naranja">
+                            <label class="modal-title text-white h3" id="lbCantidadDesprodE">Cantidad de producto</label>
                         </div>
             
-                        <div class="modal-body shadow">
-                                <div class="">            
-                                    
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-4 text-center">
+                                    <img src="./favicon.png" width="120px" height="120px">
+                                </div>
+                                <div class="col-8">
                                     <div class="form-group">
-                                        <label>Nueva cantidad:</label>
-                                        <input type="number" style="font-size:140%" class="form-control negrita text-naranja border-naranja shadow col-10" id="txtCantNuevaCant">
+                                        <label>Cantidad:</label>
+                                        <input type="number" style="font-size:140%" class="form-control negrita text-info border-naranja shadow col-10" id="txtMCCantidadE">
                                     </div>   
                                     
                                     <div class="form-group">
                                         <label>Precio:</label>
-                                        <input type="number" style="font-size:140%" class="form-control negrita text-naranja border-naranja shadow col-10" id="txtCantNuevoPrecio" disabled>
-                                    </div>                                                             
-                                        
-                                </div>
+                                        <input type="number" style="font-size:140%" class="form-control negrita text-info border-naranja shadow col-10" id="txtMCPrecioE">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Subtotal:</label>
+                                        <input type="number" style="font-size:150%" class="form-control negrita text-naranja border-naranja shadow col-10" id="txtMCTotalPrecioE" disabled>
+                                    </div>
+                                </div>            
+                            </div>
                                 
-                                <br>
+                            <br>
         
-                                <div class="row">
+                            <div class="row">
                                     <div class="col-5">
                                         <button class="btn btn-secondary btn-xl btn-circle hand shadow waves-effect waves-themed" data-dismiss="modal" id="">
                                             <i class="fal fa-arrow-left"></i>
@@ -202,16 +213,12 @@ function getView(){
                                     <div class="col-1"></div>
         
                                     <div class="col-5">
-                                        <button class="btn btn-success btn-xl btn-circle hand shadow waves-effect waves-themed" id="btnCantGuardar">
+                                        <button class="btn btn-naranja btn-xl btn-circle hand shadow waves-effect waves-themed" id="btnMCGuardarE">
                                             <i class="fal fa-check mr-1"></i>
                                         </button>
                                     </div>
-                                    
-                                    
-                                </div>
-                        
+                            </div>
                         </div>
-                    
                     </div>
                 </div>
             </div>`
@@ -234,6 +241,11 @@ function getView(){
                                 </div>
                                 
                             
+                            </div>
+
+                            <div class="form-group">
+                                <label class="negrita text-f-90">CÓDIGO CLIENTE</label>
+                                <input disabled type="text" class="form-control form-control-md border-naranja negrita text-f-90" id="txtPosCobroNitclie">                            
                             </div>
 
                             <div class="form-group">
@@ -273,7 +285,7 @@ function getView(){
                                                 <input type="text" class="form-control" id="txtCorrelativo">
                                             </div>
                                         </div>
-                                        <button class="btn form-control btn-xl btn-info hand shadow">
+                                        <button class="btn form-control btn-xl btn-info hand shadow" id="btnGuardarPedido">
                                             <i class="fal fa-save"></i> Crear Pedido (f8)
                                         </button>
                                     </div>
@@ -286,7 +298,7 @@ function getView(){
                                                 <input type="text" class="form-control" id="txtCorrelativoCot">
                                             </div>
                                         </div>
-                                        <button class="btn form-control btn-xl btn-warning hand shadow">
+                                        <button class="btn form-control btn-xl btn-warning hand shadow" id="btnGuardarCotizacion">
                                             <i class="fal fa-save"></i> Crear Cotización (f9)
                                         </button>
                                     </div>
@@ -303,6 +315,46 @@ function getView(){
                 <i class="fal fa-arrow-left"></i>
             </button>
             `
+        },
+        modal_lista_clientes:()=>{
+            return `
+            <div class="modal" id="modal_lista_clientes" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-left" role="document">
+                    <div class="modal-content">
+                    
+                        <div class="modal-header bg-naranja">
+                        </div>
+                        
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="form-group col-12">
+                                    <label>Búsqueda de Clientes</label>
+                                    <div class="input-group">
+                                        <input type="search" class="form-control border-naranja negrita" id="txtBuscarClie">
+                                        <button class="btn btn-naranja hand text-white" id="btnBuscarClie">
+                                            <i class="fal fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <table class="col-12 table table-responsive table-hover table-border">
+                                    <thead class="bg-naranja text-white">
+                                        <tr>
+                                            <td>NIT / CÓDIGO</td>
+                                            <td>CLIENTE</td>
+                                            <td>SALDO</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblDataClientes"></tbody>
+                                </table>
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>`
         }
     }
 
@@ -396,11 +448,14 @@ function listener_teclado(){
     
     //evitando errores
 
-    Mousetrap.bind('f2', function() { document.getElementById('txtPosCodprod').focus() });
+    Mousetrap.bind('f2', function() { document.getElementById('txtPosCodprod').value='';document.getElementById('txtPosCodprod').focus() });
     Mousetrap.bind('ctrl+right', function() { document.getElementById('btnPosCobro').click() });
     Mousetrap.bind('ctrl+left', function() { document.getElementById('btnPosDocumentoAtras').click() });
     
-    Mousetrap.bind('f3', function(e) { e.preventDefault(); document.getElementById('btnBuscarCliente').click() });
+    Mousetrap.bind('f3', function(e) { 
+        e.preventDefault(); 
+        document.getElementById('btnBuscarCliente').click(); 
+    });
     Mousetrap.bind('f8', function() { funciones.Aviso('Creando pedido') });
     Mousetrap.bind('f9', function() { funciones.Aviso('creando cotizacion') });
 };
@@ -428,12 +483,12 @@ function listener_vista_pedido(){
     
 
 
-    
+    //modal cantidad
     let btnMCGuardar = document.getElementById('btnMCGuardar');
     btnMCGuardar.addEventListener('click',()=>{
 
         let cantidad = Number(document.getElementById('txtMCCantidad').value || 1);
-        let preciounitario = Number(document.getElementById('txtMCTotalPrecio').value||0);
+        let preciounitario = Number(document.getElementById('txtMCPrecio').value||0);
 
         if(preciounitario==0){
             funciones.AvisoError('Precio inválido');
@@ -460,7 +515,6 @@ function listener_vista_pedido(){
 
     });
 
-
     document.getElementById('txtMCCantidad').addEventListener('input',()=>{
         CalcularTotalPrecio();  
     });
@@ -485,18 +539,63 @@ function listener_vista_pedido(){
     });
         
 
+    //modal editar cantidad
+    let btnMCGuardarE = document.getElementById('btnMCGuardarE');
+    btnMCGuardarE.addEventListener('click',()=>{
+
+        let cantidad = Number(document.getElementById('txtMCCantidadE').value || 1);
+        let preciounitario = Number(document.getElementById('txtMCPrecioE').value||0);
+
+        if(preciounitario==0){
+            funciones.AvisoError('Precio inválido');
+            return;
+        };
+
+        if(Number(preciounitario)<Number(Selected_costo)){
+            funciones.AvisoError('Precio menor al costo');
+            return;
+        };
+
+
+        let nuevacantidad = Number(cantidad);
+        selectDataRowVentaPOS(Number(Selected_id),nuevacantidad,preciounitario)
+        .then(()=>{
+            $("#modal_editar_cantidad").modal('hide');
+
+            funciones.showToast('Producto agregado ' + Selected_desprod);
+            get_tbl_pedido();
+        })
+        .catch(()=>{
+            funciones.AvisoError('No se pudo agregar');
+        })
+
+
+
+    });
+
+    document.getElementById('txtMCCantidadE').addEventListener('input',()=>{
+        CalcularTotalPrecioEditar();  
+    });
+    document.getElementById('txtMCCantidadE').addEventListener('keyup',(e)=>{
+        if (e.code === 'Enter') { 
+            document.getElementById('txtMCPrecioE').focus();
+        };
+        if (e.keyCode === 13 && !e.shiftKey) {
+            document.getElementById('txtMCPrecioE').focus();
+        };  
+    });
+    document.getElementById('txtMCPrecioE').addEventListener('input',()=>{
+        CalcularTotalPrecioEditar();  
+    });
+    document.getElementById('txtMCPrecioE').addEventListener('keyup',(e)=>{
+        if (e.code === 'Enter') { 
+            document.getElementById('btnMCGuardarE').focus();
+        };
+        if (e.keyCode === 13 && !e.shiftKey) {
+            document.getElementById('btnMCGuardarE').focus();
+        };  
+    });
     
-
-};
-
-function CalcularTotalPrecio(){
-
-    let cantidad = document.getElementById('txtMCCantidad').value || 1;
-    let precio = document.getElementById('txtMCPrecio').value;
-    
-    document.getElementById('txtMCTotalPrecio').value = (Number(cantidad)*Number(precio));
-
-
 };
 
 function listener_vista_cobro(){
@@ -513,7 +612,9 @@ function listener_vista_cobro(){
     });
 
     document.getElementById('txtPosCobroNit').addEventListener('keyup',(e)=>{
-        
+        funciones.Aviso('Búsqueda por nit, no disponible de momento');
+        return;
+
         document.getElementById('txtPosCobroNit').value = document.getElementById('txtPosCobroNit').value.toUpperCase();
         document.getElementById('txtPosCobroNit').value = document.getElementById('txtPosCobroNit').value.replace('-','').replace(" ","");
 
@@ -534,13 +635,122 @@ function listener_vista_cobro(){
 
     });
 
+
+
+    //busqueda de cliente
     document.getElementById('btnBuscarCliente').addEventListener('click',()=>{
-        funciones.Aviso('buscando cliente...')
+        $("#modal_lista_clientes").modal('show');
+        document.getElementById('txtBuscarClie').value = '';
+        document.getElementById('txtBuscarClie').focus();
+    });
+
+    document.getElementById('txtBuscarClie').addEventListener('keyup',(e)=>{
+        if (e.code === 'Enter') { 
+            document.getElementById('btnBuscarClie').click();
+        };
+        if (e.keyCode === 13 && !e.shiftKey) {
+            document.getElementById('btnBuscarClie').click();
+        };  
+    });
+
+    document.getElementById('btnBuscarClie').addEventListener('click',(e)=>{  
+        tbl_clientes(document.getElementById('txtBuscarClie').value||'');
+    });
+
+
+
+
+    //finalización de pedido
+    document.getElementById('btnGuardarPedido').addEventListener('click',()=>{
+        finalizar_pedido('PED');
+    });
+
+    document.getElementById('btnGuardarCotizacion').addEventListener('click',()=>{
+        finalizar_pedido('COT');
+    });
+
+
+
+};
+
+function tbl_clientes(filtro){
+   
+    if(filtro==''){
+        funciones.AvisoError('Escriba un nombre o nit válidos');
+        document.getElementById('txtBuscarClie').focus(); 
+        return;
+    };
+
+
+    let container = document.getElementById('tblDataClientes');
+    container.innerHTML = GlobalLoader;
+
+    let str = '';
+
+    axios.post('/pos/buscar_cliente', {
+        sucursal: GlobalCodSucursal,
+        filtro:filtro
     })
+    .then((response) => {        
+        if(response=='error'){
+            funciones.AvisoError('Error en la solicitud');
+            container.innerHTML = 'No day datos....';
+        }else{
+            const data = response.data.recordset;
+            data.map((r)=>{
+                str += `
+                <tr class="hand" onclick="get_datos_cliente('${r.NITCLIE}','${r.NIT}','${r.NOMCLIE}','${r.DIRCLIE}')">    
+                    <td>
+                        ${r.NIT} / ${r.NITCLIE}
+                    </td>
+                    <td>
+                        ${r.NOMCLIE}
+                        <br>
+                        <small>${r.DIRCLIE}</small>
+                    </td>
+                    <td>${funciones.setMoneda(r.SALDO,'Q')}</td>
+                </tr>
+                `
+            })
+            container.innerHTML = str;
+        }
+    }, (error) => {
+        funciones.AvisoError('Error en la solicitud');
+        container.innerHTML = 'No day datos....';
+    });
 
 
 
+};
 
+function get_datos_cliente(nitclie,nit,nomclie,dirclie){
+
+    $("#modal_lista_clientes").modal('hide');
+
+    document.getElementById('txtPosCobroNit').value = nit;
+    document.getElementById('txtPosCobroNitclie').value = nitclie;
+    document.getElementById('txtPosCobroNombre').value = nomclie;
+    document.getElementById('txtPosCobroDireccion').value = dirclie;
+    
+
+};
+
+function CalcularTotalPrecio(){
+
+    let cantidad = document.getElementById('txtMCCantidad').value || 1;
+    let precio = document.getElementById('txtMCPrecio').value;
+    
+    document.getElementById('txtMCTotalPrecio').value = (Number(cantidad)*Number(precio));
+
+
+};
+
+function CalcularTotalPrecioEditar(){
+
+    let cantidad = document.getElementById('txtMCCantidadE').value || 1;
+    let precio = document.getElementById('txtMCPrecioE').value;
+    
+    document.getElementById('txtMCTotalPrecioE').value = (Number(cantidad)*Number(precio));
 
 };
 
@@ -676,7 +886,6 @@ function get_producto(codprod,desprod,codmedida,equivale,costo,precio){
     
 };
 
-
 function insert_producto_pedido(codprod,desprod,codmedida,equivale,costo,precio,cantidad){
     
     let datos = 
@@ -741,7 +950,13 @@ function get_tbl_pedido(){
                     <b class="text-info" style="font-size:140%">${rows.CANTIDAD}</b>
                     <br><small>${rows.CODMEDIDA} (eq: ${rows.EQUIVALE})</small>
                 </td>
+                <td class="negrita">${funciones.setMoneda(rows.PRECIO,'Q')}</td>
                 <td class="negrita text-danger h4">${funciones.setMoneda(rows.TOTALPRECIO,'Q')}</td>
+                <td>
+                    <button class="btn btn-md btn-circle btn-info shadow hand" onclick="edit_item_pedido('${rows.ID}','${rows.CODPROD}','${rows.DESPROD}','${rows.CODMEDIDA}','${rows.EQUIVALE}','${rows.CANTIDAD}','${rows.COSTO}','${rows.PRECIO}')">
+                        <i class="fal fa-edit"></i>
+                    </button>
+                </td> 
                 <td>
                     <button class="btn btn-md btn-circle btn-danger shadow hand" onclick="delete_item_pedido('${rows.ID}')">
                         <i class="fal fa-trash"></i>
@@ -757,46 +972,33 @@ function get_tbl_pedido(){
         document.getElementById('lbPosCobroTotalPagar').innerText = funciones.setMoneda(varTotalVenta,'Q');
     })
     .catch((error)=>{
+        console.log('error cargar grid:')
+        console.log(error)
         container.innerHTML = 'No hay datos...';
     })
 
 };
 
-function aumentar_cantidad(id,cantidad,costo,precio){
+function edit_item_pedido(id,codprod,desprod,codmedida,equivale,cantidad,costo,precio){
 
-        let nuevacantidad = (Number(cantidad)+1);
+    $("#modal_editar_cantidad").modal('show');
 
-        selectDataRowVentaPOS(id,nuevacantidad,precio)
-        .then(()=>{
-            get_tbl_pedido();
-        })
-        .catch(()=>{
-            funciones.AvisoError('No se logró Eliminar la lista de productos agregados');
-        })
+    Selected_id = id;
+    Selected_codprod = codprod;
+    Selected_desprod = desprod;
+    Selected_codmedida = codmedida;
+    Selected_equivale = Number(equivale);
+    Selected_costo = Number(costo);
+    Selected_precio = Number(precio);
 
-};
+    document.getElementById('lbCantidadDesprodE').innerText = `${desprod} (${codmedida} - Eq: ${equivale})`;
 
-function disminuir_cantidad(id,cantidad,costo,precio){
-    let nuevacantidad = (Number(cantidad)-1);
+    document.getElementById('txtMCCantidadE').value = cantidad;
+    document.getElementById('txtMCPrecioE').value = precio;
 
-    if(nuevacantidad==0){return;}
+    CalcularTotalPrecioEditar();
 
-    selectDataRowVentaPOS(id,nuevacantidad,precio)
-    .then(()=>{
-        get_tbl_pedido();
-    })
-    .catch(()=>{
-        funciones.AvisoError('No se logró Eliminar la lista de productos agregados');
-    })
-};
-
-function edit_cantidad_pos(id,cantidad,costo,precio){
-
-    document.getElementById('txtCantNuevaCant').value = cantidad;
-    document.getElementById('txtCantNuevoPrecio').value = precio;
-
-    $("#modal_cambiar_cantidad").modal('show');
-
+    document.getElementById('txtMCCantidadE').focus();
 };
 
 function delete_item_pedido(id){
@@ -816,8 +1018,6 @@ function delete_item_pedido(id){
     })
     
 };
-
-
 
 function get_coddoc(tipo){
     return new Promise((resolve, reject)=>{
@@ -861,4 +1061,155 @@ function get_correlativo_coddoc(coddoc){
     })
 };
 
+
+function finalizar_pedido(tipo){
+
+            let codcliente = document.getElementById('txtPosCobroNitclie').value || ''; //GlobalSelectedCodCliente;
+            if(codcliente==''){funciones.AvisoError('Seleccione un cliente');return;}
+
+            let nit = document.getElementById('txtPosCobroNit').value || 'CF';
+            let ClienteNombre = document.getElementById('txtPosCobroNombre').value;
+            GlobalSelectedNomCliente = ClienteNombre;
+            let dirclie = document.getElementById('txtPosCobroDireccion').value; // CAMPO DIR_ENTREGA
+            GlobalSelectedDirCliente = dirclie;
+            let obs = 'SN'; //document.getElementById('cmbEntregaTipoDoc').value; 
+            let direntrega = "SN"; //document.getElementById('txtEntregaDireccion').value; //CAMPO MATSOLI
+            let codbodega = GlobalCodBodega;
+            let cmbTipoEntrega = ''; //document.getElementById('cmbEntregaConcre').value; //campo TRANSPORTE
+            
+            let txtFecha = new Date(document.getElementById('txtFecha').value);
+            let anio = txtFecha.getFullYear();
+            let mes = txtFecha.getUTCMonth()+1;
+            let d = txtFecha.getUTCDate() 
+            let fecha = anio + '-' + mes + '-' + d; // CAMPO DOC_FECHA
+            let dia = d;
+
+            let hora = funciones.getHora();
+        
+            let fe = txtFecha;// new Date(document.getElementById('txtEntregaFecha').value);
+            let ae = fe.getFullYear();
+            let me = fe.getUTCMonth()+1;
+            let de = fe.getUTCDate() 
+            let fechaentrega = ae + '-' + me + '-' + de;  // CAMPO DOC_FECHAENT
+
+            let coddoc = document.getElementById('cmbCoddoc').value;
+            let correlativoDoc = document.getElementById('txtCorrelativo').value;
+
+            let cmbVendedor = document.getElementById('cmbVendedor');
+
+            let latdoc = '0';
+            let longdoc = '0';
+
+            let tipo_pago = 'CON'; 
+            let tipo_doc = '';
+            let entrega_contacto = document.getElementById('txtNombre').value;
+            let entrega_telefono = document.getElementById('txtEntregaTelefono').value;
+            let entrega_direccion = document.getElementById('txtEntregaDireccion').value;
+            let entrega_referencia = document.getElementById('txtEntregaReferencia').value;
+            let entrega_lat = '0';
+            let entrega_long = '0';
+            
+
+        document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1 fa-spin"></i>';
+        document.getElementById('btnFinalizarPedido').disabled = true;
+
+            classTipoDocumentos.getCorrelativoDocumento('PED',GlobalCoddoc)
+                .then((correlativo)=>{
+                    correlativoDoc = correlativo;
+                    
+                    funciones.Confirmacion('¿Está seguro que desea Finalizar este Pedido')
+                    .then((value)=>{
+                        if(value==true){    
+                            gettempDocproductos(GlobalUsuario)
+                            .then((response)=>{
+                                axios.post('/ventas/insertventa', {
+                                    jsondocproductos:JSON.stringify(response),
+                                    codsucursal:GlobalCodSucursal,
+                                    empnit: GlobalEmpnit,
+                                    coddoc:coddoc,
+                                    correl: correlativoDoc,
+                                    anio:anio,
+                                    mes:mes,
+                                    dia:dia,
+                                    fecha:fecha,
+                                    fechaentrega:fechaentrega,
+                                    formaentrega:cmbTipoEntrega,
+                                    codbodega:codbodega,
+                                    codcliente: codcliente,
+                                    nomclie:ClienteNombre,
+                                    totalcosto:GlobalTotalCostoDocumento,
+                                    totalprecio:GlobalTotalDocumento,
+                                    nitclie:nit,
+                                    dirclie:dirclie,
+                                    obs:entrega_referencia,
+                                    direntrega:direntrega,
+                                    usuario:GlobalUsuario,
+                                    codven:cmbVendedor.value,
+                                    lat:latdoc,
+                                    long:longdoc,
+                                    hora:hora,
+                                    tipo_pago:tipo_pago,
+                                    tipo_doc:tipo_doc,
+                                    entrega_contacto:entrega_contacto,
+                                    entrega_telefono:entrega_telefono,
+                                    entrega_direccion:entrega_direccion,
+                                    entrega_referencia:entrega_referencia,
+                                    entrega_lat:entrega_lat,
+                                    entrega_long:entrega_long,
+                                    domicilio:GlobalSelectedDomicilio
+                                })
+                                .then(async(response) => {
+                                    const data = response.data;
+                                    console.log(response);
+                                    //if (data.rowsAffected[0]==0){
+                                    if (data=='error'){
+                                            funciones.AvisoError('No se pudo guardar este pedido');
+                                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                            document.getElementById('btnFinalizarPedido').disabled = false;
+                                    }else{
+                                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                            document.getElementById('btnFinalizarPedido').disabled = false;
+
+                                            funciones.Aviso('Pedido Generado Exitosamente !!!')
+                                        
+                                            document.getElementById('btnEntregaCancelar').click();
+                                            
+                                            deleteTempVenta(GlobalUsuario)
+
+                                            fcnNuevoPedido();
+                                    }
+                                }, (error) => {
+                                    console.log(error);
+                                    funciones.AvisoError('No se pudo guardar este pedido');
+                                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                    document.getElementById('btnFinalizarPedido').disabled = false;
+                                });        
+
+                            })
+                            .catch((error)=>{
+                                    funciones.AvisoError('No se pudo guardar este pedido');
+                                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                                    document.getElementById('btnFinalizarPedido').disabled = false;
+                            })
+
+                            
+                        
+
+                        }else{
+                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                            document.getElementById('btnFinalizarPedido').disabled = false;
+                        }
+                    })
+
+                })
+                .catch(()=>{
+                    console.log('pasa por aqui...');
+                    funciones.AvisoError('No se pudo guardar este pedido');
+                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
+                    document.getElementById('btnFinalizarPedido').disabled = false;
+                    
+                })
+
+
+};
 

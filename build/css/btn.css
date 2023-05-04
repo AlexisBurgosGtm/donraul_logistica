@@ -1,3 +1,9 @@
+.scroll_table{
+  height: 300px;
+	overflow-y: scroll;
+}
+
+
 .btn-middle-r { 
   position: fixed;
   z-index: 1088;
