@@ -274,6 +274,24 @@ function getView(){
                                   
                                 </div>
                                 <br><br>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Fecha</label>
+                                            <input type="date" class="form-control" id="txtFecha">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label>Vendedor</label>
+                                            <select class="form-control" id="cmbVendedor">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <br><br>
                               
                                 <div class="row">
                                     <div class="col-6">
@@ -375,6 +393,7 @@ function addListeners(){
     get_tbl_pedido();
 
 
+    document.getElementById('txtFecha').value = funciones.getFecha();
 
     //CARGA CODDOC DEFAULT
     let cmbCoddoc = document.getElementById('cmbCoddoc');
@@ -431,6 +450,20 @@ function addListeners(){
         })
     });
 
+    //carga el código vendedor
+    get_vendedores()
+    .then((data)=>{
+        let container = document.getElementById('cmbVendedor');
+        let str = '';
+        data.recordset.map((rows)=>{
+            str += `<option value="${rows.CODIGO}">${rows.NOMBRE}</option>`
+        })            
+        container.innerHTML = str;
+        container.value = GlobalCodUsuario;
+    })
+    .catch(()=>{
+        funciones.AvisoError('No se cargó la lista de vendedores');
+    })
     
     funciones.slideAnimationTabs();
 
@@ -448,16 +481,36 @@ function listener_teclado(){
     
     //evitando errores
 
-    Mousetrap.bind('f2', function() { document.getElementById('txtPosCodprod').value='';document.getElementById('txtPosCodprod').focus() });
     Mousetrap.bind('ctrl+right', function() { document.getElementById('btnPosCobro').click() });
     Mousetrap.bind('ctrl+left', function() { document.getElementById('btnPosDocumentoAtras').click() });
     
+
+    Mousetrap.bind('f2', function() { 
+        document.getElementById('txtPosCodprod').value='';
+        document.getElementById('btnPosDocumentoAtras').click();
+        document.getElementById('txtPosCodprod').focus();
+    });
+
+    
     Mousetrap.bind('f3', function(e) { 
         e.preventDefault(); 
-        document.getElementById('btnBuscarCliente').click(); 
+        document.getElementById('btnPosCobro').click();
+        document.getElementById('btnBuscarCliente').click();
+
     });
-    Mousetrap.bind('f8', function() { funciones.Aviso('Creando pedido') });
-    Mousetrap.bind('f9', function() { funciones.Aviso('creando cotizacion') });
+    Mousetrap.bind('f8', function() { 
+        document.getElementById('btnPosCobro').click();
+        document.getElementById('btnGuardarPedido').click(); 
+
+    });
+
+    Mousetrap.bind('f9', function() { 
+        document.getElementById('btnPosCobro').click();
+        document.getElementById('btnGuardarCotizacion').click();
+       
+    });
+
+
 };
 
 function listener_vista_pedido(){
@@ -639,9 +692,13 @@ function listener_vista_cobro(){
 
     //busqueda de cliente
     document.getElementById('btnBuscarCliente').addEventListener('click',()=>{
+        
         $("#modal_lista_clientes").modal('show');
+        
+        document.getElementById('tblDataClientes').innerHTML = '';
         document.getElementById('txtBuscarClie').value = '';
         document.getElementById('txtBuscarClie').focus();
+
     });
 
     document.getElementById('txtBuscarClie').addEventListener('keyup',(e)=>{
@@ -1061,6 +1118,20 @@ function get_correlativo_coddoc(coddoc){
     })
 };
 
+function get_vendedores(){
+    
+        return new Promise((resolve, reject) => {
+            axios.post('/empleados/vendedores', {sucursal:GlobalCodSucursal})
+            .then((response) => {
+                const data = response.data;        
+                
+               resolve(data); 
+            }, (error) => {
+                reject();
+            });
+        })
+        
+};
 
 function finalizar_pedido(tipo){
 
@@ -1092,9 +1163,16 @@ function finalizar_pedido(tipo){
             let de = fe.getUTCDate() 
             let fechaentrega = ae + '-' + me + '-' + de;  // CAMPO DOC_FECHAENT
 
-            let coddoc = document.getElementById('cmbCoddoc').value;
-            let correlativoDoc = document.getElementById('txtCorrelativo').value;
-
+            let coddoc = ''; let correlativoDoc = '';
+            if(tipo=='PED'){
+                coddoc = document.getElementById('cmbCoddoc').value;
+                correlativoDoc = document.getElementById('txtCorrelativo').value;
+            };
+            if(tipo=='COT'){
+                coddoc = document.getElementById('cmbCoddocCot').value;
+                correlativoDoc = document.getElementById('txtCorrelativoCot').value;
+            };
+            
             let cmbVendedor = document.getElementById('cmbVendedor');
 
             let latdoc = '0';
@@ -1102,18 +1180,30 @@ function finalizar_pedido(tipo){
 
             let tipo_pago = 'CON'; 
             let tipo_doc = '';
-            let entrega_contacto = document.getElementById('txtNombre').value;
-            let entrega_telefono = document.getElementById('txtEntregaTelefono').value;
-            let entrega_direccion = document.getElementById('txtEntregaDireccion').value;
-            let entrega_referencia = document.getElementById('txtEntregaReferencia').value;
+            let entrega_contacto = document.getElementById('txtPosCobroNombre').value;
+            let entrega_telefono = ''; //document.getElementById('txtEntregaTelefono').value;
+            let entrega_direccion = ''; //document.getElementById('txtEntregaDireccion').value;
+            let entrega_referencia = ''; //document.getElementById('txtEntregaReferencia').value;
             let entrega_lat = '0';
             let entrega_long = '0';
             
 
-        document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1 fa-spin"></i>';
-        document.getElementById('btnFinalizarPedido').disabled = true;
+        //BLOQUEANDO EL BOTÓN
+        if(tipo=='PED'){
+            document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1 fa-spin"></i>';
+            document.getElementById('btnGuardarPedido').disabled = true;      
+        };
+        if(tipo=='COT'){
+            document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1 fa-spin"></i>';
+            document.getElementById('btnGuardarCotizacion').disabled = true;
+        };
+        //BLOQUEANDO EL BOTÓN
+        
+        
+        
+        
 
-            classTipoDocumentos.getCorrelativoDocumento('PED',GlobalCoddoc)
+            classTipoDocumentos.getCorrelativoDocumento(tipo,GlobalCoddoc)
                 .then((correlativo)=>{
                     correlativoDoc = correlativo;
                     

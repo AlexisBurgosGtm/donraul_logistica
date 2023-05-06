@@ -4,7 +4,7 @@ let classEmpleados = {
             let combobox = document.getElementById(idContainer);
         
             let str = ""; 
-            axios.get('/empleados/vendedores?sucursal=' + GlobalCodSucursal)
+            axios.post('/empleados/vendedores', {sucursal:GlobalCodSucursal})
             .then((response) => {
                 const data = response.data;        
                 data.recordset.map((rows)=>{

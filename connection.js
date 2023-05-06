@@ -1,4 +1,4 @@
-﻿const xconfig = {
+﻿const vpn_config = {
 	user: 'iEx',
 	password: 'iEx',
 	server: '172.26.167.250',
@@ -7,7 +7,7 @@
 };
 
 
-const Dconfig = {
+const config = {
 	user: 'iEx',
 	password: 'iEx',
 	server: 'ELORIGEN\\SQLDEV',
@@ -16,7 +16,7 @@ const Dconfig = {
 };
 
 
-const config = {
+const XXconfig = {
 	user: 'iEx',
 	password: 'iEx',
 	server: '192.168.0.200',
