@@ -3,7 +3,10 @@ function getView(){
         body:()=>{
             return `
                 <div class="row">
-                    <div class="card bg-naranja card-rounded shadow col-12 p-2">
+                    <div class="col-2 text-left">
+                            <img src="./favicon.png" width="100px" height="100px">
+                    </div>
+                    <div class="card bg-naranja card-rounded shadow col-10 p-2">
                         
                             <div class="row">
                                 <div class="col-6 text-left">
@@ -20,7 +23,7 @@ function getView(){
                 <div class="col-12 p-0">
                     <div class="tab-content" id="myTabHomeContent">
                         <div class="tab-pane fade show active" id="pedido" role="tabpanel" aria-labelledby="dias-tab">
-                            ${view.pedido() + view.modal_cantidad() + view.modal_editar_cantidad()}
+                            ${view.pedido() + view.modal_cantidad() + view.modal_editar_cantidad() + view.modal_lista_documentos()}
                         </div>
                         <div class="tab-pane fade" id="precios" role="tabpanel" aria-labelledby="clientes-tab">
                           
@@ -107,6 +110,9 @@ function getView(){
 
             </div>
 
+            <button class="btn btn-warning btn-xl btn-bottom-middle btn-circle shadow hand" id="btnListadoDocumentos">
+                <i class="fal fa-folder"></i>
+            </button>
             
             <button class="btn btn-info btn-xl btn-bottom-r btn-circle shadow hand" id="btnPosCobro">
                 <i class="fal fa-arrow-right"></i>
@@ -348,7 +354,7 @@ function getView(){
                                 <div class="form-group col-12">
                                     <label>Búsqueda de Clientes</label>
                                     <div class="input-group">
-                                        <input type="search" class="form-control border-naranja negrita" id="txtBuscarClie">
+                                        <input type="search" autocomplete="off" class="form-control border-naranja negrita" id="txtBuscarClie">
                                         <button class="btn btn-naranja hand text-white" id="btnBuscarClie">
                                             <i class="fal fa-search"></i>
                                         </button>
@@ -373,6 +379,38 @@ function getView(){
                     </div>
                 </div>
             </div>`
+        },
+        modal_lista_documentos:()=>{
+            return `
+            <div class="modal fade" id="modal_lista_documentos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-right" role="document">
+                    <div class="modal-content">
+                    
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="negrita text-naranja">Filtrar documentos por...</label>
+                                        <div class="input-group">
+                                            <input type="date" class="negrita form-control" id="txtFechaDoc">
+                                            <select class="form-control negrita" id="cmbTipoDoc">
+                                                <option value="PED">PEDIDOS</option>
+                                                <option value="COT">COTIZACIONES</option>
+                                            </select>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row" id="tblDocumentos">
+
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`
         }
     }
 
@@ -389,11 +427,18 @@ function addListeners(){
     listener_vista_cobro();
 
     listener_teclado();
+
+    listener_listado_documentos();
     
-    get_tbl_pedido();
+    fcnNuevoPedido();
+
+    //get_tbl_pedido();
 
 
     document.getElementById('txtFecha').value = funciones.getFecha();
+    document.getElementById('txtFechaDoc').value = funciones.getFecha();
+
+   
 
     //CARGA CODDOC DEFAULT
     let cmbCoddoc = document.getElementById('cmbCoddoc');
@@ -730,6 +775,34 @@ function listener_vista_cobro(){
 
 };
 
+function listener_listado_documentos(){
+
+    let btnListadoDocumentos = document.getElementById('btnListadoDocumentos');
+    btnListadoDocumentos.addEventListener('click',()=>{
+        $("#modal_lista_documentos").modal('show');
+        tbl_lista_documentos('PED');
+    });
+
+    document.getElementById('txtFechaDoc').addEventListener('change',()=>{
+        tbl_lista_documentos();
+    });
+    document.getElementById('cmbTipoDoc').addEventListener('change',()=>{
+        tbl_lista_documentos();
+    });
+
+};
+
+
+
+function initView(){
+   
+    getView();
+    addListeners();
+
+};
+
+
+
 function tbl_clientes(filtro){
    
     if(filtro==''){
@@ -808,15 +881,6 @@ function CalcularTotalPrecioEditar(){
     let precio = document.getElementById('txtMCPrecioE').value;
     
     document.getElementById('txtMCTotalPrecioE').value = (Number(cantidad)*Number(precio));
-
-};
-
-function initView(){
-   
-    getView();
-    addListeners();
-
-   
 
 };
 
@@ -1032,6 +1096,8 @@ function get_tbl_pedido(){
         console.log('error cargar grid:')
         console.log(error)
         container.innerHTML = 'No hay datos...';
+        GlobalTotalCostoDocumento = 0;
+        GlobalTotalDocumento = 0;
     })
 
 };
@@ -1187,6 +1253,11 @@ function finalizar_pedido(tipo){
             let entrega_lat = '0';
             let entrega_long = '0';
             
+            get_tbl_pedido();
+
+        //VERIFICACIONES
+        if(Number(GlobalTotalDocumento)==0){funciones.AvisoError('No hay productos agregados');return;}
+         
 
         //BLOQUEANDO EL BOTÓN
         if(tipo=='PED'){
@@ -1199,18 +1270,14 @@ function finalizar_pedido(tipo){
         };
         //BLOQUEANDO EL BOTÓN
         
-        
-        
-        
-
-            classTipoDocumentos.getCorrelativoDocumento(tipo,GlobalCoddoc)
+            classTipoDocumentos.getCorrelativoDocumento(tipo,coddoc)
                 .then((correlativo)=>{
                     correlativoDoc = correlativo;
-                    
-                    funciones.Confirmacion('¿Está seguro que desea Finalizar este Pedido')
+
+                    funciones.Confirmacion('¿Está seguro que desea Crear este Documento?')
                     .then((value)=>{
                         if(value==true){    
-                            gettempDocproductos(GlobalUsuario)
+                            gettempDocproductos_pos(GlobalUsuario)
                             .then((response)=>{
                                 axios.post('/ventas/insertventa', {
                                     jsondocproductos:JSON.stringify(response),
@@ -1251,55 +1318,361 @@ function finalizar_pedido(tipo){
                                 .then(async(response) => {
                                     const data = response.data;
                                     console.log(response);
-                                    //if (data.rowsAffected[0]==0){
                                     if (data=='error'){
-                                            funciones.AvisoError('No se pudo guardar este pedido');
-                                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                                            document.getElementById('btnFinalizarPedido').disabled = false;
-                                    }else{
-                                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                                            document.getElementById('btnFinalizarPedido').disabled = false;
 
-                                            funciones.Aviso('Pedido Generado Exitosamente !!!')
+                                            funciones.AvisoError('No se pudo guardar');
+                                            //DESBLOQUEANDO EL BOTÓN
+                                            if(tipo=='PED'){
+                                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                                document.getElementById('btnGuardarPedido').disabled = false;      
+                                            };
+                                            if(tipo=='COT'){
+                                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                                document.getElementById('btnGuardarCotizacion').disabled = false;
+                                            };
+                                            //DESBLOQUEANDO EL BOTÓN
+                                    }else{
+                                            //DESBLOQUEANDO EL BOTÓN
+                                            if(tipo=='PED'){
+                                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                                document.getElementById('btnGuardarPedido').disabled = false;      
+                                            };
+                                            if(tipo=='COT'){
+                                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                                document.getElementById('btnGuardarCotizacion').disabled = false;
+                                            };
+                                            //DESBLOQUEANDO EL BOTÓN
                                         
-                                            document.getElementById('btnEntregaCancelar').click();
-                                            
-                                            deleteTempVenta(GlobalUsuario)
+
+                                            funciones.Aviso('Generado Exitosamente !!!')
+                                       
+                                            deleteTempVenta_pos(GlobalUsuario);
 
                                             fcnNuevoPedido();
                                     }
                                 }, (error) => {
                                     console.log(error);
-                                    funciones.AvisoError('No se pudo guardar este pedido');
-                                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                                    document.getElementById('btnFinalizarPedido').disabled = false;
+                                    funciones.AvisoError('No se pudo guardar');
+                                    //DESBLOQUEANDO EL BOTÓN
+                                    if(tipo=='PED'){
+                                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                        document.getElementById('btnGuardarPedido').disabled = false;      
+                                    };
+                                    if(tipo=='COT'){
+                                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                        document.getElementById('btnGuardarCotizacion').disabled = false;
+                                    };
+                                    //DESBLOQUEANDO EL BOTÓN    
                                 });        
 
                             })
                             .catch((error)=>{
-                                    funciones.AvisoError('No se pudo guardar este pedido');
-                                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                                    document.getElementById('btnFinalizarPedido').disabled = false;
+                                    funciones.AvisoError('No se pudo guardar');
+                                    //DESBLOQUEANDO EL BOTÓN
+                                    if(tipo=='PED'){
+                                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                        document.getElementById('btnGuardarPedido').disabled = false;      
+                                    };
+                                    if(tipo=='COT'){
+                                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                        document.getElementById('btnGuardarCotizacion').disabled = false;
+                                    };
+                                    //DESBLOQUEANDO EL BOTÓN    
                             })
-
-                            
-                        
-
                         }else{
-                            document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                            document.getElementById('btnFinalizarPedido').disabled = false;
+                            //DESBLOQUEANDO EL BOTÓN
+                            if(tipo=='PED'){
+                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                document.getElementById('btnGuardarPedido').disabled = false;      
+                            };
+                            if(tipo=='COT'){
+                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                document.getElementById('btnGuardarCotizacion').disabled = false;
+                            };
+                            //DESBLOQUEANDO EL BOTÓN            
                         }
                     })
 
                 })
                 .catch(()=>{
-                    console.log('pasa por aqui...');
-                    funciones.AvisoError('No se pudo guardar este pedido');
-                    document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1"></i>';
-                    document.getElementById('btnFinalizarPedido').disabled = false;
-                    
+                    funciones.AvisoError('No se pudo guardar');
+                    //DESBLOQUEANDO EL BOTÓN
+                    if(tipo=='PED'){
+                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                        document.getElementById('btnGuardarPedido').disabled = false;      
+                    };
+                    if(tipo=='COT'){
+                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                        document.getElementById('btnGuardarCotizacion').disabled = false;
+                    };
+                    //DESBLOQUEANDO EL BOTÓN
                 })
 
 
 };
 
+
+
+function fcnNuevoPedido(){
+  
+    
+        document.getElementById('txtPosCobroNit').value = 'CF';
+        document.getElementById('txtPosCobroNitclie').value = 'CF';
+        document.getElementById('txtPosCobroNombre').value = 'CONSUMIDOR FINAL';
+        document.getElementById('txtPosCobroDireccion').value = 'CIUDAD';
+       
+        document.getElementById('btnPosDocumentoAtras').click();
+        get_tbl_pedido();    
+    
+};
+
+
+//---------------------------
+//editar pedido
+//---------------------------
+function tbl_lista_documentos(){
+
+    let tipo = document.getElementById('cmbTipoDoc').value;
+    let fecha = funciones.devuelveFecha('txtFechaDoc');
+
+    let container = document.getElementById('tblDocumentos');
+    container.innerHTML = GlobalLoader;
+    
+   
+    let tableheader = `<table class="table table-responsive table-hover table-striped table-bordered">
+                        <thead class="bg-naranja text-white">
+                            <tr>
+                                <td>Documento</td>
+                                <td>Cliente</td>
+                                <td>Importe</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tblListaPedidos">`;
+    let tablefoooter ='</tbody></table>';
+
+    let strdata = '';
+    let totalpedidos = 0;
+    
+    axios.post('/pos/lista_documentos_tipo', {
+        sucursal: GlobalCodSucursal,
+        tipo:tipo,
+        fecha:fecha   
+    })
+    .then((response) => {
+        const data = response.data.recordset;
+        let total =0;
+        data.map((rows)=>{
+                let idBtn = `btnEliminar${rows.CODDOC + '-' + rows.CORRELATIVO}`;
+                total = total + Number(rows.IMPORTE);
+                totalpedidos = totalpedidos + 1;
+                strdata = strdata + `<tr>
+                            <td>
+                                <b class="text-danger">${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
+                            </td>
+                            <td>
+                                    ${rows.NOMCLIE}
+                                <br>
+                                    <small class="text-secondary">${rows.DIRCLIE + ', ' + rows.DESMUNI}</small>
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-info btn-sm"
+                                            onclick="cargarPedidoEdicion('${rows.CODCLIE}','${rows.NIT}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.CODDOC}','${rows.CORRELATIVO}')">
+                                            <i class="fal fa-edit"></i> Editar
+                                        </button>    
+                                    </div>
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-danger btn-sm" id='${idBtn}'
+                                            onclick="fcn_delete_pedido('${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}','${idBtn}');">
+                                            <i class="fal fa-trash"></i> Eliminar
+                                        </button>    
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
+                            </td>
+                        </tr>`
+        })
+        container.innerHTML = tableheader + strdata + tablefoooter;
+    }, (error) => {
+        funciones.AvisoError('Error en la solicitud');
+        strdata = '';
+        container.innerHTML = '';
+    });
+    
+
+
+};
+
+
+function cargarPedidoEdicion(codclie,nit,nombre,direccion,coddoc,correlativo){
+
+    $("#modal_lista_documentos").modal('hide');
+
+    funciones.Confirmacion('¿Está seguro que desea EDITAR este documento, no se podrá deshacer lo que haga?')
+    .then((value)=>{
+        if(value==true){
+            funciones.solicitarClave()
+                    .then((clave)=>{
+                        if(clave==GlobalPassUsuario){
+        
+                            funciones.showToast('Cargando Documento....');
+    
+                            document.getElementById('txtPosCobroNit').value = nit;
+                            document.getElementById('txtPosCobroNitclie').value = codclie;
+                            document.getElementById('txtPosCobroNombre').value = nombre;
+                            document.getElementById('txtPosCobroDireccion').value = direccion;
+                        
+                                                    
+                            deleteTempVenta_pos(GlobalUsuario)
+                            .then(()=>{
+
+                                //descarga el pedido y lo inserta en el indexed
+                                loadDetallePedido(coddoc,correlativo)
+                                .then(()=>{
+                                    
+                                    funciones.showToast('Documento cargado...');
+                                    get_tbl_pedido();
+
+
+                                    //ACTUALIZO EL DOC_ESTATUS=A PARA QUE YA NO SE PUEDA FACTURAR Y NO LO ELIMINO
+                                    anular_pedido(coddoc,correlativo)
+                                    .then(()=>{    
+                                        funciones.showToast('Documento anterior eliminado con éxito!!');
+                                    })
+                                    .catch(()=>{
+                                        funciones.AvisoError('No se pudo eliminar el pedido anterior');
+                                    })
+
+    
+                                })
+                                .catch((error)=>{
+                                    funciones.AvisoError('No se pudo cargar el pedido. Error: ' + error);
+                                })
+                            })
+                            .catch(()=>{
+                                funciones.AvisoError('No se pudo limpiar el pedido')
+                            })
+                        }
+                    })
+        }
+    })
+
+};
+
+//SELECCIONA EL DETALLE DEL PEDIDO Y LO CARGA
+function loadDetallePedido(coddoc,correlativo){
+    
+    return new Promise((resolve,reject)=>{
+        axios.post('/ventas/loadpedido_edicion', {
+            sucursal:GlobalCodSucursal,
+            coddoc: coddoc,
+            correlativo: correlativo,
+            usuario:GlobalUsuario
+        })
+        .then((response) => {
+            const data = response.data;
+           data.recordset.map((rows)=>{
+                insertTempVentasPOS(rows);
+           })
+            resolve();
+        }, (error) => {
+            //funciones.AvisoError('Error en la solicitud');
+            reject('Error de solicitud');
+        });
+
+    })
+    
+    
+};
+
+function anular_pedido(coddoc,correlativo){
+    return new Promise((resolve,reject)=>{
+        axios.post('/ventas/anular_pedido', {
+            sucursal:GlobalCodSucursal,
+            coddoc: coddoc,
+            correlativo: correlativo
+        })
+        .then((response) => {
+            
+            const data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve();             
+            }else{
+                reject();
+            }
+          
+        }, (error) => {
+            //funciones.AvisoError('Error en la solicitud');
+            reject();
+        });
+    })
+    
+};
+
+
+function fcn_delete_pedido(coddoc,correlativo,st,idBtn){
+   
+    let btn = document.getElementById(idBtn);
+
+    $("#modal_lista_documentos").modal('hide');
+
+
+        funciones.Confirmacion('¿Está seguro que desea Eliminar este Pedido?')
+        .then((value)=>{
+            if(value==true){
+
+                
+                funciones.solicitarClave()
+                    .then((clave)=>{
+                        if(clave==GlobalPassUsuario){
+
+                            btn.disabled = true;
+                            btn.innerHTML = '<i class="fal fa-trash fa-spin"></i>';
+
+                                delete_pedido(GlobalCodSucursal,coddoc,correlativo)
+                                .then(()=>{
+                                    funciones.Aviso('Pedido Eliminado Exitosamente!!')
+                                    tbl_lista_documentos();
+                                })
+                                .catch(()=>{
+                                    btn.disabled = false;
+                                    btn.innerHTML = '<i class="fal fa-trash"></i> Eliminar';
+                                    funciones.AvisoError('No se pudo eliminar');
+                                })
+                            
+                        }else{
+                            funciones.AvisoError('Clave incorrecta')
+                        }
+                    }
+                )        
+            }
+        });
+
+ 
+};
+
+function delete_pedido (sucursal,coddoc,correlativo){
+    return new Promise((resolve,reject)=>{
+        axios.post('/ventas/deletepedidovendedor',{
+           sucursal:sucursal,
+           coddoc:coddoc,
+           correlativo:correlativo
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data);             
+            }else{
+                reject();
+            }                     
+        }, (error) => {
+            reject();
+        });
+    })
+}
+
+//---------------------------
+//editar pedido
+//---------------------------

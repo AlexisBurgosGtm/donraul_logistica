@@ -101,4 +101,26 @@ router.post("/buscar_cliente", async(req,res)=>{
 });
 
 
+router.post("/lista_documentos_tipo", async(req,res)=>{
+    
+    const {sucursal,tipo,fecha}  = req.body;
+    
+    let qry = '';
+    qry = `SELECT  Documentos.CODDOC, Documentos.DOC_NUMERO AS CORRELATIVO, Documentos.NITCLIE AS CODCLIE, Documentos.DOC_NIT AS NIT, Clientes.NOMFAC AS NEGOCIO, Documentos.DOC_NOMREF AS NOMCLIE, 
+    Documentos.DOC_DIRENTREGA AS DIRCLIE, '' AS DESMUNI, ISNULL(Documentos.DOC_TOTALVENTA, 0) AS IMPORTE, Documentos.DOC_FECHA AS FECHA, Documentos.DOC_LATITUD AS LAT, 
+    Documentos.DOC_LONGITUD AS LONG, Documentos.DOC_OBS AS OBS, Documentos.DOC_MATSOLI AS DIRENTREGA, Documentos.DOC_ESTATUS AS ST, Documentos.DOC_CONTADOCREDITO AS TIPO_PAGO, 
+    Documentos.DOC_NUMORDEN AS TIPO_DOC, Documentos.DOC_INTERESADO AS ENTREGA_CONTACTO, Documentos.DOC_RECIBE AS ENTREGA_TELEFONO, Documentos.DOC_MATSOLI AS ENTREGA_DIRECCION, 
+    Documentos.DOC_OBS AS ENTREGA_REFERENCIA, Documentos.DOC_LATITUD AS ENTREGA_LAT, Documentos.DOC_LONGITUD AS ENTREGA_LONG, '' AS DOMICILIO
+            FROM Documentos LEFT OUTER JOIN
+    Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT LEFT OUTER JOIN
+    Clientes ON Documentos.NITCLIE = Clientes.NITCLIE AND Documentos.EMP_NIT = Clientes.EMP_NIT
+            WHERE (Documentos.EMP_NIT = '${sucursal}') 
+            AND (Documentos.DOC_FECHA = '${fecha}') 
+            AND (Documentos.DOC_ESTATUS <> 'A') 
+            AND (Tipodocumentos.TIPODOC = '${tipo}')`
+
+  
+    execute.Query(res,qry);
+});
+
 module.exports = router;

@@ -423,6 +423,22 @@ function gettempDocproductos(usuario){
     
 };
 
+function gettempDocproductos_pos(usuario){
+    
+    return new Promise(async(resolve,reject)=>{
+        var response = await connection.select({
+            from: "temp_pos",
+            order: { by: 'ID', type: 'asc' }
+        })
+        if(Number(response.length)>0){
+            resolve(response);
+        }else{
+            reject('No hay productos agregados');
+        }
+    })
+    
+};
+
 function deleteTempVenta(usuario){
     return new Promise(async(resolve,reject)=>{
         var rowsDeleted = await connection.remove({
@@ -430,6 +446,15 @@ function deleteTempVenta(usuario){
             where: {
                 USUARIO: usuario
             }
+        });
+        if(rowsDeleted>0){resolve()}else{resolve()}
+    })            
+};
+
+function deleteTempVenta_pos(usuario){
+    return new Promise(async(resolve,reject)=>{
+        var rowsDeleted = await connection.remove({
+            from: "temp_pos"
         });
         if(rowsDeleted>0){resolve()}else{resolve()}
     })            
