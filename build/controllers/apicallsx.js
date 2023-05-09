@@ -31,6 +31,9 @@ let apigen = {
                                 case 'POS':
                                     classNavegar.inicio_pos();
                                     break;
+                                case 'DESP':
+                                    classNavegar.inicio_despacho();
+                                    break;
                            
                             }                               
                         }        

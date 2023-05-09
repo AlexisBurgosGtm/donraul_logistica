@@ -9,10 +9,13 @@ function getView(){
                     <div class="card bg-naranja card-rounded shadow col-10 p-2">
                         
                             <div class="row">
-                                <div class="col-6 text-left">
+                                <div class="col-4 text-left">
+                                    <label class="text-white negrita h5" style="font-size:180%">Sala de Ventas</label>
+                                </div>
+                                <div class="col-4 text-left">
                                     <label class="text-white negrita h5" style="font-size:140%" id="lbTotalItems">0 items</label>
                                 </div>
-                                <div class="col-6 text-right">
+                                <div class="col-4 text-right">
                                     <h1 class="text-white negrita" id="lbTotalVenta">Q 0.00</h1>
                                 </div>
                             </div>
@@ -710,23 +713,37 @@ function listener_vista_cobro(){
     });
 
     document.getElementById('txtPosCobroNit').addEventListener('keyup',(e)=>{
-        funciones.Aviso('Búsqueda por nit, no disponible de momento');
-        return;
-
-        document.getElementById('txtPosCobroNit').value = document.getElementById('txtPosCobroNit').value.toUpperCase();
-        document.getElementById('txtPosCobroNit').value = document.getElementById('txtPosCobroNit').value.replace('-','').replace(" ","");
-
        
+        let nit = document.getElementById('txtPosCobroNit').value.toUpperCase();
+
             if (e.code === 'Enter') {
-                funciones.GetDataNit(document.getElementById('txtPosCobroNit').value)
-                .then((json)=>{
-                    document.getElementById('txtPosCobroNombre').value = json;
+                fcn_buscar_cliente(nit)
+                .then(()=>{
+                        
+                })
+                .catch(()=>{
+                    nit = document.getElementById('txtPosCobroNit').value.replace('-','').replace(" ","");
+                    funciones.GetDataNit(nit)
+                    .then((json)=>{
+                        document.getElementById('txtPosCobroNombre').value = json;
+                        document.getElementById('txtPosCobroDireccion').value = "CIUDAD";
+
+                    })
                 })
             };
             if (e.keyCode === 13 && !e.shiftKey) {
-                funciones.GetDataNit(document.getElementById('txtPosCobroNit').value)
-                .then((json)=>{
-                    document.getElementById('txtPosCobroNombre').value = json;
+                fcn_buscar_cliente(nit)
+                .then(()=>{
+                        
+                })
+                .catch(()=>{
+                    nit = document.getElementById('txtPosCobroNit').value.replace('-','').replace(" ","");
+                    funciones.GetDataNit(nit)
+                    .then((json)=>{
+                        document.getElementById('txtPosCobroNombre').value = json;
+                        document.getElementById('txtPosCobroDireccion').value = "CIUDAD";
+
+                    })
                 })
             };
      
@@ -853,6 +870,48 @@ function tbl_clientes(filtro){
 
 };
 
+function fcn_buscar_cliente(nit){
+   
+    return new Promise((resolve, reject)=>{
+        if(nit==''){
+            funciones.AvisoError('Escriba un nombre o nit válidos');
+            reject();
+            return;
+        };
+    
+        axios.post('/pos/buscar_cliente_nit', {
+            sucursal: GlobalCodSucursal,
+            nit:nit
+        })
+        .then((response) => {        
+            if(response=='error'){
+                funciones.AvisoError('Error en la solicitud');
+                reject();
+            }else{
+                const data = response.data.recordset;
+                if(response.data.rowsAffected[0].toString()=='0'){
+                    reject();
+                    return;
+                }
+                data.map((r)=>{
+                    document.getElementById('txtPosCobroNit').value = r.NIT;
+                    document.getElementById('txtPosCobroNitclie').value = r.NITCLIE;
+                    document.getElementById('txtPosCobroNombre').value = r.NOMCLIE;
+                    document.getElementById('txtPosCobroDireccion').value = r.DIRCLIE;
+                })
+                resolve();
+            }
+        }, (error) => {
+            funciones.AvisoError('Error en la solicitud');
+            reject();
+        });
+    
+    })
+    
+
+
+};
+
 function get_datos_cliente(nitclie,nit,nomclie,dirclie){
 
     $("#modal_lista_clientes").modal('hide');
@@ -905,7 +964,7 @@ function get_buscar_producto(filtro){
                 let strClassExist = 'text-success';
                 if(Number(r.EXISTENCIA)<0){strClassExist="text-danger"};
                 str += `
-                <tr class="hand border-secondary border-top-0 border-left-0 border-right-0" onclick="get_producto('${r.CODPROD}','${r.DESPROD}','${r.CODMEDIDA}','${r.EQUIVALE}','${r.COSTO}','${r.PRECIO}')">
+                <tr class="hand border-secondary border-top-0 border-left-0 border-right-0" onclick="get_producto('${r.CODPROD}','${funciones.limpiarTexto(r.DESPROD)}','${r.CODMEDIDA}','${r.EQUIVALE}','${r.COSTO}','${r.PRECIO}')">
                     <td>
                         ${funciones.limpiarTexto(r.DESPROD)}
                         <br>
@@ -1279,7 +1338,7 @@ function finalizar_pedido(tipo){
                         if(value==true){    
                             gettempDocproductos_pos(GlobalUsuario)
                             .then((response)=>{
-                                axios.post('/ventas/insertventa', {
+                                axios.post('/pos/insertventa', {
                                     jsondocproductos:JSON.stringify(response),
                                     codsucursal:GlobalCodSucursal,
                                     empnit: GlobalEmpnit,
@@ -1335,7 +1394,8 @@ function finalizar_pedido(tipo){
                                             //DESBLOQUEANDO EL BOTÓN
                                             if(tipo=='PED'){
                                                 document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
-                                                document.getElementById('btnGuardarPedido').disabled = false;      
+                                                document.getElementById('btnGuardarPedido').disabled = false;
+                                                socket.emit('nuevo_pedido',`Nuevo pedido a nombre de ${ClienteNombre} por monto de ${funciones.setMoneda(GlobalTotalDocumento,'Q')}`);      
                                             };
                                             if(tipo=='COT'){
                                                 document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';

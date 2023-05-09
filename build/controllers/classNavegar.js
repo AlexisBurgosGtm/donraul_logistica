@@ -2,6 +2,7 @@ let classNavegar = {
     login : async(historial)=>{
         divUsuario.innerText = 'DESCONECTADO';
         lbTipo.innerText = "Inicie sesión";
+        rootMenuLateral.innerHTML = '';
         rootMenu.innerHTML = '';
         GlobalCoddoc = '';
         GlobalCodUsuario=99999;
@@ -230,14 +231,16 @@ let classNavegar = {
     supervisor_mapa:()=>{
         funciones.loadScript('./views/supervisor/mapa.js','root')
         .then(()=>{
-            GlobalSelectedForm ='SUPERVISORMAPA';
+            GlobalSelectedForm ='SUPERVISOR';
             initView();
             //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
         })
     },
     supervisor_dashboard:()=>{   
+            
             funciones.loadScript('./views/supervisor/dashboard.js','root')
             .then(()=>{
+                GlobalSelectedForm ='SUPERVISOR';
                 initView();
             })        
     },
@@ -253,6 +256,14 @@ let classNavegar = {
         funciones.loadScript('./views/pos/pos.js','root')
         .then(()=>{
             GlobalSelectedForm ='POS';
+            initView();
+            //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
+        })
+    },
+    inicio_despacho:()=>{
+        funciones.loadScript('./views/pos/despacho.js','root')
+        .then(()=>{
+            GlobalSelectedForm ='DESPACHO';
             initView();
             //window.history.pushState({"page":2}, "facturacion", GlobalUrl + '/facturacion')
         })
