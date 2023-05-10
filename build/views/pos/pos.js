@@ -725,6 +725,8 @@ function listener_vista_cobro(){
                     nit = document.getElementById('txtPosCobroNit').value.replace('-','').replace(" ","");
                     funciones.GetDataNit(nit)
                     .then((json)=>{
+
+                        document.getElementById('txtPosCobroNitclie').value = '';
                         document.getElementById('txtPosCobroNombre').value = json;
                         document.getElementById('txtPosCobroDireccion').value = "CIUDAD";
 
@@ -740,6 +742,7 @@ function listener_vista_cobro(){
                     nit = document.getElementById('txtPosCobroNit').value.replace('-','').replace(" ","");
                     funciones.GetDataNit(nit)
                     .then((json)=>{
+                        document.getElementById('txtPosCobroNitclie').value = '';
                         document.getElementById('txtPosCobroNombre').value = json;
                         document.getElementById('txtPosCobroDireccion').value = "CIUDAD";
 
@@ -781,14 +784,96 @@ function listener_vista_cobro(){
 
     //finalización de pedido
     document.getElementById('btnGuardarPedido').addEventListener('click',()=>{
-        finalizar_pedido('PED');
+
+        let codcliente = document.getElementById('txtPosCobroNitclie').value || ''; //GlobalSelectedCodCliente;
+        if(codcliente==''){
+            funciones.Confirmacion('¿Desea crear este nuevo cliente?')
+            .then((value)=>{
+                if(value==true){
+
+                        let nit = document.getElementById('txtPosCobroNit').value;
+                        document.getElementById('txtPosCobroNitclie').value = nit;
+                        let nombre = document.getElementById('txtPosCobroNombre').value;
+                        let direccion = document.getElementById('txtPosCobroDireccion').value || "CIUDAD";
+
+                        insert_new_cliente(nit,nit,nombre,direccion)
+                        .then(()=>{
+                            finalizar_pedido('PED');
+                        })  
+                        .catch(()=>{
+                            funciones.AvisoError('No se pudo crear el nuevo cliente, revise los datos e inténtelo de nuevo')
+                        })                    
+
+                }
+            })
+        }else{
+            finalizar_pedido('PED');
+        }
+
+        
     });
 
     document.getElementById('btnGuardarCotizacion').addEventListener('click',()=>{
-        finalizar_pedido('COT');
+        let codcliente = document.getElementById('txtPosCobroNitclie').value || ''; //GlobalSelectedCodCliente;
+        if(codcliente==''){
+            funciones.Confirmacion('¿Desea crear este nuevo cliente?')
+            .then((value)=>{
+                if(value==true){
+
+                        let nit = document.getElementById('txtPosCobroNit').value;
+                        document.getElementById('txtPosCobroNitclie').value = nit;
+                        let nombre = document.getElementById('txtPosCobroNombre').value;
+                        let direccion = document.getElementById('txtPosCobroDireccion').value || "CIUDAD";
+
+                        insert_new_cliente(nit,nit,nombre,direccion)
+                        .then(()=>{
+                            finalizar_pedido('COT');
+                        })  
+                        .catch(()=>{
+                            funciones.AvisoError('No se pudo crear el nuevo cliente, revise los datos e inténtelo de nuevo');
+                            document.getElementById('txtPosCobroNitclie').value = '';
+                        })                    
+
+                }
+            })
+        }else{
+            finalizar_pedido('COT');
+        }
+
     });
 
 
+
+};
+
+function insert_new_cliente(nitclie,nit,nombre,direccion){
+
+    return new Promise((resolve,reject)=>{
+        axios.post('/clientes/clientes_nuevo',{
+            fecha:funciones.getFecha(),
+            codven: document.getElementById('cmbVendedor').value,
+            empnit: GlobalCodSucursal,
+            nitclie: nit,
+            nomclie: nombre,
+            dirclie: direccion,
+            coddepto: '011',
+            codmunicipio: '156',
+            telclie: '',
+            emailclie: 'SN',
+            lat: '0',
+            long: '0'
+        })
+        .then((response) => {
+            let data = response.data;
+            if(Number(data.rowsAffected[0])>0){
+                resolve(data);             
+            }else{
+                reject();
+            }                     
+        }, (error) => {
+            reject();
+        });
+    })
 
 };
 
@@ -809,16 +894,12 @@ function listener_listado_documentos(){
 
 };
 
-
-
 function initView(){
    
     getView();
     addListeners();
 
 };
-
-
 
 function tbl_clientes(filtro){
    
@@ -1261,7 +1342,10 @@ function get_vendedores(){
 function finalizar_pedido(tipo){
 
             let codcliente = document.getElementById('txtPosCobroNitclie').value || ''; //GlobalSelectedCodCliente;
-            if(codcliente==''){funciones.AvisoError('Seleccione un cliente');return;}
+            if(codcliente==''){
+                funciones.AvisoError('Seleccione un cliente');
+                return;
+            }
 
             let nit = document.getElementById('txtPosCobroNit').value || 'CF';
             let ClienteNombre = document.getElementById('txtPosCobroNombre').value;
@@ -1382,23 +1466,23 @@ function finalizar_pedido(tipo){
                                             funciones.AvisoError('No se pudo guardar');
                                             //DESBLOQUEANDO EL BOTÓN
                                             if(tipo=='PED'){
-                                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido (f8)';
                                                 document.getElementById('btnGuardarPedido').disabled = false;      
                                             };
                                             if(tipo=='COT'){
-                                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización (f9)';
                                                 document.getElementById('btnGuardarCotizacion').disabled = false;
                                             };
                                             //DESBLOQUEANDO EL BOTÓN
                                     }else{
                                             //DESBLOQUEANDO EL BOTÓN
                                             if(tipo=='PED'){
-                                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido (f8)';
                                                 document.getElementById('btnGuardarPedido').disabled = false;
                                                 socket.emit('nuevo_pedido',`Nuevo pedido a nombre de ${ClienteNombre} por monto de ${funciones.setMoneda(GlobalTotalDocumento,'Q')}`);      
                                             };
                                             if(tipo=='COT'){
-                                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización (f9)';
                                                 document.getElementById('btnGuardarCotizacion').disabled = false;
                                             };
                                             //DESBLOQUEANDO EL BOTÓN
@@ -1415,11 +1499,11 @@ function finalizar_pedido(tipo){
                                     funciones.AvisoError('No se pudo guardar');
                                     //DESBLOQUEANDO EL BOTÓN
                                     if(tipo=='PED'){
-                                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido (f8)';
                                         document.getElementById('btnGuardarPedido').disabled = false;      
                                     };
                                     if(tipo=='COT'){
-                                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización (f9)';
                                         document.getElementById('btnGuardarCotizacion').disabled = false;
                                     };
                                     //DESBLOQUEANDO EL BOTÓN    
@@ -1430,11 +1514,11 @@ function finalizar_pedido(tipo){
                                     funciones.AvisoError('No se pudo guardar');
                                     //DESBLOQUEANDO EL BOTÓN
                                     if(tipo=='PED'){
-                                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido (f8)';
                                         document.getElementById('btnGuardarPedido').disabled = false;      
                                     };
                                     if(tipo=='COT'){
-                                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización (f9)';
                                         document.getElementById('btnGuardarCotizacion').disabled = false;
                                     };
                                     //DESBLOQUEANDO EL BOTÓN    
@@ -1442,11 +1526,11 @@ function finalizar_pedido(tipo){
                         }else{
                             //DESBLOQUEANDO EL BOTÓN
                             if(tipo=='PED'){
-                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                                document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido (f8)';
                                 document.getElementById('btnGuardarPedido').disabled = false;      
                             };
                             if(tipo=='COT'){
-                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                                document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización (f9)';
                                 document.getElementById('btnGuardarCotizacion').disabled = false;
                             };
                             //DESBLOQUEANDO EL BOTÓN            
@@ -1458,11 +1542,11 @@ function finalizar_pedido(tipo){
                     funciones.AvisoError('No se pudo guardar');
                     //DESBLOQUEANDO EL BOTÓN
                     if(tipo=='PED'){
-                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido';
+                        document.getElementById('btnGuardarPedido').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Pedido (f8)';
                         document.getElementById('btnGuardarPedido').disabled = false;      
                     };
                     if(tipo=='COT'){
-                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización';
+                        document.getElementById('btnGuardarCotizacion').innerHTML = '<i class="fal fa-save mr-1"></i> Crear Cotización (f9)';
                         document.getElementById('btnGuardarCotizacion').disabled = false;
                     };
                     //DESBLOQUEANDO EL BOTÓN

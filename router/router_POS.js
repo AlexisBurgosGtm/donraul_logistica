@@ -9,9 +9,10 @@ router.post("/despacho_pedidos", async(req,res)=>{
 
 
     let clasif = '';
+
     if(codcla=='MC'){
         clasif = `'MC','HER','PER'`;
-    }else{
+    }else{        
         clasif=`'FERRE','ELECT','HEE','HM','JAR','PINT','PL','SC1','TOR'`;
     }
 
@@ -111,23 +112,39 @@ router.post("/buscar_cliente", async(req,res)=>{
    
     const { sucursal, filtro } = req.body;
 
+    let xqry = `
+    SELECT        Empresas.EMP_MES, Empresas.EMP_ANO, Clientes.EMP_NIT, 
+    Clientes.NITCLIE, Clientes.CODCLIE, Clientes.NOMCLIE, 
+    Clientes.DIRCLIE, Clientes.ZONACLIE, 
+    Clientes.CODDEPTO, Clientes.CODMUNI, Clientes.FAXCLIE, 
+    Clientes.TELCLIE, Clientes.EMAILCLIE, Clientes.TIPOCLIE, 
+    Clientes.ACEPTACHEQUE, Clientes.FECHAINGRESO, Clientes.NITFACTURA AS NIT, 
+    Clientes.CODVEN, Clientes.LIMITECREDITO, Clientes.DIASCREDITO, Clientes.CODPAIS, 
+    Clientes.NOMFAC, Clientes.CODBODEGA, Clientes.CEDULA, Clientes.DESCUENTO, 
+    Clientes.LISTA, Clientes.CODTIPOCLIE, Clientes.COLONIA, Clientes.COMISION, Clientes.IMPUESTO1, Clientes.NUMEROREG, 
+    Clientes.TEMPORADACREDITO, Clientes.TEMPORADADIAS, Clientes.FORMATOCONTA, Clientes.VENTADOLARES, Clientes.VENTAEXPORTA, Clientes.MONTOIVARET, Clientes.PORIVARET, Clientes.CODTIPOFP, 
+    Clientes.UTILIZAPUNTOS, Clientes.TIPOPUNTOS, Clientes.CODPOSTAL, Clientes.NCUOTAS, Clientes.VARIASLISTAS, Clientes.DIASPRIMERCUOTA, Clientes.DIASCUOTAS, Clientes.CALCULOCUOTAS, Clientes.CLIE_CARGOAUT, 
+    Clientes.TIPO_CARGOAUT, Clientes.LATITUDCLIE, Clientes.LONGITUDCLIE, 
+    Clientesaldo.SALDOFINAL AS SALDO
+FROM            Empresas LEFT OUTER JOIN
+    Clientesaldo ON Empresas.EMP_MES = Clientesaldo.SALDO_MES AND Empresas.EMP_ANO = Clientesaldo.SALDO_ANO AND Empresas.EMP_NIT = Clientesaldo.EMP_NIT LEFT OUTER JOIN
+    Clientes ON Clientesaldo.NITCLIE = Clientes.NITCLIE AND Clientesaldo.EMP_NIT = Clientes.EMP_NIT
+WHERE  (NOT (Clientes.EMP_NIT IS NULL) AND Empresas.EMP_NIT='${sucursal}' AND Clientes.NOMCLIE like '%${filtro}%'
+    OR
+    (NOT (Clientes.EMP_NIT IS NULL) AND Empresas.EMP_NIT='${sucursal}' AND Clientes.NITFACTURA ='${filtro}'
+    `
+    
     let qry = `
-        SELECT Clientes.NITCLIE, Clientes.NITFACTURA AS NIT, Clientes.NOMCLIE, 
-        Clientes.DIRCLIE, Clientes.TELCLIE, Clientesaldo.SALDOFINAL AS SALDO
-        FROM Clientes LEFT OUTER JOIN
-                         Clientesaldo ON Clientes.NITCLIE = Clientesaldo.NITCLIE AND Clientes.EMP_NIT = Clientesaldo.EMP_NIT
+    SELECT Clientes.NITCLIE, Clientes.NITFACTURA AS NIT, Clientes.NOMCLIE, 
+        Clientes.DIRCLIE, Clientes.TELCLIE, 0 AS SALDO
+        FROM Clientes
         WHERE 
             (Clientes.EMP_NIT = '${sucursal}') 
-            AND (Clientesaldo.SALDO_ANO = year(getdate())) 
-            AND (Clientesaldo.SALDO_MES = month(getdate()))
             AND (Clientes.NOMCLIE like '%${filtro}%')
                 OR
             (Clientes.EMP_NIT = '${sucursal}') 
-            AND (Clientesaldo.SALDO_ANO = year(getdate())) 
-            AND (Clientesaldo.SALDO_MES = month(getdate()))
             AND (Clientes.NITCLIE ='${filtro}')
-            `
-    
+    `
 
     execute.Query(res,qry);
      

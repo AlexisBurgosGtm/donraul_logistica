@@ -14,6 +14,9 @@ function getView(){
                       </div>
                       <div class="tab-pane fade" id="tres" role="tabpanel" aria-labelledby="home-tab">
                           ${view.graficas1()}                      
+                      </div>
+                      <div class="tab-pane fade" id="cuatro" role="tabpanel" aria-labelledby="home-tab">
+                          ${view.panel_inventarios()}                      
                       </div>    
                   </div>
 
@@ -29,19 +32,27 @@ function getView(){
                       <li class="nav-item">
                           <a class="nav-link negrita text-danger" id="tab-tres" data-toggle="tab" href="#tres" role="tab" aria-controls="home" aria-selected="true">
                               <i class="fal fa-comments"></i></a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link negrita text-danger" id="tab-cuatro" data-toggle="tab" href="#cuatro" role="tab" aria-controls="home" aria-selected="true">
+                              <i class="fal fa-comments"></i></a>
                       </li>         
                   </ul>
               </div>
               <div class="row">
                   <button class="btn waves-effect btn-bottom-l btn-naranja btn-circle btn-xl hand shadow" id="btnTotales">
                       <i class=""></i>T
-                  </button>  
+                  </button>
+               
                   <button class="btn waves-effect btn-bottom-middle btn-warning btn-circle btn-xl hand shadow" id="btnDias">
                       <i class=""></i>D
                   </button> 
-                  <button class="btn waves-effect btn-bottom-r btn-info btn-circle btn-xl hand shadow" id="btnGraficas">
+                  <button class="btn hidden waves-effect btn-bottom-r btn-info btn-circle btn-xl hand shadow" id="btnGraficas">
                       <i class=""></i>G
                   </button> 
+                  <button class="btn waves-effect btn-bottom-r btn-success btn-circle btn-xl hand shadow" id="btnInventarios">
+                  <i class=""></i>P
+              </button> 
               </div>   
 
           `
@@ -184,6 +195,56 @@ function getView(){
                   </div>
                 </div>
               </div>
+          `
+        },
+        panel_inventarios:()=>{
+          return `
+          <div class="row">  
+            <div id="panel-3" class="panel col-12">
+              <div class="panel-hdr">
+                <h2>
+                Consulta de Inventarios
+                </h2>
+                <div class="panel-toolbar">
+                  <button class="btn btn-panel" data-action="panel-collapse" data-toggle="tooltip" data-offset="0,10" data-original-title="Collapse"></button>
+                  <button class="btn btn-panel" data-action="panel-fullscreen" data-toggle="tooltip" data-offset="0,10" data-original-title="Fullscreen"></button>  
+                </div>
+              </div>
+              <div class="panel-container show">
+                <div class="panel-content">
+                  <div class="form-group">
+                    <label>Buscar Producto</label>
+                    <div class="input-group">
+                      <input type="text" autocomplete="off" class="form-control" id="txtBuscarProducto">
+                      <button class="btn btn-naranja btn-md hand" id="btnBuscarProducto">
+                        <i class="fal fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="row table-responsive" id="tblInventario">
+                    <table class="table table-striped table-hovered">
+                      <thead class="bg-naranja text-white">
+                        <tr>
+                          <td>PRODUCTO</td>
+                          <td>PRECIO</td>
+                          <td>EXISTENCIA</td>
+                          <td>COSTO</td>
+                          <td>COSTO_PROMEDIO</td>
+                          <td>COSTO_ULTIMO</td>
+                          <td>UTILIDAD</td>
+                          <td>MARGEN</td>
+                        </tr>
+                      </thead>
+                      <tbody id="tblDataInventarios">
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
           `
         },
         panel_dias:()=>{
@@ -381,6 +442,10 @@ async function initView(){
     document.getElementById('btnTotales').addEventListener('click',()=>{
         document.getElementById('tab-uno').click();
     });
+    document.getElementById('btnInventarios').addEventListener('click',()=>{
+        document.getElementById('tab-cuatro').click();
+    });
+    
     document.getElementById('btnDias').addEventListener('click',()=>{
       document.getElementById('tab-dos').click();
     });
@@ -440,11 +505,90 @@ async function initView(){
       getTotalVentas(empnit, 'cmbMeses', 'cmbAnio');
       getTotalCompras(empnit, 'cmbMeses', 'cmbAnio');
 
+      console.log('por acá')
+      document.getElementById('txtBuscarProducto').addEventListener('keyup',(e)=>{
+
+        if (e.code === 'Enter') {
+          document.getElementById('btnBuscarProducto').click();
+        };
+        if (e.keyCode === 13 && !e.shiftKey) {
+          document.getElementById('btnBuscarProducto').click();
+        };
+
+      })
+
+      document.getElementById('btnBuscarProducto').addEventListener('click',()=>{
+          console.log('buscando precio ps')  
+        let filtro = document.getElementById('txtBuscarProducto').value;
+          buscar_precio(filtro);
+      })
+
+
       funciones.slideAnimationTabs();
 
     
 };  
 
+function buscar_precio(filtro){
+
+    let container = document.getElementById('tblInventario');
+    container.innerHTML = GlobalLoader;
+
+  let str = '';
+
+    axios.post('/reportes/rpt_inventarios',{sucursal:GlobalCodSucursal,filtro:filtro})
+    .then((response) => {
+        const data = response.data;        
+        data.recordset.map((r)=>{
+            str += `
+            <div class="card card-rounded col-12 shadow border-naranja hand">
+                <div class="card-body p-2">
+                    <div class="form-group">
+                        <b class="text-naranja">${funciones.limpiarTexto(r.DESPROD)}</b>
+                        <br>
+                        <small>Código: ${r.CODPROD}</small>
+                    </div>
+                    
+                    <hr class="solid">
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Precio:</label>
+                            <h5 class="negrita">${funciones.setMoneda(r.PRECIO,'Q')}</h5>
+                        </div>
+                        <div class="col-6">
+                            <label>Existencia:</label>
+                            <h5 class="negrita text-info">${r.EXISTENCIA}</h5>
+                        </div>
+                    </div>
+                    
+                
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Costo:</label>
+                            <h5 class="negrita">${funciones.setMoneda(r.COSTO,'Q')}</h5>
+                        </div>
+                        <div class="col-4">
+                            <label>C.Promedio:</label>
+                            <h5 class="negrita">${funciones.setMoneda(r.PROMEDIO,'Q')}</h5>
+                        </div>
+                        <div class="col-4">
+                            <label>C.Último:</label>
+                            <h5 class="negrita">${funciones.setMoneda(r.ULTIMO,'Q')}</h5>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <br>`;
+        })
+        container.innerHTML = str;
+    }, (error) => {
+        container.innerHTML = `<h1 class="text-danger">Error al cargar datos.. ${error}</h1>`
+    });
+
+
+};
 
 function getEmpresas(){        
         document.getElementById('cmbEmpresas').innerHTML = funciones.getComboSucursales()

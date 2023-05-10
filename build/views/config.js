@@ -56,6 +56,7 @@ function getView(){
                                     <td>OBJETIVO</td>
                                     <td>PEDIDO</td>
                                     <td>COTIZACIÓN</td>
+                                    <td>BODEGA</td>
                                     <td></td>
                                 </tr>
                             </thead>
@@ -98,6 +99,7 @@ function getView(){
                                     <option value="SUP">SUPERVISOR (SUP)</option>
                                     <option value="CAJA">CAJERO (CAJA)</option>
                                     <option value="POS">PUNTO DE VENTA (POS)</option>
+                                    <option value="DESP">DESPACHO</option>
                                 </select>
                             </div>    
                         </div>
@@ -131,10 +133,26 @@ function getView(){
                     
                     <br>
                     
-                    <div class="form-group">
-                        <label class="negrita">OBJETIVO VENTA</label>
-                        <input type="number" class="negrita text-danger col-6 form-control" id="txtObjetivoU" value="0">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="negrita">OBJETIVO VENTA</label>
+                                <input type="number" class="negrita text-danger col-6 form-control" id="txtObjetivoU" value="0">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label class="negrita">TIPO BODEGA</label>
+                                <select class="form-control" id="cmbBodega">
+                                    <option value="SN">NINGUNA</option>
+                                    <option value="MC">MATERIAL DE CONSTRUCCIÓN</option>
+                                    <option value="FERRE">FERRETERÍA</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
+                    
 
                     <div class="row">
                         <div class="col-6">
@@ -183,6 +201,7 @@ function addListeners(){
         let cmbCoddocPedU = document.getElementById('cmbCoddocPedU').value;
         let cmbCoddocCotU = document.getElementById('cmbCoddocCotU').value;
         let txtObjetivoU = document.getElementById('txtObjetivoU').value || '0';
+        let cmbBodega = document.getElementById('cmbBodega').value;
 
         if(txtNombreU==''){funciones.AvisoError('Escriba un nombre de usuario'); return;}
         if(txtClaveU==''){funciones.AvisoError('Escriba una clave de usuario'); return;}
@@ -194,7 +213,7 @@ function addListeners(){
                 btnGuardarU.innerHTML = '<i class="fal fa-save fa-spin"></i>';
                 btnGuardarU.disabled = true;
                 
-                insert_usuario(cmbTipoU, txtNombreU, txtClaveU, cmbVendedorU, txtObjetivoU, cmbCoddocPedU, cmbCoddocCotU)
+                insert_usuario(cmbTipoU, txtNombreU, txtClaveU, cmbVendedorU, txtObjetivoU, cmbCoddocPedU, cmbCoddocCotU,cmbBodega)
                 .then(()=>{
                     funciones.Aviso('Usuario creado exitosamente!!');
                     document.getElementById('txtNombreU').value = '';
@@ -323,7 +342,7 @@ function eliminar_usuario(tipo,nombre,clave,idbtn){
     
 }
 
-function insert_usuario(tipo,nombre,clave,codven,objetivo,coddoc_ped,coddoc_cot){
+function insert_usuario(tipo,nombre,clave,codven,objetivo,coddoc_ped,coddoc_cot,codclauno){
 
     return new Promise((resolve,reject)=>{
         axios.post('/reportes/usuarios_new', {
@@ -334,7 +353,8 @@ function insert_usuario(tipo,nombre,clave,codven,objetivo,coddoc_ped,coddoc_cot)
             codven:codven,
             objetivo:objetivo,
             ped:coddoc_ped,
-            cot:coddoc_cot
+            cot:coddoc_cot,
+            codclauno:codclauno
         })
         .then((response) => {
                 const data = response.data;
@@ -385,6 +405,10 @@ function rpt_usuarios(){
         data.map((r)=>{
             i += 1;
             let idbtn = `btnEliminar${i.toString()}`;
+            let tipobod = '';
+            if(r.CODCLAUNO.toString()=='MC'){tipobod='CONSTRUCCIÓN'};
+            if(r.CODCLAUNO.toString()=='FERRE'){tipobod='FERRETERÍA'};
+            if(r.CODCLAUNO.toString()=='SN'){tipobod='- - - - - -'}; 
             str += `
             <tr>
                 <td>${get_tipo_empleado(r.TIPO)}</td>
@@ -394,6 +418,7 @@ function rpt_usuarios(){
                 <td>${r.OBJETIVO}</td>
                 <td>${r.CODDOC}</td>
                 <td>${r.CODDOC_COTIZ}</td>
+                <td>${tipobod}</td>
                 <td>
                     <button id="${idbtn}" class="btn btn-danger btn-circle hand shadow" onclick="eliminar_usuario('${r.TIPO}','${r.USUARIO}','${r.CLAVE}','${idbtn}')">
                         <i class="fal fa-trash"></i>
@@ -426,6 +451,9 @@ function get_tipo_empleado(codtipo){
             break;
         case 'POS':
             tipo = 'PUNTO DE VENTA (POS)';
+            break;
+        case 'DESP':
+            tipo = 'DESPACHO / BODEGA';
             break;
     }
 

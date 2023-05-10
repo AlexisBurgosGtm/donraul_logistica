@@ -120,6 +120,32 @@ router.post("/rpt_total_compras", async(req,res)=>{
 
 });
 
+router.post("/rpt_inventarios", async(req,res)=>{
+
+    const {sucursal,filtro}  = req.body;
+    
+    let qry = '';
+    qry = `
+        SELECT CODPROD, DESPROD, PRECIO, CODMEDIDA, EQUIVALE, 
+        (ISNULL(COSTO,0)*1.12) AS COSTO, 
+        (ISNULL(PROMEDIO,0)*1.12) AS PROMEDIO, 
+        (ISNULL(ULTIMO,0)*1.12) AS ULTIMO, 
+        SALDOFINAL AS EXISTENCIA
+        FROM WEB_PRECIOS
+        WHERE EMP_NIT='${sucursal}'
+            AND DESPROD LIKE '%${filtro}%' 
+            AND CODBODEGA='B001'
+        OR
+            EMP_NIT='${sucursal}'
+            AND CODPROD ='${filtro}'
+            AND CODBODEGA='B001'
+
+    `
+    
+    execute.Query(res,qry);
+
+});
+
 
 
 
@@ -130,7 +156,11 @@ router.post("/usuarios", async(req,res)=>{
     
     let qry = '';
     qry = `
-        SELECT WEB_USUARIOS.TIPO, WEB_USUARIOS.USUARIO, WEB_USUARIOS.CLAVE, WEB_USUARIOS.OBJETIVO, WEB_USUARIOS.CODVEN, Vendedores.NOMVEN, WEB_USUARIOS.CODDOC, WEB_USUARIOS.CODDOC_COTIZ
+        SELECT WEB_USUARIOS.TIPO, WEB_USUARIOS.USUARIO, 
+        WEB_USUARIOS.CLAVE, WEB_USUARIOS.OBJETIVO, 
+        WEB_USUARIOS.CODVEN, Vendedores.NOMVEN, 
+        WEB_USUARIOS.CODDOC, WEB_USUARIOS.CODDOC_COTIZ,
+        ISNULL(WEB_USUARIOS.CODCLAUNO,'SN') AS CODCLAUNO
         FROM WEB_USUARIOS LEFT OUTER JOIN Vendedores ON WEB_USUARIOS.CODVEN = Vendedores.CODVEN AND WEB_USUARIOS.EMP_NIT = Vendedores.EMP_NIT
         WHERE (WEB_USUARIOS.EMP_NIT = '${sucursal}')
         ORDER BY WEB_USUARIOS.TIPO
@@ -142,15 +172,15 @@ router.post("/usuarios", async(req,res)=>{
 
 router.post("/usuarios_new", async(req,res)=>{
 
-    const {sucursal,tipo,nombre,clave,codven,objetivo,ped,cot}  = req.body;
+    const {sucursal,tipo,nombre,clave,codven,objetivo,ped,cot,codclauno}  = req.body;
 
     let qry = '';
     qry = `
         INSERT INTO WEB_USUARIOS 
-        (EMP_NIT,TIPO,USUARIO,CLAVE,OBJETIVO,CODVEN,CODDOC,CODDOC_COTIZ)  
+        (EMP_NIT,TIPO,USUARIO,CLAVE,OBJETIVO,CODVEN,CODDOC,CODDOC_COTIZ,CODCLAUNO)  
         SELECT '${sucursal}' AS EMP_NIT, '${tipo}' AS TIPO, 
         '${nombre}' AS USUARIO, '${clave}' AS CLAVE, ${objetivo} AS OBJETIVO,
-        ${codven} AS CODVEN, '${ped}' AS CODDOC, '${cot}' AS CODDOC_COTIZ
+        ${codven} AS CODVEN, '${ped}' AS CODDOC, '${cot}' AS CODDOC_COTIZ, '${codclauno}' AS CODCLAUNO
     `
     
     execute.Query(res,qry);
