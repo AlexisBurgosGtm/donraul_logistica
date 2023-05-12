@@ -3,6 +3,19 @@ const express = require('express');
 const router = express.Router();
 
 
+router.post("/despacho_marcar_entregado", async(req,res)=>{
+   
+    const { sucursal, item, cantidad } = req.body;
+
+    let qry = ``
+    
+    
+  
+    execute.Query(res,qry);
+     
+});
+
+
 router.post("/despacho_pedidos", async(req,res)=>{
    
     const { sucursal, codcla } = req.body;
@@ -53,10 +66,11 @@ router.post("/despacho_pedido_detalle", async(req,res)=>{
 
 
     let qry = `
-    SELECT        CODDOC, DOC_NUMERO, DOC_NOMREF AS NOMCLIE, DOC_DIRENTREGA AS DIRCLIE, CODPROD, DESPROD, CANTIDADINV, PRECIO,TOTALPRECIO, CANTIDADPED
+    SELECT        CODDOC, DOC_NUMERO, DOC_NOMREF AS NOMCLIE, 
+    DOC_DIRENTREGA AS DIRCLIE, CODPROD, DESPROD, DOC_ITEM AS ITEM, CANTIDADINV, PRECIO,TOTALPRECIO, CANTIDADPED
 FROM            W_DESPACHO_PRODUCTOS
 WHERE        (DOC_ESTATUS <> 'A') AND (DOC_NUMORDEN = 'POS') AND (CODCLAUNO IN (${clasif}))
-GROUP BY EMP_NIT, CODDOC, DOC_NUMERO, DOC_FECHA, NITCLIE, DOC_NIT, DOC_NOMREF, DOC_DIRENTREGA, CODPROD, DESPROD, CANTIDADINV, PRECIO,TOTALPRECIO, CANTIDADPED
+GROUP BY EMP_NIT, CODDOC, DOC_NUMERO, DOC_FECHA, NITCLIE, DOC_NIT, DOC_NOMREF, DOC_DIRENTREGA, CODPROD, DESPROD, DOC_ITEM, CANTIDADINV, PRECIO,TOTALPRECIO, CANTIDADPED
 HAVING        (EMP_NIT = '${sucursal}') AND (CODDOC = '${coddoc}') AND (DOC_NUMERO = '${correlativo}')
 
     `

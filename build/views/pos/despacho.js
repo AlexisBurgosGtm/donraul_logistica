@@ -85,15 +85,15 @@ function getView(){
             <div class="row">
                 <div class="card col-12 card-rounded shadow hand border-naranja">
                     <div class="card-body p-4">
-                        <h1 class="text-naranja text-center">PEDIDOS PENDIENTES DE DESPACHO</h1>
-                        <br>
+                        
                         <br>
                         <div class="table-responsive col-12">
-                            <table class="table table-responsive table-hover">
+                            <table class="table table-responsive table-hover table-bordered">
                                 <thead class="bg-secondary text-white">
                                     <tr>
                                         <td>PRODUCTO</td>
                                         <td>CANTIDAD</td>
+                                        <td>ENTREGADO</td>
                                         <td>PRECIO</td>
                                         <td>SUBTOTAL</td>
                                     </tr>
@@ -110,6 +110,11 @@ function getView(){
             <button class="btn btn-secondary btn-bottom-l hand shadow btn-xl btn-circle" id="btnAtrasDetalle">
                 <i class="fal fa-arrow-left"></i>
             </button>
+            `
+        },
+        modal_cambiar_cantidad:()=>{
+            return `
+            
             `
         }
     }
@@ -133,6 +138,10 @@ function addListeners(){
     document.getElementById('btnAtrasDetalle').addEventListener('click',()=>{
          document.getElementById('tab-uno').click();
     });
+
+
+
+    funciones.slideAnimationTabs();
 
 
 };
@@ -166,7 +175,7 @@ function get_tbl_despacho(codclauno){
             const data = response.data.recordset;
             data.map((r)=>{
                 str += `
-                <tr class="hand" onclick="get_detalle_pedido('${r.CODDOC}','${r.DOC_NUMERO}')">
+                <tr class="hand" onclick="get_detalle_pedido('${r.NOMCLIE}','${r.CODDOC}','${r.DOC_NUMERO}')">
                     <td>
                         ${r.CODDOC}-${r.DOC_NUMERO}
                         <br>
@@ -200,11 +209,12 @@ function get_tbl_despacho(codclauno){
 
 };
 
-function get_detalle_pedido(coddoc,correlativo){
 
-
+function get_detalle_pedido(nomclie,coddoc,correlativo){
 
         document.getElementById('tab-dos').click();
+
+        document.getElementById('lbCliente').innerText = nomclie;
 
         let container = document.getElementById('tblDataDetallePedido');
         container.innerHTML = GlobalLoader;
@@ -225,16 +235,17 @@ function get_detalle_pedido(coddoc,correlativo){
                 const data = response.data.recordset;
                 data.map((r)=>{
                     str += `
-                    <tr class="hand">
+                    <tr class="hand" onclick="set_cantidad('${r.ITEM}','${r.DESPROD}','${r.CANTIDADINV}')">
                         <td>
                             ${r.DESPROD}
                             <br>
                             <small>Código: ${r.CODPROD}</small>
                         </td>
                         <td>
-                            ${r.CANTIDADINV}
-                            <br>
-                            <small>Código: ${r.CANTIDADPED}</small>
+                            <b class="text-info h3">${r.CANTIDADINV}</b>
+                        </td>
+                        <td>
+                            <b class="text-danger h3">${r.CANTIDADPED}</b>
                         </td>
                         <td>
                             ${funciones.setMoneda(r.PRECIO, 'Q')}
@@ -242,7 +253,6 @@ function get_detalle_pedido(coddoc,correlativo){
                         <td>
                             ${funciones.setMoneda(r.TOTALPRECIO,'Q')}
                         </td>
-
                     </tr>
                     `
                 })
@@ -252,6 +262,17 @@ function get_detalle_pedido(coddoc,correlativo){
             funciones.AvisoError('Error en la solicitud');
             container.innerHTML = 'No day datos....';
         });
+
+
+
+};
+
+
+
+
+function set_cantidad(item,desprod,cantidad){
+
+
 
 
 
