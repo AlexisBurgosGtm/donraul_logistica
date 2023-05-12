@@ -16,6 +16,7 @@ let apigen = {
                             GlobalCotiz = rows.COTIZ;
                             GlobalCodSucursal = sucursal;
                             GlobalSistema = sucursal;
+                            GlobalCodCla = rows.CODCLAUNO;
                             GlobalObjetivoVenta = Number(rows.OBJETIVO);
                             GlobalSelectedDiaUpdated = Number(f.getDate());
                             switch (GlobalTipoUsuario) {

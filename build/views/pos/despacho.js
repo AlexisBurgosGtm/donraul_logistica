@@ -84,11 +84,32 @@ function getView(){
             <br>
             <div class="row">
                 <div class="card col-12 card-rounded shadow hand border-naranja">
-                    <div class="card-body p-4 text-center">
-                        <h1 class="text-naranja">PEDIDOS PENDIENTES DE DESPACHO</h1>
+                    <div class="card-body p-4">
+                        <h1 class="text-naranja text-center">PEDIDOS PENDIENTES DE DESPACHO</h1>
+                        <br>
+                        <br>
+                        <div class="table-responsive col-12">
+                            <table class="table table-responsive table-hover">
+                                <thead class="bg-secondary text-white">
+                                    <tr>
+                                        <td>PRODUCTO</td>
+                                        <td>CANTIDAD</td>
+                                        <td>PRECIO</td>
+                                        <td>SUBTOTAL</td>
+                                    </tr>
+                                </thead>
+                                <tbody id="tblDataDetallePedido">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+
+                    
                 </div>
             </div>
+            <button class="btn btn-secondary btn-bottom-l hand shadow btn-xl btn-circle" id="btnAtrasDetalle">
+                <i class="fal fa-arrow-left"></i>
+            </button>
             `
         }
     }
@@ -99,13 +120,23 @@ function getView(){
 function addListeners(){
 
     let cmbClaUno = document.getElementById('cmbClaUno');
+    cmbClaUno.value = GlobalCodCla;
+
     get_tbl_despacho(cmbClaUno.value);
 
     cmbClaUno.addEventListener('change',()=>{
         get_tbl_despacho(cmbClaUno.value);
     })
 
+
+
+    document.getElementById('btnAtrasDetalle').addEventListener('click',()=>{
+         document.getElementById('tab-uno').click();
+    });
+
+
 };
+
 
 function initView(){
     
@@ -113,6 +144,7 @@ function initView(){
     addListeners();
 
 };
+
 
 
 function get_tbl_despacho(codclauno){
@@ -134,7 +166,7 @@ function get_tbl_despacho(codclauno){
             const data = response.data.recordset;
             data.map((r)=>{
                 str += `
-                <tr>
+                <tr class="hand" onclick="get_detalle_pedido('${r.CODDOC}','${r.DOC_NUMERO}')">
                     <td>
                         ${r.CODDOC}-${r.DOC_NUMERO}
                         <br>
@@ -163,6 +195,63 @@ function get_tbl_despacho(codclauno){
         funciones.AvisoError('Error en la solicitud');
         container.innerHTML = 'No day datos....';
     });
+
+
+
+};
+
+function get_detalle_pedido(coddoc,correlativo){
+
+
+
+        document.getElementById('tab-dos').click();
+
+        let container = document.getElementById('tblDataDetallePedido');
+        container.innerHTML = GlobalLoader;
+
+        let str = '';
+
+        axios.post('/pos/despacho_pedido_detalle', {
+            sucursal: GlobalCodSucursal,
+            codcla:document.getElementById('cmbClaUno').value,
+            coddoc:coddoc,
+            correlativo:correlativo
+        })
+        .then((response) => {        
+            if(response=='error'){
+                funciones.AvisoError('Error en la solicitud');
+                container.innerHTML = 'No day datos....';
+            }else{
+                const data = response.data.recordset;
+                data.map((r)=>{
+                    str += `
+                    <tr class="hand">
+                        <td>
+                            ${r.DESPROD}
+                            <br>
+                            <small>Código: ${r.CODPROD}</small>
+                        </td>
+                        <td>
+                            ${r.CANTIDADINV}
+                            <br>
+                            <small>Código: ${r.CANTIDADPED}</small>
+                        </td>
+                        <td>
+                            ${funciones.setMoneda(r.PRECIO, 'Q')}
+                        </td>
+                        <td>
+                            ${funciones.setMoneda(r.TOTALPRECIO,'Q')}
+                        </td>
+
+                    </tr>
+                    `
+                })
+                container.innerHTML = str;
+            }
+        }, (error) => {
+            funciones.AvisoError('Error en la solicitud');
+            container.innerHTML = 'No day datos....';
+        });
 
 
 

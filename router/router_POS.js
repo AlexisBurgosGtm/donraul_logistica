@@ -37,6 +37,38 @@ router.post("/despacho_pedidos", async(req,res)=>{
      
 });
 
+router.post("/despacho_pedido_detalle", async(req,res)=>{
+   
+    const { sucursal, codcla, coddoc, correlativo } = req.body;
+
+
+    let clasif = '';
+
+    if(codcla=='MC'){
+        clasif = `'MC','HER','PER'`;
+    }else{        
+        clasif=`'FERRE','ELECT','HEE','HM','JAR','PINT','PL','SC1','TOR'`;
+    }
+
+
+
+    let qry = `
+    SELECT        CODDOC, DOC_NUMERO, DOC_NOMREF AS NOMCLIE, DOC_DIRENTREGA AS DIRCLIE, CODPROD, DESPROD, CANTIDADINV, PRECIO,TOTALPRECIO, CANTIDADPED
+FROM            W_DESPACHO_PRODUCTOS
+WHERE        (DOC_ESTATUS <> 'A') AND (DOC_NUMORDEN = 'POS') AND (CODCLAUNO IN (${clasif}))
+GROUP BY EMP_NIT, CODDOC, DOC_NUMERO, DOC_FECHA, NITCLIE, DOC_NIT, DOC_NOMREF, DOC_DIRENTREGA, CODPROD, DESPROD, CANTIDADINV, PRECIO,TOTALPRECIO, CANTIDADPED
+HAVING        (EMP_NIT = '${sucursal}') AND (CODDOC = '${coddoc}') AND (DOC_NUMERO = '${correlativo}')
+
+    `
+    
+    
+  
+    execute.Query(res,qry);
+     
+});
+
+
+
 router.post("/claseuno", async(req,res)=>{
    
     const { sucursal } = req.body;

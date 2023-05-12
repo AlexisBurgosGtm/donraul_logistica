@@ -7,7 +7,7 @@
 };
 
 
-const xconfig = {
+const xx_config = {
 	user: 'iEx',
 	password: 'iEx',
 	server: 'ELORIGEN\\SQLDEV',

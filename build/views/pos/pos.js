@@ -254,7 +254,7 @@ function getView(){
 
                             <div class="form-group">
                                 <label class="negrita text-f-90">CÓDIGO CLIENTE</label>
-                                <input disabled type="text" class="form-control form-control-md border-naranja negrita text-f-90" id="txtPosCobroNitclie">                            
+                                <input disabled type="text" class="form-control form-control-md border-naranja negrita text-f-90" id="txtPosCobroNitclie" autocomplete="off">                            
                             </div>
 
                             <div class="form-group">
@@ -521,7 +521,7 @@ function addListeners(){
 
 function listener_teclado(){
     //evitando errores
-    Mousetrap.bind('f5', function(e) { e.preventDefault(); });
+    //Mousetrap.bind('f5', function(e) { e.preventDefault(); });
     Mousetrap.bind('f7', function(e) { e.preventDefault(); });
     Mousetrap.bind('f10', function(e) { e.preventDefault(); });
     Mousetrap.bind('f11', function(e) { e.preventDefault(); });
@@ -729,7 +729,7 @@ function listener_vista_cobro(){
                         document.getElementById('txtPosCobroNitclie').value = '';
                         document.getElementById('txtPosCobroNombre').value = json;
                         document.getElementById('txtPosCobroDireccion').value = "CIUDAD";
-
+                        document.getElementById('txtPosCobroNombre').focus();
                     })
                 })
             };
@@ -745,7 +745,7 @@ function listener_vista_cobro(){
                         document.getElementById('txtPosCobroNitclie').value = '';
                         document.getElementById('txtPosCobroNombre').value = json;
                         document.getElementById('txtPosCobroDireccion').value = "CIUDAD";
-
+                        document.getElementById('txtPosCobroNombre').focus();
                     })
                 })
             };

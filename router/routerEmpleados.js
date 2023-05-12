@@ -10,7 +10,9 @@ router.get("/login",async(req,res)=>{
 
             let qry ='';
             qry = `SELECT CODVEN AS CODIGO, USUARIO, TIPO, CODDOC, CODDOC_COTIZ AS COTIZ, 
-                    EMP_NIT AS CODSUCURSAL, ISNULL(OBJETIVO,100000) AS OBJETIVO 
+                    EMP_NIT AS CODSUCURSAL, 
+                    ISNULL(OBJETIVO,100000) AS OBJETIVO,
+                    CODCLAUNO
                     FROM WEB_USUARIOS 
                     WHERE EMP_NIT='${codsucursal}' AND USUARIO='${user}' AND CLAVE='${pass}' `;
 

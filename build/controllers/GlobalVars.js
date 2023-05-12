@@ -41,6 +41,7 @@ let GlobalCoddoc = 'PED01';
 let GlobalCotiz = '';
 let GlobalTotalDocumento = 0;
 let GlobalTotalCostoDocumento = 0;
+let GlobalCodCla = '';
 
 let GlobalTipoCobro = 'TERMINAR';
 
