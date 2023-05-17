@@ -11,7 +11,7 @@ router.post('/buscar_precio',async(req,res)=>{
     
 
     let qry = `SELECT TOP (30) 
-    Productos.CODPROD, Productos.DESPROD, Precios.CODMEDIDA, 
+    Productos.CODPROD, Productos.DESPROD, PRODUCTOS.DESPROD2, Precios.CODMEDIDA, 
     Precios.EQUIVALE, Precios.COSTO, Precios.PRECIO, 
     Precios.MAYORISTA, Precios.ESCALA, 
     Precios.OFERTA, '2023-03-07' AS LASTUPDATE, 
@@ -22,10 +22,12 @@ router.post('/buscar_precio',async(req,res)=>{
                 WHERE (Productos.EMP_NIT = '${sucursal}')
                     AND (Productos.DESPROD LIKE '%${filtro}%')
                     AND (Invsaldo.INV_ANO = YEAR(GETDATE())) AND (Invsaldo.INV_MES = MONTH(GETDATE()))
+                    AND (Invsaldo.CODBODEGA='B001')
                 OR 
                 (Productos.EMP_NIT = '${sucursal}')
                     AND (Productos.CODPROD='${filtro}')
-                    AND (Invsaldo.INV_ANO = YEAR(GETDATE())) AND (Invsaldo.INV_MES = MONTH(GETDATE()))`;
+                    AND (Invsaldo.INV_ANO = YEAR(GETDATE())) AND (Invsaldo.INV_MES = MONTH(GETDATE()))
+                    AND (Invsaldo.CODBODEGA='B001')`;
 
  
     execute.Query(res,qry);
