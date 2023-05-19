@@ -1031,6 +1031,8 @@ function get_buscar_producto(filtro){
 
     let str = '';
 
+    let idf = 'first-element'; let i =0;
+
     axios.post('/pos/productos_filtro', {
         sucursal: GlobalCodSucursal,
         filtro:filtro
@@ -1042,10 +1044,11 @@ function get_buscar_producto(filtro){
         }else{
             const data = response.data.recordset;
             data.map((r)=>{
+                if(Number(i)==0){}else{idf=""};
                 let strClassExist = 'text-success';
                 if(Number(r.EXISTENCIA)<0){strClassExist="text-danger"};
                 str += `
-                <tr class="hand border-secondary border-top-0 border-left-0 border-right-0" onclick="get_producto('${r.CODPROD}','${funciones.limpiarTexto(r.DESPROD)}','${r.CODMEDIDA}','${r.EQUIVALE}','${r.COSTO}','${r.PRECIO}')">
+                <tr id="${idf}" class="hand border-secondary border-top-0 border-left-0 border-right-0" onclick="get_producto('${r.CODPROD}','${funciones.limpiarTexto(r.DESPROD)}','${r.CODMEDIDA}','${r.EQUIVALE}','${r.COSTO}','${r.PRECIO}')">
                     <td>
                         ${funciones.limpiarTexto(r.DESPROD)}
                         <br>
@@ -1068,6 +1071,7 @@ function get_buscar_producto(filtro){
                 `
             })
             container.innerHTML = str;
+            getMoveTable();
         }
     }, (error) => {
         funciones.AvisoError('Error en la solicitud');
@@ -1077,6 +1081,65 @@ function get_buscar_producto(filtro){
 
 
 };
+
+function getMoveTable(){
+    let start = document.getElementById('first-element');
+start.focus();
+start.style.backgroundColor = '#50b988';
+start.style.color = 'white';
+
+const changeStyle = (sibling) => {
+  if (sibling !== null) {
+    start.focus();
+    start.style.backgroundColor = '';
+    start.style.color = '';
+    sibling.focus();
+    sibling.style.backgroundColor = '#50b988';
+    sibling.style.color = 'white';
+    start = sibling;
+  }
+}
+
+const checkKey = (event) => {
+  event = event || window.event;
+  const idx = start.cellIndex;
+
+  if (event.keyCode === 38) {
+    // up arrow
+    const previousSibling = start.previousElementSibling;
+    changeStyle(previousSibling);
+    
+    //const previousRow = start.parentElement.previousElementSibling;
+    //if (previousRow !== null) {
+      //const previousSibling = previousRow.cells[idx];
+      //changeStyle(previousSibling);
+    //}
+
+  } else if (event.keyCode === 40) {
+    // down arrow
+    const nextsibling = start.nextElementSibling;
+    changeStyle(nextsibling);
+    
+    //const nextRow = start.parentElement.nextElementSibling;
+    //if (nextRow !== null) {
+      //const nextSibling = nextRow.cells[idx];
+      //changeStyle(nextSibling); 
+    //}
+
+  } else if (event.keyCode === 37) {
+    // left arrow
+    const previousSibling = start.previousElementSibling;
+    changeStyle(previousSibling);
+  } else if (event.keyCode === 39) {
+    // right arrow
+    const nextsibling = start.nextElementSibling;
+    changeStyle(nextsibling);
+  }
+}
+
+document.onkeydown = checkKey;
+
+}
 
 function get_tbl_productos_clasificacion(codigo){
 

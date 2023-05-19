@@ -7,6 +7,7 @@
 };
 
 
+
 const Xconfig = {
 	user: 'iEx',
 	password: 'iEx',
@@ -16,6 +17,8 @@ const Xconfig = {
 };
 
 
+
+
 const config = {
 	user: 'iEx',
 	password: 'iEx',
@@ -23,7 +26,6 @@ const config = {
 	database: 'VENTAS',
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
-
 
 const sql = require('mssql');
 
