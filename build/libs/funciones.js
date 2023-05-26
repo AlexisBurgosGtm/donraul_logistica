@@ -1,4 +1,7 @@
 let funciones = {
+    download_pdf_doc:(coddoc,correlativo)=>{
+      
+    },
     device:()=>{
       var userAgent = navigator.userAgent || navigator.vendor || window.opera;
       console.log(userAgent);

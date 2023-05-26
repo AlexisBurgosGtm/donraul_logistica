@@ -224,7 +224,7 @@ router.post("/buscar_cliente_nit", async(req,res)=>{
 
 router.post("/lista_documentos_tipo", async(req,res)=>{
     
-    const {sucursal,tipo,fecha}  = req.body;
+    const {sucursal,tipo,fecha,coddoc}  = req.body;
     
     let qry = '';
     qry = `SELECT  Documentos.CODDOC, Documentos.DOC_NUMERO AS CORRELATIVO, Documentos.NITCLIE AS CODCLIE, Documentos.DOC_NIT AS NIT, Clientes.NOMFAC AS NEGOCIO, Documentos.DOC_NOMREF AS NOMCLIE, 
@@ -236,6 +236,7 @@ router.post("/lista_documentos_tipo", async(req,res)=>{
     Tipodocumentos ON Documentos.CODDOC = Tipodocumentos.CODDOC AND Documentos.EMP_NIT = Tipodocumentos.EMP_NIT LEFT OUTER JOIN
     Clientes ON Documentos.NITCLIE = Clientes.NITCLIE AND Documentos.EMP_NIT = Clientes.EMP_NIT
             WHERE (Documentos.EMP_NIT = '${sucursal}') 
+            AND (Documentos.CODDOC = '${coddoc}')
             AND (Documentos.DOC_FECHA = '${fecha}') 
             AND (Documentos.DOC_ESTATUS <> 'A') 
             AND (Tipodocumentos.TIPODOC = '${tipo}')`

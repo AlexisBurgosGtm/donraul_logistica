@@ -1,3 +1,4 @@
+
 function getView(){
     let view = {
         body:()=>{
@@ -1082,22 +1083,24 @@ function get_buscar_producto(filtro){
 
 };
 
-function getMoveTable(){
-    let start = document.getElementById('first-element');
-start.focus();
-start.style.backgroundColor = '#50b988';
-start.style.color = 'white';
 
-const changeStyle = (sibling) => {
-  if (sibling !== null) {
+function getMoveTable(){
+
+    let start = document.getElementById('first-element');
     start.focus();
-    start.style.backgroundColor = '';
-    start.style.color = '';
-    sibling.focus();
-    sibling.style.backgroundColor = '#50b988';
-    sibling.style.color = 'white';
-    start = sibling;
-  }
+    start.style.backgroundColor = '#50b988';
+    start.style.color = 'white';
+
+    const changeStyle = (sibling) => {
+    if (sibling !== null) {
+        start.focus();
+        start.style.backgroundColor = '';
+        start.style.color = '';
+        sibling.focus();
+        sibling.style.backgroundColor = '#50b988';
+        sibling.style.color = 'white';
+        start = sibling;
+    }
 }
 
 const checkKey = (event) => {
@@ -1139,7 +1142,7 @@ const checkKey = (event) => {
 
 document.onkeydown = checkKey;
 
-}
+};
 
 function get_tbl_productos_clasificacion(codigo){
 
@@ -1645,6 +1648,12 @@ function tbl_lista_documentos(){
     let container = document.getElementById('tblDocumentos');
     container.innerHTML = GlobalLoader;
     
+    let coddoc = '';
+    if(tipo=='PED'){
+        coddoc = document.getElementById('cmbCoddoc').value;
+    }else{
+        coddoc = document.getElementById('cmbCoddocCot').value;
+    }
    
     let tableheader = `<table class="table table-responsive table-hover table-striped table-bordered">
                         <thead class="bg-naranja text-white">
@@ -1652,6 +1661,7 @@ function tbl_lista_documentos(){
                                 <td>Documento</td>
                                 <td>Cliente</td>
                                 <td>Importe</td>
+                                <td></td>
                             </tr>
                         </thead>
                         <tbody id="tblListaPedidos">`;
@@ -1663,7 +1673,8 @@ function tbl_lista_documentos(){
     axios.post('/pos/lista_documentos_tipo', {
         sucursal: GlobalCodSucursal,
         tipo:tipo,
-        fecha:fecha   
+        fecha:fecha,
+        coddoc:coddoc   
     })
     .then((response) => {
         const data = response.data.recordset;
@@ -1699,6 +1710,10 @@ function tbl_lista_documentos(){
                             <td>
                                 <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
                             </td>
+                            <td>
+                                <button class="btn btn-circle btn-naranja btn-md hand shadow" onclick="funciones.download_pdf_doc('${rows.CODDOC}','${rows.CORRELATIVO}')">
+                                </button>
+                            </td>
                         </tr>`
         })
         container.innerHTML = tableheader + strdata + tablefoooter;
@@ -1711,6 +1726,7 @@ function tbl_lista_documentos(){
 
 
 };
+
 
 
 function cargarPedidoEdicion(codclie,nit,nombre,direccion,coddoc,correlativo){

@@ -1103,7 +1103,7 @@ function get_data_precios(filtro){
             reject();
         });
     })
-}
+};
 
 
 
@@ -1505,61 +1505,56 @@ async function fcnGuardarNuevoCliente(form){
 
 //FINALIZAR PEDIDO
 async function fcnFinalizarPedido(){
-    
-  
-      
-    let codcliente = document.getElementById('txtCliCodigo').value || ''; //GlobalSelectedCodCliente;
-    if(codcliente==''){funciones.AvisoError('Seleccione un cliente');return;}
+          
+        let codcliente = document.getElementById('txtCliCodigo').value || ''; //GlobalSelectedCodCliente;
+        if(codcliente==''){funciones.AvisoError('Seleccione un cliente');return;}
 
-    let nit = document.getElementById('txtCliNit').value || 'CF';
-    //codcliente = 'CF';
-    let ClienteNombre = document.getElementById('txtCliNombre').value;
-    GlobalSelectedNomCliente = ClienteNombre;
-    
-    let dirclie = document.getElementById('txtCliDireccion').value; // CAMPO DIR_ENTREGA
-    GlobalSelectedDirCliente = dirclie;
+        let nit = document.getElementById('txtCliNit').value || 'CF';
+        //codcliente = 'CF';
+        let ClienteNombre = document.getElementById('txtCliNombre').value;
+        GlobalSelectedNomCliente = ClienteNombre;
+        
+        let dirclie = document.getElementById('txtCliDireccion').value; // CAMPO DIR_ENTREGA
+        GlobalSelectedDirCliente = dirclie;
 
-    let obs = document.getElementById('cmbEntregaTipoDoc').value; //document.getElementById('txtEntregaObs').value; 
-    let direntrega = "SN"; //document.getElementById('txtEntregaDireccion').value; //CAMPO MATSOLI
-    let codbodega = GlobalCodBodega;
-    let cmbTipoEntrega = document.getElementById('cmbEntregaConcre').value; //campo TRANSPORTE
+        let obs = document.getElementById('cmbEntregaTipoDoc').value; //document.getElementById('txtEntregaObs').value; 
+        let direntrega = "SN"; //document.getElementById('txtEntregaDireccion').value; //CAMPO MATSOLI
+        let codbodega = GlobalCodBodega;
+        let cmbTipoEntrega = document.getElementById('cmbEntregaConcre').value; //campo TRANSPORTE
 
 
-    let txtFecha = new Date(document.getElementById('txtFecha').value);
-    let anio = txtFecha.getFullYear();
-    let mes = txtFecha.getUTCMonth()+1;
-    let d = txtFecha.getUTCDate() 
-    let fecha = anio + '-' + mes + '-' + d; // CAMPO DOC_FECHA
-    let dia = d;
+        let txtFecha = new Date(document.getElementById('txtFecha').value);
+        let anio = txtFecha.getFullYear();
+        let mes = txtFecha.getUTCMonth()+1;
+        let d = txtFecha.getUTCDate() 
+        let fecha = anio + '-' + mes + '-' + d; // CAMPO DOC_FECHA
+        let dia = d;
 
-    let hora = funciones.getHora();
-    
-    let fe = txtFecha;// new Date(document.getElementById('txtEntregaFecha').value);
-    let ae = fe.getFullYear();
-    let me = fe.getUTCMonth()+1;
-    let de = fe.getUTCDate() 
-    let fechaentrega = ae + '-' + me + '-' + de;  // CAMPO DOC_FECHAENT
+        let hora = funciones.getHora();
+        
+        let fe = txtFecha;// new Date(document.getElementById('txtEntregaFecha').value);
+        let ae = fe.getFullYear();
+        let me = fe.getUTCMonth()+1;
+        let de = fe.getUTCDate() 
+        let fechaentrega = ae + '-' + me + '-' + de;  // CAMPO DOC_FECHAENT
 
-    let coddoc = document.getElementById('cmbCoddoc').value;//GlobalCoddoc;
-    let correlativoDoc = document.getElementById('txtCorrelativo').value;
+        let coddoc = document.getElementById('cmbCoddoc').value;//GlobalCoddoc;
+        let correlativoDoc = document.getElementById('txtCorrelativo').value;
 
-    let cmbVendedor = document.getElementById('cmbVendedor');
+        let cmbVendedor = document.getElementById('cmbVendedor');
 
-  
+        let latdoc = document.getElementById('lbDocLat').innerText;
+        let longdoc = document.getElementById('lbDocLong').innerText;
 
-    let latdoc = document.getElementById('lbDocLat').innerText;
-    let longdoc = document.getElementById('lbDocLong').innerText;
-
-            let tipo_pago = document.getElementById('cmbEntregaConcre').value;
-            let tipo_doc = document.getElementById('cmbEntregaTipoDoc').value;
-            let entrega_contacto = document.getElementById('txtEntregaContacto').value || document.getElementById('txtNombre').value;
-            let entrega_telefono = document.getElementById('txtEntregaTelefono').value || '00';
-            let entrega_direccion = document.getElementById('txtEntregaDireccion').value || 'SN';
-            let entrega_referencia = document.getElementById('txtEntregaReferencia').value || 'SN';
-            let entrega_lat = document.getElementById('lbEntregaLat').innerText || '0';
-            let entrega_long = document.getElementById('lbEntregaLong').innerText || '0';
-            
-
+        let tipo_pago = document.getElementById('cmbEntregaConcre').value;
+        let tipo_doc = document.getElementById('cmbEntregaTipoDoc').value;
+        let entrega_contacto = document.getElementById('txtEntregaContacto').value || document.getElementById('txtNombre').value;
+        let entrega_telefono = document.getElementById('txtEntregaTelefono').value || '00';
+        let entrega_direccion = document.getElementById('txtEntregaDireccion').value || 'SN';
+        let entrega_referencia = document.getElementById('txtEntregaReferencia').value || 'SN';
+        let entrega_lat = document.getElementById('lbEntregaLat').innerText || '0';
+        let entrega_long = document.getElementById('lbEntregaLong').innerText || '0';
+        
         document.getElementById('btnFinalizarPedido').innerHTML = '<i class="fal fa-paper-plane mr-1 fa-spin"></i>';
         document.getElementById('btnFinalizarPedido').disabled = true;
 
@@ -1671,7 +1666,8 @@ async function fcnFinalizarPedido(){
                     
                 })
 
-    
+  
+                
 };
 
 async function fcnEliminarTempVentas(usuario){
