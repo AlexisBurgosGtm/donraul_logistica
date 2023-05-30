@@ -1681,6 +1681,7 @@ function tbl_lista_documentos(){
         let total =0;
         data.map((rows)=>{
                 let idBtn = `btnEliminar${rows.CODDOC + '-' + rows.CORRELATIVO}`;
+                let idBtnDownload = `btnDownload${rows.CODDOC + '-' + rows.CORRELATIVO}`
                 total = total + Number(rows.IMPORTE);
                 totalpedidos = totalpedidos + 1;
                 strdata = strdata + `<tr>
@@ -1711,7 +1712,8 @@ function tbl_lista_documentos(){
                                 <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
                             </td>
                             <td>
-                                <button class="btn btn-circle btn-naranja btn-md hand shadow" onclick="funciones.download_pdf_doc('${rows.CODDOC}','${rows.CORRELATIVO}')">
+                                <button class="btn btn-circle btn-naranja btn-md hand shadow" id="${idBtnDownload}" onclick="get_pdf('${rows.CODDOC}','${rows.CORRELATIVO}','${idBtnDownload}')">
+                                    <i class="fal fa-download"></i>
                                 </button>
                             </td>
                         </tr>`
@@ -1727,7 +1729,42 @@ function tbl_lista_documentos(){
 
 };
 
+function get_pdf(coddoc, correlativo, idbtn){
 
+    let btn = document.getElementById(idbtn);
+
+    btn.innerHTML = '<i class="fal fa-download fa-spin"></i>';
+    btn.disabled = true;
+
+    axios.post('/pdf',{
+        sucursal:GlobalCodSucursal,
+        coddoc:coddoc,
+        correlativo:correlativo
+     })
+     .then((response) => {
+        let base = response.data;
+        base = base.replace('data:application/pdf;base64,','');
+        var link = document.createElement('a');
+        link.innerHTML = 'Download PDF file';
+        link.download ='DOCUMENTO_' + coddoc.toString() + correlativo.toString() + '.pdf';
+        link.href = 'data:application/octet-stream;base64,' + base;
+        //document.body.appendChild(link);
+        link.click();
+        link.remove();
+        //desbloquea el botón para que deje de dar vueltas
+        btn.innerHTML = '<i class="fal fa-download"></i>';
+        btn.disabled = false;
+        
+     }, (error) => {
+        console.log(error);
+        
+        btn.innerHTML = '<i class="fal fa-download"></i>';
+        btn.disabled = false;
+
+        funciones.AvisoError('No se logró crear el pdf')
+     });     
+
+};
 
 function cargarPedidoEdicion(codclie,nit,nombre,direccion,coddoc,correlativo){
 
