@@ -1,6 +1,18 @@
 let funciones = {
-    download_pdf_doc:(coddoc,correlativo)=>{
-      
+    converBase64:(file)=>{
+      return new Promise((resolve, reject)=>{
+          var reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = function() {
+                //console.log(reader.result);
+                resolve(reader.result);
+          };
+          reader.onerror = function(e){
+                console.log('Error: ', e);
+                reject(e);
+          };
+      })
+
     },
     device:()=>{
       var userAgent = navigator.userAgent || navigator.vendor || window.opera;

@@ -102,9 +102,22 @@ function getView(){
          
             
         </div>
-        <button class="btn btn-xl btn-secondary btn-circle hand shadow" id="btnDetalleAtras">
-            <i class="fal fa-arrow-left"></i>
-        </button>
+
+        <div class="row">
+            <div class="col-6">
+                    <button class="btn btn-xl btn-secondary btn-circle hand shadow" id="btnDetalleAtras">
+                        <i class="fal fa-arrow-left"></i>
+                    </button>
+            </div>
+            <div class="col-6">
+                    <button class="btn btn-xl btn-outline-danger btn-circle hand shadow" id="btnPdf">
+                        <i class="fal fa-download"></i>
+                    </button>
+            </div>
+        </div>
+        
+
+        
         `
         },
         vista_mes : ()=>{
@@ -296,6 +309,11 @@ function addListeners(){
        cargarPedidoEdicion(GlobalSelectedCoddoc,GlobalSelectedCorrelativo,GlobalSelectedSt);    
    });
 
+   let btnPdf = document.getElementById('btnPdf');
+   btnPdf.addEventListener('click',()=>{
+        get_pdf(GlobalSelectedNitClie,GlobalSelectedNomCliente,GlobalSelectedDirCliente,GlobalSelectedCoddoc,GlobalSelectedCorrelativo,'btnPdf')
+   });
+
 };
 
 function inicializarVistaLogro(){
@@ -446,6 +464,7 @@ function getDetallePedido(fecha,coddoc,correlativo,codclie,nit,nomclie,dirclie,s
 };
 
 
+
 function deleteProductoPedido(idRow,coddoc,correlativo,totalprecio,totalcosto,cantidadenviada){
     
     if(Number(cantidadenviada)==0){}else{funciones.AvisoError('No puedes quitar este item porque ya fué facturado');return;};
@@ -592,6 +611,11 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
                             </td>
                             <td>
                                 <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
+                                <br>
+                                <button class="btn btn-outline-danger btn-sm btn-circle hand shadow" id='${idBtn}D'
+                                    onclick="get_pdf('${rows.NIT}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.CODDOC}','${rows.CORRELATIVO}','${idBtn}D')">
+                                    <i class="fal fa-download"></i>
+                                </button> 
                             </td>
                         </tr>`
         })
