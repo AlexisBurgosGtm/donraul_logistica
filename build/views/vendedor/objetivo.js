@@ -662,3 +662,45 @@ function cargarPedidoEdicion(coddoc,correlativo){
     
     
 };
+
+
+
+function get_pdf(nit,cliente,direccion,coddoc, correlativo, idbtn){
+
+    let btn = document.getElementById(idbtn);
+
+    btn.innerHTML = '<i class="fal fa-download fa-spin"></i>';
+    btn.disabled = true;
+
+    axios.post('/pdf',{
+        sucursal:GlobalCodSucursal,
+        coddoc:coddoc,
+        correlativo:correlativo,
+        nit:nit,
+        cliente:cliente,
+        direccion:direccion
+     })
+     .then((response) => {
+        let base = response.data;
+        base = base.replace('data:application/pdf;base64,','');
+        var link = document.createElement('a');
+        link.innerHTML = 'Download PDF file';
+        link.download ='DOCUMENTO_' + coddoc.toString() + correlativo.toString() + '.pdf';
+        link.href = 'data:application/octet-stream;base64,' + base;
+        //document.body.appendChild(link);
+        link.click();
+        link.remove();
+        //desbloquea el botón para que deje de dar vueltas
+        btn.innerHTML = '<i class="fal fa-download"></i>';
+        btn.disabled = false;
+        
+     }, (error) => {
+        console.log(error);
+        
+        btn.innerHTML = '<i class="fal fa-download"></i>';
+        btn.disabled = false;
+
+        funciones.AvisoError('No se logró crear el pdf')
+     });     
+
+};

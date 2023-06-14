@@ -1712,7 +1712,7 @@ function tbl_lista_documentos(){
                                 <b>${funciones.setMoneda(rows.IMPORTE,'Q')}</b>
                             </td>
                             <td>
-                                <button class="btn btn-circle btn-naranja btn-md hand shadow" id="${idBtnDownload}" onclick="get_pdf('${rows.CODDOC}','${rows.CORRELATIVO}','${idBtnDownload}')">
+                                <button class="btn btn-circle btn-naranja btn-md hand shadow" id="${idBtnDownload}" onclick="get_pdf('${rows.NIT}','${funciones.limpiarTexto(rows.NOMCLIE)}','${funciones.limpiarTexto(rows.DIRCLIE)}','${rows.CODDOC}','${rows.CORRELATIVO}','${idBtnDownload}')">
                                     <i class="fal fa-download"></i>
                                 </button>
                             </td>
@@ -1729,7 +1729,7 @@ function tbl_lista_documentos(){
 
 };
 
-function get_pdf(coddoc, correlativo, idbtn){
+function get_pdf(nit,cliente,direccion,coddoc, correlativo, idbtn){
 
     let btn = document.getElementById(idbtn);
 
@@ -1739,7 +1739,10 @@ function get_pdf(coddoc, correlativo, idbtn){
     axios.post('/pdf',{
         sucursal:GlobalCodSucursal,
         coddoc:coddoc,
-        correlativo:correlativo
+        correlativo:correlativo,
+        nit:nit,
+        cliente:cliente,
+        direccion:direccion
      })
      .then((response) => {
         let base = response.data;

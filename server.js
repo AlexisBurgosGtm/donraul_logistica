@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var router = express.Router();
 var bodyParser = require('body-parser');
+
 const axios = require('axios');
 
 const execute = require('./connection');
@@ -22,7 +23,6 @@ var io = require('socket.io')(http);
 const PORT = process.env.PORT || 4600;
 
 
-
 const cors = require('cors');
 app.use(cors({
     origin: '*'
@@ -39,19 +39,19 @@ var path = __dirname + '/'
 //manejador de rutas
 router.use(function (req,res,next) {
  
-  /*
-      // Website you wish to allow to connect
-      res.setHeader('Access-Control-Allow-Origin', '*');
-      // Request methods you wish to allow
-      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-        // Request headers you wish to allow
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5,  Date, X-Api-Version, X-File-Name, pplication/json');
-        // Set to true if you need the website to include cookies in the requests sent
-      res.setHeader('Access-Control-Allow-Credentials', true);
-  */
+      /*
+          // Website you wish to allow to connect
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          // Request methods you wish to allow
+          res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+            // Request headers you wish to allow
+          res.setHeader('Access-Control-Allow-Headers', 'Content-Type,X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5,  Date, X-Api-Version, X-File-Name, pplication/json');
+            // Set to true if you need the website to include cookies in the requests sent
+          res.setHeader('Access-Control-Allow-Credentials', true);
+      */
 
-  //console.log("/" + req.toString());
-  next();
+      next();
+
 });
 
 //--------------------------------------------------------------------------
@@ -156,8 +156,6 @@ const tokenInfile = async (fel_alias,fel_llave) => {
   }
 }
 
-
-
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
@@ -176,42 +174,58 @@ var fs = require('fs');
 
 app.post("/pdf", function(req,res){
 
-  const {sucursal,coddoc, correlativo} = req.body;
+  const {sucursal,nit,cliente,direccion, coddoc, correlativo} = req.body;
 
 
       const pdf = require('html-pdf');
 
-      let content = get_plantilla(coddoc,correlativo);
+      execute.get_data(`SELECT CODPROD, DESCRIPCION AS DESPROD, CANTIDAD, ISNULL(PRECIO,0) AS PRECIO, ISNULL(TOTALPRECIO,0) AS TOTALPRECIO
+                          FROM DOCPRODUCTOS 
+                        WHERE EMP_NIT='${sucursal}' 
+                        AND CODDOC='${coddoc}' 
+                        AND DOC_NUMERO='${getCorrelativo(correlativo)}';
+                        `)
+      .then((result)=>{
+
+          let data = result.recordset;
+
+          let content = get_plantilla(nit,cliente,direccion,coddoc,correlativo,data);
 
 
-      //nombre del archivo a crearse
-      var filename = __dirname + `/pdf/${sucursal}${coddoc}${correlativo}.pdf`;
-      //esta función crea el pdf como archivo
-      pdf.create(content).toFile(filename, function(err, ress) {
-          if (err){
-              //console.log(err);
-              //error al crear el pdf
-              res.send('error')
-          } else {
-              console.log('Pdf creado');
-              
-              //esta función convierte el archivo creado en un string base64
-              const pdf2base64 = require('pdf-to-base64');
-              pdf2base64(filename)
-                  .then((response) => {
-                          //envia el string a la app
-                          res.send(response);
-                          //elimina el archivo en el servidor
-                          fs.unlinkSync(filename);        
-                  })
-                  .catch((error) => {
-                          //error al convertir el archivo a base64
-                          console.log(error);
-                          res.send('error');
-                          
-                  })
-          }
-      });
+          //nombre del archivo a crearse
+          var filename = __dirname + `/pdf/${sucursal}${coddoc}${correlativo}.pdf`;
+          //esta función crea el pdf como archivo
+          pdf.create(content).toFile(filename, function(err, ress) {
+              if (err){
+                  //console.log(err);
+                  //error al crear el pdf
+                  res.send('error')
+              } else {
+                  console.log('Pdf creado');
+                  
+                  //esta función convierte el archivo creado en un string base64
+                  const pdf2base64 = require('pdf-to-base64');
+                  pdf2base64(filename)
+                      .then((response) => {
+                              //envia el string a la app
+                              res.send(response);
+                              //elimina el archivo en el servidor
+                              fs.unlinkSync(filename);        
+                      })
+                      .catch((error) => {
+                              //error al convertir el archivo a base64
+                              console.log(error);
+                              res.send('error');
+                              
+                      })
+              }
+          });
+
+      })
+      .catch(()=>{
+          res.send('error');
+      })
+
 
 })
 
@@ -297,10 +311,8 @@ app.use("/",router);
 
 
 app.use("*",function(req,res){
-  res.redirect('/');
+    res.redirect('/');
 });
-
-
 
 
 // SOCKET HANDLER
@@ -316,7 +328,6 @@ io.on('connection', function(socket){
   
 });
 
-
 http.listen(PORT, function(){
   console.log('listening on *:' + PORT);
 });
@@ -325,262 +336,278 @@ http.listen(PORT, function(){
 
 
 
-function get_plantilla(coddoc,correlativo){
-let plantilla = `
+function get_plantilla(nit,cliente,direccion,coddoc,correlativo,data){
 
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
-xmlns="http://www.w3.org/TR/REC-html40">
+  let totalventa = 0;
 
-<head>
-<meta http-equiv=Content-Type content="text/html; charset=utf-8">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 15">
-<meta name=Originator content="Microsoft Word 15">
+      let plantilla = `
+          <html xmlns:v="urn:schemas-microsoft-com:vml"
+              xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:w="urn:schemas-microsoft-com:office:word"
+              xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+              xmlns="http://www.w3.org/TR/REC-html40">
 
-<link rel=File-List
-href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/filelist.xml">
-<link rel=Edit-Time-Data
-href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/editdata.mso">
-<link rel=themeData
-href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/themedata.thmx">
-<link rel=colorSchemeMapping
-href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/colorschememapping.xml">
+              <head>
+              <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+              <meta name=ProgId content=Word.Document>
+              <meta name=Generator content="Microsoft Word 15">
+              <meta name=Originator content="Microsoft Word 15">
 
-<style>
- /* Font Definitions */
- @font-face
-	{font-family:"Cambria Math";
-	panose-1:2 4 5 3 5 4 6 3 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:roman;
-	mso-font-pitch:variable;
-	mso-font-signature:3 0 0 0 1 0;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;
-	mso-font-charset:0;
-	mso-generic-font-family:swiss;
-	mso-font-pitch:variable;
-	mso-font-signature:-469750017 -1073732485 9 0 511 0;}
- /* Style Definitions */
- p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-unhide:no;
-	mso-style-qformat:yes;
-	mso-style-parent:"";
-	margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:8.0pt;
-	margin-left:0cm;
-	line-height:106%;
-	mso-pagination:widow-orphan;
-	font-size:11.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;
-	mso-font-kerning:1.0pt;
-	mso-ligatures:standardcontextual;
-	mso-fareast-language:EN-US;}
-p.msonormal0, li.msonormal0, div.msonormal0
-	{mso-style-name:msonormal;
-	mso-style-unhide:no;
-	mso-margin-top-alt:auto;
-	margin-right:0cm;
-	mso-margin-bottom-alt:auto;
-	margin-left:0cm;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman",serif;
-	mso-fareast-font-family:"Times New Roman";
-	mso-fareast-theme-font:minor-fareast;}
-.MsoChpDefault
-	{mso-style-type:export-only;
-	mso-default-props:yes;
-	font-size:10.0pt;
-	mso-ansi-font-size:10.0pt;
-	mso-bidi-font-size:10.0pt;
-	font-family:"Calibri",sans-serif;
-	mso-ascii-font-family:Calibri;
-	mso-ascii-theme-font:minor-latin;
-	mso-fareast-font-family:Calibri;
-	mso-fareast-theme-font:minor-latin;
-	mso-hansi-font-family:Calibri;
-	mso-hansi-theme-font:minor-latin;
-	mso-bidi-font-family:"Times New Roman";
-	mso-bidi-theme-font:minor-bidi;
-	mso-font-kerning:0pt;
-	mso-ligatures:none;
-	mso-fareast-language:EN-US;}
-@page WordSection1
-	{size:612.0pt 792.0pt;
-	margin:42.55pt 3.0cm 70.85pt 3.0cm;
-	mso-header-margin:35.4pt;
-	mso-footer-margin:35.4pt;
-	mso-paper-source:0;}
-div.WordSection1
-	{page:WordSection1;}
+              <link rel=File-List
+              href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/filelist.xml">
+              <link rel=Edit-Time-Data
+              href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/editdata.mso">
+              <link rel=themeData
+              href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/themedata.thmx">
+              <link rel=colorSchemeMapping
+              href="CONSTRUMATERIALES%20EL%20CAMPESINO_archivos/colorschememapping.xml">
 
-</style>
-</head>
+              <style>
+              /* Font Definitions */
+              @font-face
+                {font-family:"Cambria Math";
+                panose-1:2 4 5 3 5 4 6 3 2 4;
+                mso-font-charset:0;
+                mso-generic-font-family:roman;
+                mso-font-pitch:variable;
+                mso-font-signature:3 0 0 0 1 0;}
+              @font-face
+                {font-family:Calibri;
+                panose-1:2 15 5 2 2 2 4 3 2 4;
+                mso-font-charset:0;
+                mso-generic-font-family:swiss;
+                mso-font-pitch:variable;
+                mso-font-signature:-469750017 -1073732485 9 0 511 0;}
+              /* Style Definitions */
+              p.MsoNormal, li.MsoNormal, div.MsoNormal
+                {mso-style-unhide:no;
+                mso-style-qformat:yes;
+                mso-style-parent:"";
+                margin-top:0cm;
+                margin-right:0cm;
+                margin-bottom:8.0pt;
+                margin-left:0cm;
+                line-height:106%;
+                mso-pagination:widow-orphan;
+                font-size:11.0pt;
+                font-family:"Calibri",sans-serif;
+                mso-ascii-font-family:Calibri;
+                mso-ascii-theme-font:minor-latin;
+                mso-fareast-font-family:Calibri;
+                mso-fareast-theme-font:minor-latin;
+                mso-hansi-font-family:Calibri;
+                mso-hansi-theme-font:minor-latin;
+                mso-bidi-font-family:"Times New Roman";
+                mso-bidi-theme-font:minor-bidi;
+                mso-font-kerning:1.0pt;
+                mso-ligatures:standardcontextual;
+                mso-fareast-language:EN-US;}
+              p.msonormal0, li.msonormal0, div.msonormal0
+                {mso-style-name:msonormal;
+                mso-style-unhide:no;
+                mso-margin-top-alt:auto;
+                margin-right:0cm;
+                mso-margin-bottom-alt:auto;
+                margin-left:0cm;
+                mso-pagination:widow-orphan;
+                font-size:12.0pt;
+                font-family:"Times New Roman",serif;
+                mso-fareast-font-family:"Times New Roman";
+                mso-fareast-theme-font:minor-fareast;}
+              .MsoChpDefault
+                {mso-style-type:export-only;
+                mso-default-props:yes;
+                font-size:10.0pt;
+                mso-ansi-font-size:10.0pt;
+                mso-bidi-font-size:10.0pt;
+                font-family:"Calibri",sans-serif;
+                mso-ascii-font-family:Calibri;
+                mso-ascii-theme-font:minor-latin;
+                mso-fareast-font-family:Calibri;
+                mso-fareast-theme-font:minor-latin;
+                mso-hansi-font-family:Calibri;
+                mso-hansi-theme-font:minor-latin;
+                mso-bidi-font-family:"Times New Roman";
+                mso-bidi-theme-font:minor-bidi;
+                mso-font-kerning:0pt;
+                mso-ligatures:none;
+                mso-fareast-language:EN-US;}
+              @page WordSection1
+                {size:612.0pt 792.0pt;
+                margin:42.55pt 3.0cm 70.85pt 3.0cm;
+                mso-header-margin:35.4pt;
+                mso-footer-margin:35.4pt;
+                mso-paper-source:0;}
+              div.WordSection1
+                {page:WordSection1;}
 
-<body lang=ES-GT style='tab-interval:35.4pt;word-wrap:break-word;margin-top:20pt'>
+              </style>
+              </head>
 
-<div class=WordSection1>
+              <body lang=ES-GT style='tab-interval:35.4pt;word-wrap:break-word;margin-top:20pt'>
 
-<p class=MsoNormal style='margin-left:7.1pt'>
+              <div class=WordSection1>
 
-<img width=136 height=136
-src="${__dirname + "/favicon.png"}" align=left
-hspace=12 v:shapes="Imagen_x0020_1">
+              <p class=MsoNormal style='margin-left:7.1pt'>
 
-<b><span style='font-size:14.0pt;
-line-height:106%'><o:p></o:p></span></b></p>
+              <img width=136 height=136
+              src="./favicon.png" align=left
+              hspace=12 v:shapes="Imagen_x0020_1">
 
-<p class=MsoNormal><b><span style='font-size:14.0pt;line-height:106%;margin-left:15pt'>CONSTRUMATERIALES
-EL CAMPESINO<o:p></o:p></span></b></p>
+              <b><span style='font-size:14.0pt;
+              line-height:106%'><o:p></o:p></span></b></p>
 
-<p class=MsoNormal style='margin-left:141.6pt'>Cotización de Productos<br>
-Kilómetro 181.4 zona 0, San Sebastián, Retalhuleu<br>
-PBX: 7772-2556</p>
+              <p class=MsoNormal><b><span style='font-size:14.0pt;line-height:106%;margin-left:15pt'>CONSTRUMATERIALES
+              EL CAMPESINO<o:p></o:p></span></b></p>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              <p class=MsoNormal style='margin-left:141.6pt'>Cotización de Productos<br>
+              Kilómetro 181.4 zona 0, San Sebastián, Retalhuleu<br>
+              PBX: 7772-2556</p>
 
-<p class=MsoNormal style='text-indent:35.4pt'>No. Documento: ${coddoc}-${correlativo}</p>
+              <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              <p class=MsoNormal style='text-indent:35.4pt'>No. Documento: ${coddoc}-${correlativo}</p>
 
-<p class=MsoNormal style='margin-left:35.4pt'>Estimado cliente, reciba nuestros
-cordiales saludos y buenos deseos. <br>
-A continuación, le presentamos los precios de los productos cotizados por su
-persona o encargado/a:</p>
+              <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              <p class=MsoNormal style='margin-left:35.4pt'>Estimado cliente ${cliente}, reciba nuestros
+              cordiales saludos y buenos deseos. <br>
+              A continuación, le presentamos los precios de los productos cotizados por su
+              persona o encargado/a:</p>
 
-<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=614
- style='width:460.45pt;margin-left:35.6pt;border-collapse:collapse;border:none;
- mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:1184;mso-padding-alt:
- 0cm 5.4pt 0cm 5.4pt'>
-  <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
-      <td width=85 valign=top style='width:63.55pt;border:solid windowtext 1.0pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>CANTIDAD</p>
-      </td>
-      <td width=85 valign=top style='width:63.8pt;border:solid windowtext 1.0pt;
-      border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-      solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>CODIGO</p>
-      </td>
-      <td width=236 valign=top style='width:177.2pt;border:solid windowtext 1.0pt;
-      border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-      solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>DESCRIPCION</p>
-      </td>
-      <td width=94 valign=top style='width:70.85pt;border:solid windowtext 1.0pt;
-      border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-      solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>PRECIO</p>
-      </td>
-      <td width=113 valign=top style='width:3.0cm;border:solid windowtext 1.0pt;
-      border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
-      solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>SUBTOTAL</p>
-      </td>
-  </tr>
-  <tr style='mso-yfti-irow:1'>
-      <td width=85 valign=top style='width:63.55pt;border:solid windowtext 1.0pt;
-      border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
-      padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>10</p>
-      </td>
-      <td width=85 valign=top style='width:63.8pt;border-top:none;border-left:none;
-      border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>TCCP</p>
-      </td>
-      <td width=236 valign=top style='width:177.2pt;border-top:none;border-left:
-      none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>TAPA PARA
-      CAJA OCTAGONAL</p>
-      </td>
-      <td width=94 valign=top style='width:70.85pt;border-top:none;border-left:
-      none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal align=right style='margin-bottom:0cm;text-align:right;
-      line-height:normal'>6.00</p>
-      </td>
-      <td width=113 valign=top style='width:3.0cm;border-top:none;border-left:none;
-      border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal align=right style='margin-bottom:0cm;text-align:right;
-      line-height:normal'>60.00</p>
-      </td>
-  </tr>
-  <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
-      <td width=85 valign=top style='width:63.55pt;border:solid windowtext 1.0pt;
-      border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
-      padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>6</p>
-      </td>
-      <td width=85 valign=top style='width:63.8pt;border-top:none;border-left:none;
-      border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>TCRG</p>
-      </td>
-      <td width=236 valign=top style='width:177.2pt;border-top:none;border-left:
-      none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>TAPA PARA
-      CAJA RECTANGULAR</p>
-      </td>
-      <td width=94 valign=top style='width:70.85pt;border-top:none;border-left:
-      none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal align=right style='margin-bottom:0cm;text-align:right;
-      line-height:normal'>4</p>
-      </td>
-      <td width=113 valign=top style='width:3.0cm;border-top:none;border-left:none;
-      border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
-      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
-      <p class=MsoNormal align=right style='margin-bottom:0cm;text-align:right;
-      line-height:normal'>24</p>
-      </td>
-  </tr>
-  
-</table>
+              <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              <table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=614
+              style='width:460.45pt;margin-left:35.6pt;border-collapse:collapse;border:none;
+              mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:1184;mso-padding-alt:
+              0cm 5.4pt 0cm 5.4pt'> 
+              
+              <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
+                    <td width=85 valign=top style='width:63.55pt;border:solid windowtext 1.0pt;
+                    mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>CANTIDAD</p>
+                    </td>
+                    <td width=85 valign=top style='width:63.8pt;border:solid windowtext 1.0pt;
+                    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+                    solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>CODIGO</p>
+                    </td>
+                    <td width=236 valign=top style='width:177.2pt;border:solid windowtext 1.0pt;
+                    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+                    solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>DESCRIPCION</p>
+                    </td>
+                    <td width=94 valign=top style='width:70.85pt;border:solid windowtext 1.0pt;
+                    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+                    solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>PRECIO</p>
+                    </td>
+                    <td width=113 valign=top style='width:3.0cm;border:solid windowtext 1.0pt;
+                    border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+                    solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                    <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>SUBTOTAL</p>
+                    </td>
+              </tr>`
+          
+              +
 
-<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              data.map((r)=>{
+                totalventa += Number(r.TOTALPRECIO);
+                  return `
+                  <tr style='mso-yfti-irow:1'>
+                      <td width=85 valign=top style='width:63.55pt;border:solid windowtext 1.0pt;
+                      border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+                      padding:0cm 5.4pt 0cm 5.4pt'>
+                      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>${r.CANTIDAD}</p>
+                      </td>
+                      <td width=85 valign=top style='width:63.8pt;border-top:none;border-left:none;
+                      border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+                      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>${r.CODPROD}</p>
+                      </td>
+                      <td width=236 valign=top style='width:177.2pt;border-top:none;border-left:
+                      none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+                      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                      <p class=MsoNormal style='margin-bottom:0cm;line-height:normal'>${r.DESPROD.replace("'","").replace('"',"")}</p>
+                      </td>
+                      <td width=94 valign=top style='width:70.85pt;border-top:none;border-left:
+                      none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+                      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                      <p class=MsoNormal align=right style='margin-bottom:0cm;text-align:right;
+                      line-height:normal'>Q${r.PRECIO.toFixed(2)}</p>
+                      </td>
+                      <td width=113 valign=top style='width:3.0cm;border-top:none;border-left:none;
+                      border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+                      mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+                      mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+                      <p class=MsoNormal align=right style='margin-bottom:0cm;text-align:right;
+                      line-height:normal'>Q${r.TOTALPRECIO.toFixed(2)}</p>
+                      </td>
+                  </tr>
+                  `
+              }).join() 
+          
+              +
 
-<p class=MsoNormal style='text-indent:35.4pt'>** TOTAL EN LETRAS</p>
-
-<p class=MsoNormal style='margin-left:424.8pt'><b><span style='font-size:14.0pt;
-line-height:106%'>Q 84.00</span></b></p>
-
-</div>
-
-</body>
-
-</html>
+              `        
+              </table>
+              <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+              <p class=MsoNormal style='text-indent:35.4pt'>* TOTAL A PAGAR</p>
+              <p class=MsoNormal style='margin-left:430.8pt'><b><span style='font-size:14.0pt;
+              line-height:110%'>Q ${totalventa.toFixed(2)}</span></b></p>
+            </div>
+            <br><br><br>
+            <p>* Precios sujetos a cambios sin previo aviso</p>
+          </body>
+        </html>
 
 
-`
-return plantilla;
-}
+        `
+    return plantilla;
+};
+
+function getCorrelativo(correlativo){
+  let numdoc = '';
+
+  switch (correlativo.toString().length) {
+      case 1:
+          numdoc = '         ' + correlativo;
+      break;
+      case 2:
+          numdoc = '        ' + correlativo;
+      break;
+      case 3:
+          numdoc = '       ' + correlativo;
+      break;
+      case 4:
+          numdoc = '      ' + correlativo;
+          break;
+      case 5:
+          numdoc = '     ' + correlativo;
+          break;
+      case 6:
+          numdoc = '    ' + correlativo;
+          break;
+      case 7:
+          numdoc = '   ' + correlativo;
+          break;
+      case 8:
+          numdoc = '  ' + correlativo;
+      break;
+      case 9:
+          numdoc = ' ' + correlativo;
+      break;
+      case 10:
+          numdoc = correlativo;
+      break;
+      default:
+          break;
+  };
+
+  return numdoc;
+
+};

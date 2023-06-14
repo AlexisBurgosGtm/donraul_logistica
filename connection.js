@@ -7,22 +7,10 @@
 };
 
 
-
-const Xconfig = {
-	user: 'iEx',
-	password: 'iEx',
-	server: 'ELORIGEN\\SQLDEV',
-	database: 'VENTAS',
-	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
-};
-
-
-
-
 const config = {
 	user: 'iEx',
 	password: 'iEx',
-	server: '192.168.0.200',
+	server: '192.168.0.200', //'ELORIGEN\\SQLDEV'
 	database: 'VENTAS',
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
@@ -56,6 +44,35 @@ let execute = {
 			//res.send('Error al ejecutar la consulta: ' + error)   
 		  sql.close();
 		}
+	},
+	get_data : (sqlqry)=>{	
+		
+		return new Promise((resolve,reject)=>{
+
+			try {
+				const pool1 = new sql.ConnectionPool(config, err => {
+				  new sql.Request(pool1)
+				  .query(sqlqry, (err, result) => {
+					  if(err){
+						  reject();
+					  }else{
+						  resolve(result);
+					  }					
+				  })
+				  sql.close();  
+				})
+				pool1.on('error', err => {
+					reject();
+					sql.close();
+				})
+			  } catch (error) {
+				reject();   
+				sql.close();
+			  }
+
+		})
+
+		
 	}
 }
 
