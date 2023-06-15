@@ -478,10 +478,10 @@ function get_plantilla(nit,cliente,direccion,coddoc,correlativo,data){
               <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
               <table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=614
-              style='width:460.45pt;margin-left:35.6pt;border-collapse:collapse;border:none;
-              mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:1184;mso-padding-alt:
-              0cm 5.4pt 0cm 5.4pt'> 
-              
+                style='width:460.45pt;margin-left:35.6pt;border-collapse:collapse;border:none;
+                mso-border-alt:solid windowtext .5pt;mso-yfti-tbllook:1184;mso-padding-alt:
+                0cm 5.4pt 0cm 5.4pt'> 
+                
               <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes'>
                     <td width=85 valign=top style='width:63.55pt;border:solid windowtext 1.0pt;
                     mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>

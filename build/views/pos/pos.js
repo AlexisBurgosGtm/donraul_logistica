@@ -64,7 +64,7 @@ function getView(){
                     <input type="search" autocomplete="off" class="form-control border-naranja negrita" placeholder='Escriba para buscar...' id="txtPosCodprod">
                     
                     <div class="table-responsive col-12 p-2">
-                        <table style="height: 500px;overflow-y: scroll;" class="table table-responsive table-hover table-border col-12" id="tblProductosBuscar">
+                        <table class="table table-responsive table-hover table-border col-12" id="tblProductosBuscar">
                             <thead class="bg-naranja text-white">
                                 <tr>
                                     <td>Producto</td>
@@ -1086,61 +1086,69 @@ function get_buscar_producto(filtro){
 
 function getMoveTable(){
 
-    let start = document.getElementById('first-element');
-    start.focus();
-    start.style.backgroundColor = '#50b988';
-    start.style.color = 'white';
-
-    const changeStyle = (sibling) => {
-    if (sibling !== null) {
+        let start = document.getElementById('first-element');
         start.focus();
-        start.style.backgroundColor = '';
-        start.style.color = '';
-        sibling.focus();
-        sibling.style.backgroundColor = '#50b988';
-        sibling.style.color = 'white';
-        start = sibling;
-    }
-}
+        start.style.backgroundColor = '#50b988';
+        start.style.color = 'white';
 
-const checkKey = (event) => {
-  event = event || window.event;
-  const idx = start.cellIndex;
+        const changeStyle = (sibling) => {
+            if (sibling !== null) {
+                start.focus();
+                start.style.backgroundColor = '';
+                start.style.color = '';
+                sibling.focus();
+                sibling.style.backgroundColor = '#50b988';
+                sibling.style.color = 'white';
+                start = sibling;
+            }
+        };
 
-  if (event.keyCode === 38) {
-    // up arrow
-    const previousSibling = start.previousElementSibling;
-    changeStyle(previousSibling);
-    
-    //const previousRow = start.parentElement.previousElementSibling;
-    //if (previousRow !== null) {
-      //const previousSibling = previousRow.cells[idx];
-      //changeStyle(previousSibling);
-    //}
+        const checkKey = (event) => {
+            event = event || window.event;
+            const idx = start.cellIndex;
 
-  } else if (event.keyCode === 40) {
-    // down arrow
-    const nextsibling = start.nextElementSibling;
-    changeStyle(nextsibling);
-    
-    //const nextRow = start.parentElement.nextElementSibling;
-    //if (nextRow !== null) {
-      //const nextSibling = nextRow.cells[idx];
-      //changeStyle(nextSibling); 
-    //}
+            if (event.keyCode === 38) {
+                // up arrow
+                const previousSibling = start.previousElementSibling;
+                changeStyle(previousSibling);
+                
+                //const previousRow = start.parentElement.previousElementSibling;
+                //if (previousRow !== null) {
+                //const previousSibling = previousRow.cells[idx];
+                //changeStyle(previousSibling);
+                //}
 
-  } else if (event.keyCode === 37) {
-    // left arrow
-    const previousSibling = start.previousElementSibling;
-    changeStyle(previousSibling);
-  } else if (event.keyCode === 39) {
-    // right arrow
-    const nextsibling = start.nextElementSibling;
-    changeStyle(nextsibling);
-  }
-}
+            } else if (event.keyCode === 40) {
+                // down arrow
+                const nextsibling = start.nextElementSibling;
+                changeStyle(nextsibling);
+                
+                //const nextRow = start.parentElement.nextElementSibling;
+                //if (nextRow !== null) {
+                //const nextSibling = nextRow.cells[idx];
+                //changeStyle(nextSibling); 
+                //}
 
-document.onkeydown = checkKey;
+            } else if (event.keyCode === 37) {
+                // left arrow
+                //const previousSibling = start.previousElementSibling;
+                //changeStyle(previousSibling);
+            } else if (event.keyCode === 39) {
+                // right arrow
+                
+                //const nextsibling = start.nextElementSibling;
+                //changeStyle(nextsibling);
+                
+                
+                console.log(start.onclick());
+
+
+                //get_producto(codprod,desprod,codmedida,equivale,costo,precio)
+                
+            }
+        };
+
+        document.onkeydown = checkKey;
 
 };
 

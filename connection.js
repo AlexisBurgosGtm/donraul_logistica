@@ -1,10 +1,12 @@
-﻿const vpn_config = {
+﻿
+const vpn_config = {
 	user: 'iEx',
 	password: 'iEx',
 	server: '172.26.167.250',
 	database: 'VENTAS',
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
+
 
 
 const config = {
@@ -14,6 +16,8 @@ const config = {
 	database: 'VENTAS',
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
+
+
 
 const sql = require('mssql');
 
@@ -46,18 +50,13 @@ let execute = {
 		}
 	},
 	get_data : (sqlqry)=>{	
-		
-		return new Promise((resolve,reject)=>{
 
+		return new Promise((resolve,reject)=>{
 			try {
 				const pool1 = new sql.ConnectionPool(config, err => {
 				  new sql.Request(pool1)
 				  .query(sqlqry, (err, result) => {
-					  if(err){
-						  reject();
-					  }else{
-						  resolve(result);
-					  }					
+					  if(err){ reject(); }else{ resolve(result); }					
 				  })
 				  sql.close();  
 				})
@@ -65,15 +64,12 @@ let execute = {
 					reject();
 					sql.close();
 				})
-			  } catch (error) {
+			} catch (error) {
 				reject();   
 				sql.close();
-			  }
-
-		})
-
-		
-	}
+			}
+		}
+	)}
 }
 
 module.exports = execute;
