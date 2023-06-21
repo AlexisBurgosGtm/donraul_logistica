@@ -1656,6 +1656,7 @@ function tbl_lista_documentos(){
     let container = document.getElementById('tblDocumentos');
     container.innerHTML = GlobalLoader;
     
+
     let coddoc = '';
     if(tipo=='PED'){
         coddoc = document.getElementById('cmbCoddoc').value;
@@ -1740,7 +1741,8 @@ function tbl_lista_documentos(){
 function get_pdf(nit,cliente,direccion,coddoc, correlativo, idbtn){
 
     let btn = document.getElementById(idbtn);
-
+    let tipo = document.getElementById('cmbTipoDoc').value;
+    
     btn.innerHTML = '<i class="fal fa-download fa-spin"></i>';
     btn.disabled = true;
 
@@ -1750,7 +1752,8 @@ function get_pdf(nit,cliente,direccion,coddoc, correlativo, idbtn){
         correlativo:correlativo,
         nit:nit,
         cliente:cliente,
-        direccion:direccion
+        direccion:direccion,
+        tipodoc:tipo
      })
      .then((response) => {
         let base = response.data;

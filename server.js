@@ -174,7 +174,7 @@ var fs = require('fs');
 
 app.post("/pdf", function(req,res){
 
-  const {sucursal,nit,cliente,direccion, coddoc, correlativo} = req.body;
+  const {sucursal,nit,cliente,direccion, coddoc, correlativo,tipodoc} = req.body;
 
 
       const pdf = require('html-pdf');
@@ -189,7 +189,7 @@ app.post("/pdf", function(req,res){
 
           let data = result.recordset;
 
-          let content = get_plantilla(nit,cliente,direccion,coddoc,correlativo,data);
+          let content = get_plantilla(nit,cliente,direccion,coddoc,correlativo,tipodoc,data);
 
 
           //nombre del archivo a crearse
@@ -336,9 +336,25 @@ http.listen(PORT, function(){
 
 
 
-function get_plantilla(nit,cliente,direccion,coddoc,correlativo,data){
+function get_plantilla(nit,cliente,direccion,coddoc,correlativo,tipodoc,data){
 
-  let totalventa = 0;
+      let totalventa = 0;
+      let leyenda_tipo_doc = '';
+      let leyenda_cuerpo_mensaje = '';
+
+      if(tipodoc=='COT'){
+          leyenda_tipo_doc='Cotización de Productos';
+          leyenda_cuerpo_mensaje = `Estimado cliente ${cliente}, reciba nuestros
+          cordiales saludos y buenos deseos. <br>
+          A continuación, le presentamos los precios de los productos cotizados por su
+          persona o encargado/a:`;
+      };
+      if(tipodoc=='PED'){
+        leyenda_tipo_doc='Pedido';
+        leyenda_cuerpo_mensaje = `Estimado cliente ${cliente}, reciba nuestros
+          cordiales saludos y buenos deseos. <br>
+          A continuación, le presentamos los productos solicitados a nuestro agente de ventas:`;
+      };
 
       let plantilla = `
           <html xmlns:v="urn:schemas-microsoft-com:vml"
@@ -460,7 +476,7 @@ function get_plantilla(nit,cliente,direccion,coddoc,correlativo,data){
               <p class=MsoNormal><b><span style='font-size:14.0pt;line-height:106%;margin-left:15pt'>CONSTRUMATERIALES
               EL CAMPESINO<o:p></o:p></span></b></p>
 
-              <p class=MsoNormal style='margin-left:141.6pt'>Cotización de Productos<br>
+              <p class=MsoNormal style='margin-left:141.6pt'>${leyenda_tipo_doc}<br>
               Kilómetro 181.4 zona 0, San Sebastián, Retalhuleu<br>
               PBX: 7772-2556</p>
 
@@ -470,10 +486,7 @@ function get_plantilla(nit,cliente,direccion,coddoc,correlativo,data){
 
               <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-              <p class=MsoNormal style='margin-left:35.4pt'>Estimado cliente ${cliente}, reciba nuestros
-              cordiales saludos y buenos deseos. <br>
-              A continuación, le presentamos los precios de los productos cotizados por su
-              persona o encargado/a:</p>
+              <p class=MsoNormal style='margin-left:35.4pt'>${leyenda_cuerpo_mensaje}</p>
 
               <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 

@@ -53,6 +53,10 @@ function getView(){
 
                 <div class="col-6">
                     <div class="" id="containerTotal"></div>
+                    <select class="form-control negrita text-info" id="cmbTipoDoc">
+                        <option value="PED">PEDIDOS</option>
+                        <option value="COT">COTIZACIONES</option>
+                    </select>
                 </div>
 
             </div>
@@ -288,6 +292,10 @@ function addListeners(){
 
     //REPORTE DE DOCUMENTOS DEL DIA
     document.getElementById('txtFecha').addEventListener('change',()=>{
+        rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
+    });
+
+    document.getElementById('cmbTipoDoc').addEventListener('change',()=>{
         rpt_pedidos_vendedor(GlobalCodSucursal,GlobalCodUsuario,funciones.devuelveFecha('txtFecha'),'tblReport','containerTotal');
     });
     
@@ -551,6 +559,10 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
 
     let container = document.getElementById(idContenedor);
     container.innerHTML = GlobalLoader;
+
+
+    let tipodoc = document.getElementById('cmbTipoDoc').value;
+
     
     let lbTotal = document.getElementById(idLbTotal);
     lbTotal.innerText = '---';
@@ -564,14 +576,121 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
                             </tr>
                         </thead>
                         <tbody id="tblListaPedidos">`;
+
     let tablefoooter ='</tbody></table>';
 
     let strdata = '';
     let totalpedidos = 0;
-    
+    let coddoc = '';
+    if(tipodoc=='PED'){coddoc=GlobalCoddoc};
+    if(tipodoc=='COT'){coddoc=GlobalCotiz};
+
     axios.post('/ventas/lista_pedidos', {
         sucursal: sucursal,
-        coddoc:GlobalCoddoc,
+        coddoc:coddoc,
+        fecha:fecha   
+    })
+    .then((response) => {
+        const data = response.data.recordset;
+        let total =0;
+        data.map((rows)=>{
+                let idBtn = `btnEliminar${rows.CODDOC + '-' + rows.CORRELATIVO}`;
+                total = total + Number(rows.IMPORTE);
+                totalpedidos = totalpedidos + 1;
+                strdata = strdata + `
+                            <div class="card card-rounded col-12 shadow border-naranja p-1">
+                                <div class="card-body">
+                                    <div class="col-12">
+                                        ${rows.NOMCLIE}
+                                        <br>
+                                            <small class="text-secondary">${rows.DIRCLIE + ', ' + rows.DESMUNI}</small>
+                                        <br>
+                                            <small class="text-white bg-secondary">${rows.OBS}</small>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <b class="text-danger">${rows.CODDOC + '-' + rows.CORRELATIVO}</b>
+                                        </div>
+                                        <div class="col-8 text-right">
+                                            <h2 class="negrita text-naranja">${funciones.setMoneda(rows.IMPORTE,'Q')}</h2>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <button class="btn btn-outline-info btn-sm"
+                                                onclick="getDetallePedido('${rows.FECHA.toString().replace('T00:00:00.000Z','')}','${rows.CODDOC}',
+                                                '${rows.CORRELATIVO}','${rows.CODCLIE}','${rows.NIT}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.ST}',
+                                                '${rows.TIPO_PAGO}','${rows.TIPO_DOC}','${rows.ENTREGA_CONTACTO}','${rows.ENTREGA_TELEFONO}','${rows.ENTREGA_DIRECCION}',
+                                                '${rows.ENTREGA_REFERENCIA}','${rows.ENTREGA_LAT}','${rows.ENTREGA_LONG}','${rows.DOMICILIO}');">
+                                                <i class="fal fa-edit"></i> Editar
+                                            </button>
+                                        </div>
+                                        <div class="col-4">
+                                                <button class="btn btn-outline-danger btn-sm" id='${idBtn}'
+                                                    onclick="fcn_delete_pedido('${rows.CODDOC}','${rows.CORRELATIVO}','${rows.ST}','${idBtn}');">
+                                                    <i class="fal fa-trash"></i> Eliminar
+                                                </button>
+                                        </div>
+                                        <div class="col-4">
+                                            <button class="btn btn-naranja btn-sm btn-circle hand shadow" id='${idBtn}D'
+                                                onclick="get_pdf('${rows.NIT}','${rows.NOMCLIE}','${rows.DIRCLIE}','${rows.CODDOC}','${rows.CORRELATIVO}','${idBtn}D')">
+                                                <i class="fal fa-download"></i>
+                                            </button> 
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            `
+        })
+        container.innerHTML = strdata //tableheader + strdata + tablefoooter;
+        //lbTotal.innerText = `${funciones.setMoneda(total,'Q ')} - Pedidos: ${totalpedidos} - Promedio:${funciones.setMoneda((Number(total)/Number(totalpedidos)),'Q')}`;
+        lbTotal.innerHTML = `<h3 class="negrita text-naranja">Total Importe: ${funciones.setMoneda(total,'Q ')}</h3>
+                             <h3 class="negrita text-danger">No. Pedidos: ${totalpedidos}</h3>
+                            `;
+    }, (error) => {
+        funciones.AvisoError('Error en la solicitud');
+        strdata = '';
+        container.innerHTML = '';
+        lbTotal.innerHTML = '-- --';
+    });
+       
+};
+
+function BACKUP_rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
+
+    let container = document.getElementById(idContenedor);
+    container.innerHTML = GlobalLoader;
+
+
+    let tipodoc = document.getElementById('cmbTipoDoc').value;
+
+    
+    let lbTotal = document.getElementById(idLbTotal);
+    lbTotal.innerText = '---';
+
+    let tableheader = `<table class="table table-responsive table-hover table-striped table-bordered">
+                        <thead class="bg-naranja text-white">
+                            <tr>
+                                <td>Documento</td>
+                                <td>Cliente</td>
+                                <td>Importe</td>
+                            </tr>
+                        </thead>
+                        <tbody id="tblListaPedidos">`;
+
+    let tablefoooter ='</tbody></table>';
+
+    let strdata = '';
+    let totalpedidos = 0;
+    let coddoc = '';
+    if(tipodoc=='PED'){coddoc=GlobalCoddoc};
+    if(tipodoc=='COT'){coddoc=GlobalCotiz};
+
+    axios.post('/ventas/lista_pedidos', {
+        sucursal: sucursal,
+        coddoc:coddoc,
         fecha:fecha   
     })
     .then((response) => {
@@ -631,7 +750,7 @@ function rpt_pedidos_vendedor(sucursal,codven,fecha,idContenedor,idLbTotal){
         lbTotal.innerHTML = '-- --';
     });
        
-}
+};
 
 
 //EDICION DE PEDIDO
@@ -696,13 +815,17 @@ function get_pdf(nit,cliente,direccion,coddoc, correlativo, idbtn){
     btn.innerHTML = '<i class="fal fa-download fa-spin"></i>';
     btn.disabled = true;
 
+    let tipodoc = document.getElementById('cmbTipoDoc').value;
+
+
     axios.post('/pdf',{
         sucursal:GlobalCodSucursal,
         coddoc:coddoc,
         correlativo:correlativo,
         nit:nit,
         cliente:cliente,
-        direccion:direccion
+        direccion:direccion,
+        tipodoc:tipodoc
      })
      .then((response) => {
         let base = response.data;
