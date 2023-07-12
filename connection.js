@@ -12,7 +12,7 @@ const vpn_config = {
 const config = {
 	user: 'iEx',
 	password: 'iEx',
-	server: '192.168.0.200', //'ELORIGEN\\SQLDEV'
+	server: '172.26.167.250', //'192.168.0.200'
 	database: 'VENTAS',
 	pool: {	max: 100,	min: 0,	idleTimeoutMillis: 30000}
 };
