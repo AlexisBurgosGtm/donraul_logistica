@@ -20,7 +20,7 @@ let routerUsuarios = require('./router/routerUsuarios');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-const PORT = process.env.PORT || 4600;
+const PORT = process.env.PORT || 4650;
 
 
 const cors = require('cors');
